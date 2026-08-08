@@ -23,7 +23,7 @@ Production checks also cover every sitemap route, a nested unknown route, canoni
 - Removed 66 HTML validation findings: normalized the doctype, named or removed invalid landmarks, removed an accessible-name mismatch, and made every input type explicit.
 - Replaced the low-contrast accent palette. The nine measured text/button contrast failures now pass WCAG AA in the generated site.
 - Localized skip navigation, menu text, navigation landmark names, language landmark names and phone-validation errors for all approved languages.
-- Aligned non-English process claims with the qualified English intake scope; the site no longer promises a diagnosis, parts decision or price before billable work.
+- Aligned all locales with MRC's actual workflow: the free intake assessment determines acceptance; accepted repair jobs receive a proper diagnostic and quote before any repair work begins.
 - Added responsive 480 px and 720 px hero sources, correct intrinsic dimensions, decoding/loading hints and a lazy footer logo. This removes roughly 73 KiB from the typical desktop hero transfer.
 - Added an explicit empty request-type option so browser validation requires a deliberate choice.
 - Prevented backend error details from being exposed in customer-facing status text.

@@ -125,6 +125,10 @@ def validate_site() -> None:
 
     english = (SITE / "index.html").read_text(encoding="utf-8").lower()
     assert "mrc repairs desktop graphics cards at board level and checks used gpus" in english
+    assert "graphics card diagnosis and quote before repair work begins" in english
+    assert "the intake assessment determines acceptance; it is not the repair diagnostic" in english
+    assert "after the accepted card arrives, we perform a proper diagnostic and provide a quote" in english
+    assert "no repair work begins without your approval" in english
     assert "displayed phone format" in english
     assert "detected country" not in english
     assert "gpu certification" in english
@@ -138,6 +142,26 @@ def validate_site() -> None:
     assert "intel graphics cards are normally not accepted" in english
     assert "nvidia · amd · intel" not in english
     assert "nvidia · amd</small>" in english
+    for stale_claim in (
+        "diagnosed before it is promised",
+        "diagnostic avant toute promesse",
+        "diagnóstico antes de prometer",
+        "chẩn đoán trước khi cam kết",
+        "إصلاح بطاقات الرسومات بعد التشخيص",
+        "約束する前に診断する",
+    ):
+        assert stale_claim not in public_copy
+
+    locale_workflow_markers = {
+        "fr": ("évaluation du dossier sert à décider de l’acceptation", "diagnostic complet et fournissons un devis"),
+        "es": ("evaluación de admisión decide la aceptación", "diagnóstico completo y damos un presupuesto"),
+        "vi": ("đánh giá tiếp nhận chỉ quyết định có nhận việc", "chẩn đoán đầy đủ và báo giá"),
+        "ar": ("تقييم القبول يحدد قبول العمل فقط", "تشخيصاً كاملاً ونقدم عرض سعر"),
+        "ja": ("受付評価は受入れ可否を決める", "正式な診断を行い、修理作業を始める前に見積り"),
+    }
+    for locale, markers in locale_workflow_markers.items():
+        localized = (SITE / locale / "index.html").read_text(encoding="utf-8").lower()
+        assert all(marker in localized for marker in markers)
     assert (SITE / "assets" / "gpu-repair-480.webp").stat().st_size < 60_000
     assert (SITE / "assets" / "gpu-repair-720.webp").stat().st_size < 100_000
 
@@ -183,6 +207,8 @@ def validate_site() -> None:
     assert "does not state that the card meets oem standards" in terms
     assert "written test report" in terms
     assert "shop testing rig" in terms
+    assert "the free intake assessment is only used to decide whether mrc will accept the job" in terms
+    assert "after an accepted card arrives, mrc performs a proper diagnostic and provides a quote before any repair work begins" in terms
 
     not_found = (SITE / "404.html").read_text(encoding="utf-8")
     assert "Page not found" in not_found

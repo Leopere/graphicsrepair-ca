@@ -21,6 +21,8 @@ The web launch initially preserved Namecheap forwarding. On 2026-08-08, mail was
 
 Mail-in-a-Box also maintains automatic abuse, admin and postmaster aliases for the domain. Do not restore the old `eforward1` through `eforward5.registrar-servers.com` MX records or the old Namecheap SPF record. Do not import Mail-in-a-Box's suggested apex or `www` web records: those names remain DNS-only GitHub Pages targets.
 
+Inside Mail-in-a-Box, custom DNS records mirror the four GitHub Pages apex A records and `www CNAME leopere.github.io.`. These internal records mark the website as hosted elsewhere, preventing false TLS-health alarms and certificate requests for apex or `www`; Cloudflare remains authoritative. Only `mta-sts.graphicsrepair.ca` is provisioned on the Mail-in-a-Box certificate.
+
 ## Form protection
 
 The browser uses the MRC Cloudflare Worker endpoint with a short-lived proof-of-work challenge. The form also has country-specific phone validation, a honeypot, a minimum completion time, strict length limits and server-side rate limiting. Production requires `graphicsrepair.ca` and `www.graphicsrepair.ca` in the Worker's allowed-origin and proof-origin runtime configuration.

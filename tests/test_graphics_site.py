@@ -88,11 +88,12 @@ def validate_site() -> None:
         assert "plausible" not in source.lower()
         assert 'form_id" value="graphics_card_repair_quote"' in source
         for field_name in (
-            "name", "email", "phone", "model", "serial_number",
+            "name", "email", "phone", "model",
             "request_type", "message", "service_type", "mailing_address",
             "unit_number", "accept_terms",
         ):
             assert re.search(rf'name="{field_name}"', source), f"{path} is missing form field {field_name}"
+        assert "serial_number" not in source
         assert 'option value="In-Person"' in source
         assert 'option value="Mail-In"' in source
         assert 'id="mailing-fields"' in source and " hidden" in source
@@ -143,11 +144,12 @@ def validate_site() -> None:
     assert "sendBeacon" not in js
     assert "forms.motherboardrepair.ca/api/submit" in js
     for intake_contract in (
-        "setupMailingFields", "setupPhone", "address.required = mailIn", "serial_number",
+        "setupMailingFields", "setupPhone", "address.required = mailIn",
         "request_type", "mailing_address", "unit_number", "Graphics card:",
         "Request details:", "digits.startsWith('1') ? 'CA'", "phoneSetup.country()",
     ):
         assert intake_contract in js
+    assert "serial" not in js.lower()
     assert "phone.setCustomValidity(valid ? '' : phone.dataset.error)" in js
     assert "form.dataset.error + ' ('" not in js
 

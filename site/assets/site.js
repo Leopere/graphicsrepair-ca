@@ -176,20 +176,18 @@
       status.textContent = form.dataset.sending;
       const message = clean(form.elements.message.value, 1000);
       const model = clean(form.elements.model.value, 160);
-      const serial = clean(form.elements.serial_number.value, 100);
       const requestType = form.elements.request_type.value;
       const serviceType = form.elements.service_type.value;
       const mailingAddress = clean(form.elements.mailing_address.value, 300);
       const unitNumber = clean(form.elements.unit_number.value, 30);
       const messageParts = [
         'Graphics card: ' + model,
-        serial ? 'Serial number: ' + serial : '',
         'Request type: ' + requestType,
         'Intake method: ' + serviceType,
         mailingAddress ? 'Return address: ' + mailingAddress + (unitNumber ? ', ' + unitNumber : '') : '',
         '',
         'Request details: ' + message
-      ].filter(function (part, index) { return part || index === 5; });
+      ].filter(function (part, index) { return part || index === 4; });
       const payload = {
         name: clean(form.elements.name.value, 100),
         email: clean(form.elements.email.value, 254),
@@ -202,7 +200,6 @@
         extra_fields: {
           country: phoneSetup.country(),
           graphics_card_model: model,
-          serial_number: serial,
           request_type: requestType,
           service_type: serviceType,
           mailing_address: mailingAddress,

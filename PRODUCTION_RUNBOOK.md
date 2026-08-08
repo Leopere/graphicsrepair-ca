@@ -30,3 +30,9 @@ Treat `leadform` and Woodpecker references as legacy context. New runtime servic
 ## Metrics boundary
 
 The Notomo admin API has a distinct `graphicsrepair.ca` property. Do not reuse the motherboard site ID `2`. No Notomo browser snippet is installed: an API-created property has no public host allowlist until it is added to Notomo's checked-in fleet map, and Notomo replay can record literal form values. Until a separately reviewed, replay-disabled host policy is deployed, production metrics remain Cloudflare's aggregate edge request metrics only, as disclosed in the privacy policy.
+
+Cloudflare Web Analytics automatic setup must remain disabled for this zone. Automatic setup injects a browser beacon, which conflicts with the site's disclosed no-client-analytics posture and is intentionally blocked by the page CSP. Validate production HTML through a browser-facing request and confirm it contains no `static.cloudflareinsights.com` script. Do not relax the CSP to admit the beacon.
+
+## Edge security controls
+
+The HTML contains a restrictive meta CSP, but response-only controls such as HSTS and `frame-ancestors` require Cloudflare response-header configuration. Preserve all DNS and Worker bindings when adding them. Recheck the complete live header set after any edge change.

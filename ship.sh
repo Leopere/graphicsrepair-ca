@@ -19,7 +19,7 @@ python3 build_graphics_site.py --check
 node --check site/assets/site.js
 python3 tests/test_graphics_site.py
 
-git add README.md build_graphics_site.py site tests/test_graphics_site.py .github .gitignore ship.sh
+git add README.md PRODUCTION_RUNBOOK.md STATIC_SITE_AUDIT.md build_graphics_site.py site tests/test_graphics_site.py .github .gitignore ship.sh
 if ! git diff --cached --quiet; then
   git commit -m "$message"
 fi

@@ -73,6 +73,7 @@ def validate_site() -> None:
     for locale, tag in LOCALES.items():
         path = SITE / ("index.html" if locale == "en" else f"{locale}/index.html")
         parser, source = parse(path)
+        assert source.startswith("<!DOCTYPE html>")
         html_tags = [attrs for name, attrs in parser.tags if name == "html"]
         assert html_tags and html_tags[0].get("lang") == tag
         assert len([1 for name, _attrs in parser.tags if name == "h1"]) == 1
@@ -96,7 +97,12 @@ def validate_site() -> None:
         assert 'option value="Mail-In"' in source
         assert 'id="mailing-fields"' in source and " hidden" in source
         assert 'id="phone-country-detected"' in source
+        assert 'data-error="' in source
         assert 'name="country"' not in source
+        assert all(attrs.get("type") for name, attrs in parser.tags if name == "input")
+        assert 'srcset="' in source and "gpu-repair-480.webp 480w" in source and "gpu-repair-720.webp 720w" in source
+        for fragment in ("faults", "process", "used-check", "contact"):
+            assert f'href="#{fragment}"' in source
         assert "https://motherboardrepair.ca/" in source
         assert source.count('rel="alternate" hreflang=') == 7
         canonical = [attrs.get("href") for name, attrs in parser.tags if name == "link" and attrs.get("rel") == "canonical"]
@@ -120,6 +126,8 @@ def validate_site() -> None:
     assert "intel graphics cards are normally not accepted" in english
     assert "nvidia · amd · intel" not in english
     assert "nvidia · amd</small>" in english
+    assert (SITE / "assets" / "gpu-repair-480.webp").stat().st_size < 60_000
+    assert (SITE / "assets" / "gpu-repair-720.webp").stat().st_size < 100_000
 
     js = (SITE / "assets/site.js").read_text(encoding="utf-8")
     for country in COUNTRIES:
@@ -135,6 +143,8 @@ def validate_site() -> None:
         "Request details:", "digits.startsWith('1') ? 'CA'", "phoneSetup.country()",
     ):
         assert intake_contract in js
+    assert "phone.setCustomValidity(valid ? '' : phone.dataset.error)" in js
+    assert "form.dataset.error + ' ('" not in js
 
     css = (SITE / "assets/style.css").read_text(encoding="utf-8")
     assert ".form-row { display: grid; grid-template-columns: 1fr 1fr; align-items: start;" in css
@@ -147,6 +157,8 @@ def validate_site() -> None:
         assert f'href="/{legal_kind}/"' in legal_source
         assert 'href="../assets/style.css"' in legal_source
         assert 'src="../assets/mrc-logo-white.svg"' in legal_source
+        for fragment in ("faults", "process", "used-check", "contact"):
+            assert f'href="/#{fragment}"' in legal_source
 
     terms = (SITE / "terms" / "index.html").read_text(encoding="utf-8").lower()
     assert "it is not a repair diagnostic" in terms
@@ -154,12 +166,32 @@ def validate_site() -> None:
     not_found = (SITE / "404.html").read_text(encoding="utf-8")
     assert "Page not found" in not_found
     assert 'content="noindex,follow"' in not_found
-    assert 'href="assets/style.css"' in not_found
+    assert 'href="/assets/style.css"' in not_found
+    assert 'src="/assets/site.js"' in not_found
+    assert 'src="/assets/mrc-logo.svg"' in not_found
+    assert 'src="/assets/mrc-logo-white.svg"' in not_found
+    for fragment in ("faults", "process", "used-check", "contact"):
+        assert f'href="/#{fragment}"' in not_found
     assert "Information we collect" not in not_found
 
     privacy = (SITE / "privacy" / "index.html").read_text(encoding="utf-8").lower()
-    for disclosure in ("no form text is sent to analytics", "do not run advertising analytics", "session replay", "aggregate edge traffic metrics", "cloudflare", "github"):
+    for disclosure in (
+        "no form text is sent to analytics", "do not run advertising analytics", "session replay",
+        "aggregate edge traffic metrics", "cloudflare", "github", "selected intake method",
+        "detected phone country", "page language", "local storage",
+    ):
         assert disclosure in privacy
+
+    deploy = (ROOT / ".github/workflows/deploy.yml").read_text(encoding="utf-8")
+    build_workflow = (ROOT / ".github/workflows/build-and-test.yml").read_text(encoding="utf-8")
+    assert "actions/checkout@v" not in deploy + build_workflow
+    assert "actions/setup-python@v" not in deploy + build_workflow
+    assert "actions/configure-pages@v" not in deploy
+    assert "actions/upload-pages-artifact@v" not in deploy
+    assert "actions/deploy-pages@v" not in deploy
+    assert deploy.count("pages: write") == 1
+    assert deploy.count("id-token: write") == 1
+    assert "node --check site/assets/site.js" in deploy
 
     sitemap = ET.parse(SITE / "sitemap.xml").getroot()
     namespace = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}

@@ -87,7 +87,7 @@
       const rule = phoneRules[detectCountry()];
       const digits = localDigits(phone.value, rule);
       const valid = rule.pattern.test(digits);
-      phone.setCustomValidity(valid ? '' : 'Enter a valid mobile phone number for the selected country.');
+      phone.setCustomValidity(valid ? '' : phone.dataset.error);
       phone.setAttribute('aria-invalid', String(!valid));
       return valid;
     }
@@ -224,8 +224,9 @@
         status.className = 'form-status success';
         status.textContent = form.dataset.success;
       } catch (error) {
+        console.error('Protected form submission failed:', error);
         status.className = 'form-status error';
-        status.textContent = form.dataset.error + ' (' + error.message + ')';
+        status.textContent = form.dataset.error;
       } finally {
         button.disabled = false;
       }

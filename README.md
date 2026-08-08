@@ -25,7 +25,7 @@ The checks prove:
 Run the project-specific static-site policy with the local SST installation:
 
 ```bash
-/Volumes/macmini\ dump/Dev/static-site-tests/dist/sst run "$PWD" --parallel --json
+/Volumes/macmini\ dump/Dev/static-site-tests/dist/sst run "$PWD" --json
 ```
 
 [`sst.yml`](sst.yml) sets no minimum keyword density, so the test suite never

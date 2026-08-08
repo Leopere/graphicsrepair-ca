@@ -97,9 +97,12 @@ def validate_site() -> None:
         assert 'option value="In-Person"' in source
         assert 'option value="Mail-In"' in source
         assert 'id="mailing-fields"' in source and " hidden" in source
-        assert 'id="phone-country-detected"' in source
+        assert 'id="phone-validation-profile"' in source
         assert 'data-error="' in source
         assert 'name="country"' not in source
+        assert 'placeholder="e.g. ASUS TUF RTX 3080 10GB"' not in source
+        assert '<div class="honeypot" inert>' in source
+        assert 'class="honeypot" aria-hidden=' not in source
         assert all(attrs.get("type") for name, attrs in parser.tags if name == "input")
         assert 'srcset="' in source and "gpu-repair-480.webp 480w" in source and "gpu-repair-720.webp 720w" in source
         for fragment in ("faults", "process", "gpu-certification", "contact"):
@@ -121,6 +124,7 @@ def validate_site() -> None:
                     assert parsed.netloc in {"graphicsrepair.ca", "motherboardrepair.ca"}
 
     english = (SITE / "index.html").read_text(encoding="utf-8").lower()
+    assert "mrc repairs desktop graphics cards at board level and checks used gpus" in english
     assert "gpu certification" in english
     assert "not a repair diagnostic" in english
     assert "missing, substituted or changed chips" in english
@@ -146,21 +150,25 @@ def validate_site() -> None:
     for intake_contract in (
         "setupMailingFields", "setupPhone", "address.required = mailIn",
         "request_type", "mailing_address", "unit_number", "Graphics card:",
-        "Request details:", "digits.startsWith('1') ? 'CA'", "phoneSetup.country()",
+        "Request details:", "digits.startsWith('1') ? 'CA'", "phoneSetup.profile()",
     ):
         assert intake_contract in js
     assert "serial" not in js.lower()
     assert "phone.setCustomValidity(valid ? '' : phone.dataset.error)" in js
     assert "form.dataset.error + ' ('" not in js
+    assert "mailing_address: mailingAddress" not in js
+    assert "unit_number: unitNumber" not in js
 
     css = (SITE / "assets/style.css").read_text(encoding="utf-8")
     assert ".form-row { display: grid; grid-template-columns: 1fr 1fr; align-items: start;" in css
     assert '.repair-form input:not([type="checkbox"]), .repair-form select { min-height: 48px; }' in css
+    assert "#faults, #process, #gpu-certification, #contact { scroll-margin-block-start: 7rem; }" in css
 
     for legal_kind in ("privacy", "terms"):
         legal_parser, legal_source = parse(SITE / legal_kind / "index.html")
         legal_canonical = [attrs.get("href") for name, attrs in legal_parser.tags if name == "link" and attrs.get("rel") == "canonical"]
         assert legal_canonical == [f"https://graphicsrepair.ca/{legal_kind}/"]
+        assert "MRC · Updated 2026-08-08" in legal_source
         assert f'href="/{legal_kind}/"' in legal_source
         assert 'href="../assets/style.css"' in legal_source
         assert 'src="../assets/mrc-logo-white.svg"' in legal_source
@@ -189,7 +197,8 @@ def validate_site() -> None:
     for disclosure in (
         "no form text is sent to analytics", "do not run advertising analytics", "session replay",
         "authoritative dns only", "does not proxy page requests", "cloudflare", "github", "selected intake method",
-        "detected phone country", "page language", "local storage",
+        "phone validation profile", "page language", "local storage",
+        "browser network-error reports do not contain the form body",
     ):
         assert disclosure in privacy
 

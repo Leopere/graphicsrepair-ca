@@ -177,6 +177,8 @@ defaults:
     whitelist:
       - "forms.motherboardrepair.ca"
       - "motherboardrepair.ca"
+      - "graphicsrepair.ca"
+      - "schema.org"
 
   tracking:
     services: []

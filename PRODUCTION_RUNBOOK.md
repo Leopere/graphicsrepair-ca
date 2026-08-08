@@ -17,6 +17,7 @@ The web launch initially preserved Namecheap forwarding. On 2026-08-08, mail was
 - DKIM selector: `mail._domainkey.graphicsrepair.ca`
 - DMARC: `v=DMARC1; p=quarantine;`
 - MTA-STS host: `mta-sts.graphicsrepair.ca` at `89.117.56.210`, DNS-only, with an enforced policy for `box.p.nixc.us`
+- MTA-STS discovery: `_mta-sts.graphicsrepair.ca TXT "v=STSv1; id=2026080801"`; increment the ID whenever the policy changes
 - support alias: `repairs@graphicsrepair.ca` forwards to the established `repairs@motherboardrepair.ca` support alias
 
 Mail-in-a-Box also maintains automatic abuse, admin and postmaster aliases for the domain. Do not restore the old `eforward1` through `eforward5.registrar-servers.com` MX records or the old Namecheap SPF record. Do not import Mail-in-a-Box's suggested apex or `www` web records: those names remain DNS-only GitHub Pages targets.

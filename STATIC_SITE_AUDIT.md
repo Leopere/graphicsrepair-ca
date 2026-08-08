@@ -34,7 +34,7 @@ Baseline live Lighthouse scores were 100 performance, 97 accessibility, 93 best 
 
 ## DNS-only correction
 
-The initial audit found that proxied Cloudflare web records injected a Web Analytics beacon. The site's CSP blocked it, but the injection caused a console error and contradicted the intended no-client-analytics posture. On 2026-08-08, all four apex GitHub Pages A records and the `www` CNAME were changed to `proxied: false`; the then-current MX and TXT records were preserved during that web-only change. Public DNS now resolves apex and `www` directly to GitHub Pages IPv4 and IPv6 targets. Mail was subsequently migrated in a separate authorized change to MRC's Mail-in-a-Box, as recorded in `PRODUCTION_RUNBOOK.md`.
+The initial audit found that proxied Cloudflare web records injected a Web Analytics beacon. The site's CSP blocked it, but the injection caused a console error and contradicted the intended no-client-analytics posture. On 2026-08-08, all four apex GitHub Pages A records and the `www` CNAME were changed to `proxied: false`; the then-current MX and TXT records were preserved during that web-only change. Public DNS now resolves the apex directly to GitHub Pages IPv4 targets; the `www` CNAME resolves to GitHub Pages IPv4 and IPv6 targets. Mail was subsequently migrated in a separate authorized change to MRC's Mail-in-a-Box, as recorded in `PRODUCTION_RUNBOOK.md`.
 
 After the DNS-only change, browser-facing HTML contains no Cloudflare beacon, the CSP console error is gone and live desktop Lighthouse best practices scores 100. Cloudflare is not in the HTTP path and its WAF is not used for this site. GitHub Pages does not provide project-defined response headers such as HSTS or `frame-ancestors`; this limitation is accepted rather than adding an unwanted reverse proxy.
 
@@ -46,3 +46,41 @@ After the DNS-only change, browser-facing HTML contains no Cloudflare beacon, th
 - Intel graphics cards are normally not accepted.
 - Drop-offs are welcome whenever MRC is open; the site does not claim appointments are scheduled.
 - Notomo site ID 2 is never reused. The separately created graphics property remains inactive until a replay-free, host-scoped integration can be proven.
+
+## Comprehensive follow-up scan
+
+The 2026-08-08 follow-up rebuilt the artifact and proved that the live homepage
+matched it byte for byte before remediation. All six locales, both legal pages,
+the sitemap, robots policy, assets and an unknown route returned the expected
+status. Safe form checks proved short-lived `no-store` challenges, allowed
+apex/`www` CORS preflights and rejection of invalid submissions without sending
+a lead.
+
+Repeated live Lighthouse runs produced median scores of 100 performance, 100
+accessibility and 100 best practices on mobile and desktop. Median LCP was 1.25
+seconds on mobile and 0.33 seconds on desktop, with zero layout shift. The SEO
+score remained 92 only because Lighthouse said it could not download
+`robots.txt`; direct curl, Chromium and GitHub Pages requests all returned the
+valid 70-byte policy with HTTP 200.
+
+This pass corrected an invalid `aria-hidden` form-label pattern, added sticky
+header offsets for fragment targets, removed an English-only model placeholder
+from translated forms, renamed derived phone metadata as a validation profile,
+stopped duplicating mail-in addresses in both message and extra metadata, made
+legal review dates explicit, simplified the English search description and
+documented form-Worker network diagnostics. W3C validation has no HTML errors;
+its remaining JSON-LD CSP notice is informational, while browser best-practices
+checks report no console or CSP failure.
+
+The full local SST run passed 264 checks and skipped 709, with 50 reported
+failures. Review showed those failures were scanner/environment mismatches:
+localhost HTTPS, caching and canonical assumptions; the packaged trailing-slash
+lookup bug; GitHub Pages' known header limitation; false tracking matches in
+privacy disclosures; and optional sitemap fields. The one actionable SST
+finding, English meta readability, was corrected and its focused rerun passed.
+
+The missing MTA-STS discovery marker was added without changing any existing web
+or mail record: `_mta-sts.graphicsrepair.ca TXT "v=STSv1; id=2026080801"`.
+GitHub Pages still cannot set HSTS, frame protection or `nosniff` response
+headers. That residual risk remains accepted while the site stays unproxied and
+DNS-only, as required.

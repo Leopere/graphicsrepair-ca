@@ -8,7 +8,7 @@ LOCALES = {
     "en": {
         "tag": "en-CA", "dir": "ltr", "native": "English", "country": "CA",
         "title": "Graphics Card & GPU Repair Across Canada | MRC",
-        "description": "MRC board-level graphics card repair and used-GPU verification for customers across Canada.",
+        "description": "MRC repairs desktop graphics cards at board level and checks used GPUs. Mail-in service is available across Canada for accepted work.",
         "notice": "English source copy.",
         "nav_faults": "Faults", "nav_process": "Process", "nav_check": "GPU Certification", "nav_contact": "Start a repair",
         "network": "An MRC specialist site. For other board-level electronics work, visit Motherboard Repair Canada.",

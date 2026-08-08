@@ -62,7 +62,7 @@
 
   function setupPhone(form) {
     const phone = form.elements.phone;
-    const detection = form.querySelector('#phone-country-detected');
+    const detection = form.querySelector('#phone-validation-profile');
     const locale = document.documentElement.lang || 'en-CA';
     const names = typeof Intl.DisplayNames === 'function' ? new Intl.DisplayNames([locale], { type: 'region' }) : null;
     const defaultCountry = document.body.dataset.defaultCountry || 'CA';
@@ -100,7 +100,7 @@
     phone.addEventListener('blur', validate);
     update();
     return {
-      country: function () { return detectCountry(); },
+      profile: function () { return detectCountry(); },
       e164: function () {
         const detected = detectCountry();
         const rule = phoneRules[detected];
@@ -198,12 +198,10 @@
         website: form.elements.website.value,
         start_time: Number(form.elements.start_time.value),
         extra_fields: {
-          country: phoneSetup.country(),
+          phone_validation_profile: phoneSetup.profile(),
           graphics_card_model: model,
           request_type: requestType,
           service_type: serviceType,
-          mailing_address: mailingAddress,
-          unit_number: unitNumber,
           site_language: document.documentElement.lang,
           accepted_privacy_and_terms: true,
           source_site: 'graphicsrepair.ca'

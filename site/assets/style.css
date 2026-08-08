@@ -29,6 +29,7 @@ button, input, select, textarea { font: inherit; }
 .network-bar .shell { padding-block: .55rem; }
 .network-bar a { color: white; font-weight: 700; }
 .site-header { position: sticky; top: 0; z-index: 50; background: rgba(247, 244, 238, .94); border-bottom: 1px solid rgba(29, 53, 87, .15); backdrop-filter: blur(16px); }
+#faults, #process, #gpu-certification, #contact { scroll-margin-block-start: 7rem; }
 .header-row { min-height: 86px; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
 .brand { display: flex; align-items: center; gap: 1rem; color: var(--ink); text-decoration: none; }
 .brand img { width: 112px; }

@@ -34,7 +34,7 @@ Baseline live Lighthouse scores were 100 performance, 97 accessibility, 93 best 
 
 ## DNS-only correction
 
-The initial audit found that proxied Cloudflare web records injected a Web Analytics beacon. The site's CSP blocked it, but the injection caused a console error and contradicted the intended no-client-analytics posture. On 2026-08-08, all four apex GitHub Pages A records and the `www` CNAME were changed to `proxied: false`. MX and TXT records were preserved. Public DNS now resolves apex and `www` directly to GitHub Pages IPv4 and IPv6 targets.
+The initial audit found that proxied Cloudflare web records injected a Web Analytics beacon. The site's CSP blocked it, but the injection caused a console error and contradicted the intended no-client-analytics posture. On 2026-08-08, all four apex GitHub Pages A records and the `www` CNAME were changed to `proxied: false`; the then-current MX and TXT records were preserved during that web-only change. Public DNS now resolves apex and `www` directly to GitHub Pages IPv4 and IPv6 targets. Mail was subsequently migrated in a separate authorized change to MRC's Mail-in-a-Box, as recorded in `PRODUCTION_RUNBOOK.md`.
 
 After the DNS-only change, browser-facing HTML contains no Cloudflare beacon, the CSP console error is gone and live desktop Lighthouse best practices scores 100. Cloudflare is not in the HTTP path and its WAF is not used for this site. GitHub Pages does not provide project-defined response headers such as HSTS or `frame-ancestors`; this limitation is accepted rather than adding an unwanted reverse proxy.
 

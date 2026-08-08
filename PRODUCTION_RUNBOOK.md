@@ -8,16 +8,18 @@
 4. Only then replace the parked apex and `www` records with proven GitHub Pages targets.
 5. Confirm the custom domain, certificate and redirects, then keep apex and `www` DNS-only. Do not enable the Cloudflare proxy or WAF for this site.
 
-## DNS safety record
+## DNS and mail safety record
 
-Observed before launch on 2026-08-08:
+The web launch initially preserved Namecheap forwarding. On 2026-08-08, mail was intentionally migrated to MRC's Mail-in-a-Box at `box.p.nixc.us`:
 
-- parked apex: `A 162.255.119.26` (proxied)
-- parked `www`: `CNAME parkingpage.namecheap.com` (proxied)
-- MX: `eforward1` through `eforward5.registrar-servers.com` with priorities 10, 10, 10, 15 and 20
-- TXT: `v=spf1 include:spf.efwd.registrar-servers.com ~all`
+- apex MX: `10 box.p.nixc.us.`
+- apex SPF: `v=spf1 mx -all`
+- DKIM selector: `mail._domainkey.graphicsrepair.ca`
+- DMARC: `v=DMARC1; p=quarantine;`
+- MTA-STS host: `mta-sts.graphicsrepair.ca` at `89.117.56.210`, DNS-only, with an enforced policy for `box.p.nixc.us`
+- support alias: `repairs@graphicsrepair.ca` forwards to the established `repairs@motherboardrepair.ca` support alias
 
-The MX and TXT records are out of scope for the web launch and must not be modified.
+Mail-in-a-Box also maintains automatic abuse, admin and postmaster aliases for the domain. Do not restore the old `eforward1` through `eforward5.registrar-servers.com` MX records or the old Namecheap SPF record. Do not import Mail-in-a-Box's suggested apex or `www` web records: those names remain DNS-only GitHub Pages targets.
 
 ## Form protection
 

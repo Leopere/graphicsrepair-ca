@@ -30,7 +30,7 @@ GitHub Actions builds `_site/` and deploys it with the official GitHub Pages art
 ./ship.sh "Describe the release"
 ```
 
-DNS is managed separately in Cloudflare. Apex and `www` must not move until the Pages deployment is successful and the GitHub Pages target has been proven. Both web records must remain DNS-only so Cloudflare does not proxy site traffic or enable its WAF. Existing MX and TXT records are mail infrastructure and must remain unchanged.
+DNS is managed separately in Cloudflare. Apex and `www` must not move until the Pages deployment is successful and the GitHub Pages target has been proven. Both web records must remain DNS-only so Cloudflare does not proxy site traffic or enable its WAF. Mail is handled by MRC's Mail-in-a-Box; preserve the MX, SPF, DKIM, DMARC and MTA-STS records documented in `PRODUCTION_RUNBOOK.md`.
 
 ## Service and privacy posture
 

@@ -4,6 +4,7 @@
 
 !/.github/
 !/.gitignore
+!/AGENTS.md
 !/README.md
 !/PRODUCTION_RUNBOOK.md
 !/build_graphics_site.py

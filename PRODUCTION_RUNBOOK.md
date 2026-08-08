@@ -21,4 +21,8 @@ The MX and TXT records are out of scope for the web launch and must not be modif
 
 ## Form protection
 
-The browser uses the MRC leadform API with a short-lived proof-of-work challenge. The form also has country-specific phone validation, a honeypot, a minimum completion time, strict length limits and server-side rate limiting. Production requires `graphicsrepair.ca` and `www.graphicsrepair.ca` in the form service's allowed-domain runtime configuration.
+The browser uses the MRC Cloudflare Worker endpoint with a short-lived proof-of-work challenge. The form also has country-specific phone validation, a honeypot, a minimum completion time, strict length limits and server-side rate limiting. Production requires `graphicsrepair.ca` and `www.graphicsrepair.ca` in the Worker's allowed-origin and proof-origin runtime configuration.
+
+## Infrastructure direction
+
+Treat `leadform` and Woodpecker references as legacy context. New runtime services should use Cloudflare Workers, and automation or deployment should use GitHub Actions on local runners unless current production evidence requires a different path.

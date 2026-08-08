@@ -111,6 +111,7 @@ h3 { font-size: 1.3rem; letter-spacing: -.02em; }
 .repair-form input:focus, .repair-form select:focus, .repair-form textarea:focus { outline: 3px solid rgba(69, 123, 157, .24); border-color: var(--blue); }
 .repair-form [aria-invalid="true"] { border-color: var(--red); }
 .form-hint { color: var(--muted); font-size: .76rem; font-weight: 500; line-height: 1.45; }
+.phone-detection { width: fit-content; border-radius: 999px; padding: .18rem .55rem; color: var(--navy); background: #dceaf1; font-size: .75rem; font-weight: 800; }
 .conditional-fields { display: grid; gap: 1rem; padding: 1rem; border-inline-start: 3px solid var(--blue); background: rgba(69, 123, 157, .07); }
 .conditional-fields[hidden] { display: none; }
 .consent { grid-template-columns: 22px 1fr !important; align-items: start; font-weight: 500 !important; }

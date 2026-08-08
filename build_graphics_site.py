@@ -164,7 +164,7 @@ def render_index(locale: str) -> str:
       <input type="hidden" name="form_id" value="graphics_card_repair_quote"><input type="hidden" name="start_time" value="">
       <fieldset><legend>{esc(f['contact_details'])}</legend>
         <div class="form-row"><label>{esc(c['name'])}<input name="name" autocomplete="name" maxlength="100" required></label><label>{esc(c['email'])}<input name="email" type="email" autocomplete="email" maxlength="254" aria-describedby="email-hint" required><small id="email-hint" class="form-hint">{esc(f['email_hint'])}</small></label></div>
-        <div class="form-row"><label>{esc(c['country_label'])}<select name="country" id="country" autocomplete="country" required></select></label><label>{esc(c['phone'])}<input name="phone" id="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" aria-describedby="phone-hint" required><small id="phone-hint" class="form-hint">{esc(f['phone_hint'])}</small></label></div>
+        <label>{esc(c['phone'])}<input name="phone" id="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" aria-describedby="phone-country-detected phone-hint" required><span id="phone-country-detected" class="phone-detection" aria-live="polite"></span><small id="phone-hint" class="form-hint">{esc(f['phone_hint'])}</small></label>
       </fieldset>
       <fieldset><legend>{esc(f['card_details'])}</legend>
         <label>{esc(c['model'])}<input name="model" maxlength="160" required placeholder="e.g. ASUS TUF RTX 3080 10GB" aria-describedby="model-hint"><small id="model-hint" class="form-hint">{esc(f['model_hint'])}</small></label>

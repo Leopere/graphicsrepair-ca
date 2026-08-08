@@ -60,38 +60,53 @@
     return digits;
   }
 
-  function setupCountries(form) {
-    const select = form.elements.country;
+  function setupPhone(form) {
     const phone = form.elements.phone;
+    const detection = form.querySelector('#phone-country-detected');
     const locale = document.documentElement.lang || 'en-CA';
     const names = typeof Intl.DisplayNames === 'function' ? new Intl.DisplayNames([locale], { type: 'region' }) : null;
     const defaultCountry = document.body.dataset.defaultCountry || 'CA';
-    Object.keys(phoneRules).forEach(function (country) {
-      const option = document.createElement('option');
-      option.value = country;
-      option.textContent = names ? names.of(country) : country;
-      option.selected = country === defaultCountry;
-      select.appendChild(option);
-    });
+    let country = defaultCountry;
+    const byLongestCode = Object.keys(phoneRules).sort(function (a, b) { return phoneRules[b].code.length - phoneRules[a].code.length; });
+    function detectCountry() {
+      const trimmed = phone.value.trim();
+      const digits = trimmed.replace(/\D/g, '');
+      if (trimmed.startsWith('+')) {
+        const match = byLongestCode.find(function (candidate) { return digits.startsWith(phoneRules[candidate].code); });
+        country = match || defaultCountry;
+      } else {
+        // A leading 1 is unambiguous among the approved countries. Other
+        // unprefixed numbers remain local to the page locale to avoid treating
+        // a Canadian 212 area code as Morocco's +212, for example.
+        country = digits.startsWith('1') ? 'CA' : defaultCountry;
+      }
+      detection.textContent = (names ? names.of(country) : country) + ' (+' + phoneRules[country].code + ')';
+      return country;
+    }
     function validate() {
-      const rule = phoneRules[select.value];
+      const rule = phoneRules[detectCountry()];
       const digits = localDigits(phone.value, rule);
       const valid = rule.pattern.test(digits);
       phone.setCustomValidity(valid ? '' : 'Enter a valid mobile phone number for the selected country.');
       phone.setAttribute('aria-invalid', String(!valid));
       return valid;
     }
-    function updatePlaceholder() {
-      phone.placeholder = '+' + phoneRules[select.value].code;
+    function update() {
+      detectCountry();
+      phone.placeholder = '+' + phoneRules[country].code;
       if (phone.value) validate();
     }
-    select.addEventListener('change', updatePlaceholder);
-    phone.addEventListener('input', validate);
+    phone.addEventListener('input', update);
     phone.addEventListener('blur', validate);
-    updatePlaceholder();
-    return function e164() {
-      const rule = phoneRules[select.value];
-      return '+' + rule.code + localDigits(phone.value, rule);
+    update();
+    return {
+      country: function () { return detectCountry(); },
+      e164: function () {
+        const detected = detectCountry();
+        const rule = phoneRules[detected];
+        return '+' + rule.code + localDigits(phone.value, rule);
+      },
+      update: update
     };
   }
 
@@ -149,7 +164,7 @@
     const form = document.querySelector('#repair-form');
     if (!form) return;
     form.elements.start_time.value = String(Math.floor(Date.now() / 1000));
-    const e164 = setupCountries(form);
+    const phoneSetup = setupPhone(form);
     const updateMailingFields = setupMailingFields(form);
     const button = form.querySelector('button[type="submit"]');
     const status = form.querySelector('#form-status');
@@ -178,14 +193,14 @@
       const payload = {
         name: clean(form.elements.name.value, 100),
         email: clean(form.elements.email.value, 254),
-        phone: e164(),
+        phone: phoneSetup.e164(),
         company: '',
         message: messageParts.join('\n'),
         form_id: 'graphics_card_repair_quote',
         website: form.elements.website.value,
         start_time: Number(form.elements.start_time.value),
         extra_fields: {
-          country: form.elements.country.value,
+          country: phoneSetup.country(),
           graphics_card_model: model,
           serial_number: serial,
           request_type: requestType,
@@ -204,6 +219,7 @@
         if (!response.ok) throw new Error(result.error || 'Submission failed.');
         form.reset();
         form.elements.start_time.value = String(Math.floor(Date.now() / 1000));
+        phoneSetup.update();
         updateMailingFields();
         status.className = 'form-status success';
         status.textContent = form.dataset.success;

@@ -24,6 +24,7 @@ Production checks also cover every sitemap route, a nested unknown route, canoni
 - Replaced the low-contrast accent palette. The nine measured text/button contrast failures now pass WCAG AA in the generated site.
 - Localized skip navigation, menu text, navigation landmark names, language landmark names and phone-validation errors for all approved languages.
 - Aligned all locales with MRC's actual workflow: the free intake assessment determines acceptance; accepted repair jobs receive a proper diagnostic and quote before any repair work begins.
+- Adapted the current motherboardrepair.ca international intake gate for standalone GPUs: mail-in requests identify the return country, and non-Canadian requests require ownership/authorization plus cross-border shipping-cost acknowledgement. Serial/IMEI and battery questions are intentionally excluded.
 - Added responsive 480 px and 720 px hero sources, correct intrinsic dimensions, decoding/loading hints and a lazy footer logo. This removes roughly 73 KiB from the typical desktop hero transfer.
 - Added an explicit empty request-type option so browser validation requires a deliberate choice.
 - Prevented backend error details from being exposed in customer-facing status text.

@@ -90,14 +90,29 @@ def validate_site() -> None:
         for field_name in (
             "name", "email", "phone", "model",
             "request_type", "message", "service_type", "mailing_address",
-            "unit_number", "accept_terms",
+            "unit_number", "return_country", "ownership_confirmed",
+            "international_shipping_ack", "accept_terms",
         ):
             assert re.search(rf'name="{field_name}"', source), f"{path} is missing form field {field_name}"
         assert "serial_number" not in source
+        assert "device_serial" not in source
+        assert "battery_status" not in source
+        assert "imei" not in source.lower()
         assert 'option value="In-Person"' in source
         assert 'option value="Mail-In"' in source
         assert 'id="mailing-fields"' in source and " hidden" in source
+        assert 'id="international-mailing-fields"' in source
+        assert 'name="return_country" id="return_country"' in source
+        assert 'autocomplete="country-name"' in source
+        assert 'name="mailing_address" rows="3" maxlength="300" autocomplete="street-address" aria-describedby="address-hint" disabled' in source
+        assert 'name="unit_number" type="text" maxlength="30" autocomplete="address-line2" disabled' in source
+        assert 'role="group" aria-labelledby="international-title" hidden' in source
+        assert 'name="ownership_confirmed" type="checkbox" value="confirmed" disabled' in source
+        assert 'name="international_shipping_ack" type="checkbox" value="accepted" disabled' in source
+        for return_country in COUNTRIES | {"OTHER"}:
+            assert f'<option value="{return_country}">' in source
         assert 'id="phone-validation-profile"' in source
+        assert 'data-international-label="' in source
         assert 'data-error="' in source
         if locale == "en":
             assert 'name="english_support_preference"' not in source
@@ -151,6 +166,9 @@ def validate_site() -> None:
     assert "intel graphics cards are normally not accepted" in english
     assert "nvidia · amd · intel" not in english
     assert "nvidia · amd</small>" in english
+    assert "country where the card is located and will be returned" in english
+    assert "international mail-in details" in english
+    assert "shipping, customs, duties, taxes, brokerage, insurance and return costs" in english
     for stale_claim in (
         "diagnosed before it is promised",
         "diagnostic avant toute promesse",
@@ -171,6 +189,16 @@ def validate_site() -> None:
     for locale, markers in locale_workflow_markers.items():
         localized = (SITE / locale / "index.html").read_text(encoding="utf-8").lower()
         assert all(marker in localized for marker in markers)
+    localized_international_titles = {
+        "fr": "détails de l’envoi international",
+        "es": "datos del envío internacional",
+        "vi": "thông tin gửi bưu điện quốc tế",
+        "ar": "تفاصيل الإرسال الدولي",
+        "ja": "海外郵送の詳細",
+    }
+    for locale, title in localized_international_titles.items():
+        localized = (SITE / locale / "index.html").read_text(encoding="utf-8").lower()
+        assert title in localized
     assert (SITE / "assets" / "gpu-repair-480.webp").stat().st_size < 60_000
     assert (SITE / "assets" / "gpu-repair-720.webp").stat().st_size < 100_000
 
@@ -187,6 +215,16 @@ def validate_site() -> None:
         "request_type", "mailing_address", "unit_number", "Graphics card:",
         "Request details:", "digits.startsWith('1') ? 'CA'", "phoneSetup.profile()",
         "english_support_preference", "replyPreference ? replyPreference.value : undefined",
+        "returnCountry.required = mailIn", "returnCountry.disabled = !mailIn",
+        "address.disabled = !mailIn", "unitNumber.disabled = !mailIn",
+        "returnCountry.value !== 'CA'", "internationalFields.hidden = !international",
+        "ownershipConfirmed.required = Boolean(international)",
+        "shippingAcknowledged.required = Boolean(international)",
+        "Return country:", "Ownership or owner authorization: confirmed",
+        "International shipping and cross-border costs: accepted",
+        "return_country: returnCountry || undefined", "international_mail_in: Boolean(internationalMailIn)",
+        "country = match || 'INTL'", "detected === 'INTL'", "^[1-9]\\d{6,14}$",
+        "return '+' + phone.value.replace(/\\D/g, '').slice(0, 15)",
     ):
         assert intake_contract in js
     assert "serial" not in js.lower()
@@ -217,6 +255,9 @@ def validate_site() -> None:
     assert "does not state that the card meets oem standards" in terms
     assert "written test report" in terms
     assert "shop testing rig" in terms
+    assert "canada is our main market" in terms
+    assert "international mail-in service is available only for jobs mrc accepts" in terms
+    assert "shipping, customs, duties, taxes, brokerage, insurance and return costs" in terms
     assert "the free intake assessment is only used to decide whether mrc will accept the job" in terms
     assert "after an accepted card arrives, mrc performs a proper diagnostic and provides a quote before any repair work begins" in terms
 
@@ -237,6 +278,8 @@ def validate_site() -> None:
         "authoritative dns only", "does not proxy page requests", "cloudflare", "github", "selected intake method",
         "phone validation profile", "page language", "local storage",
         "selected text-message reply language",
+        "return country", "ownership or owner-authorization confirmation",
+        "international-mail-in status", "cross-border shipping costs",
         "browser network-error reports do not contain the form body",
     ):
         assert disclosure in privacy

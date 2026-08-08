@@ -73,18 +73,29 @@
       const digits = trimmed.replace(/\D/g, '');
       if (trimmed.startsWith('+')) {
         const match = byLongestCode.find(function (candidate) { return digits.startsWith(phoneRules[candidate].code); });
-        country = match || defaultCountry;
+        country = match || 'INTL';
       } else {
         // A leading 1 is unambiguous among the approved countries. Other
         // unprefixed numbers remain local to the page locale to avoid treating
         // a Canadian 212 area code as Morocco's +212, for example.
         country = digits.startsWith('1') ? 'CA' : defaultCountry;
       }
-      detection.textContent = (names ? names.of(country) : country) + ' (+' + phoneRules[country].code + ')';
+      detection.textContent = country === 'INTL'
+        ? detection.dataset.internationalLabel
+        : (names ? names.of(country) : country) + ' (+' + phoneRules[country].code + ')';
       return country;
     }
     function validate() {
-      const rule = phoneRules[detectCountry()];
+      const detected = detectCountry();
+      if (detected === 'INTL') {
+        const trimmed = phone.value.trim();
+        const validInternational = /^\+[0-9\s().-]+$/.test(trimmed)
+          && /^[1-9]\d{6,14}$/.test(trimmed.replace(/\D/g, ''));
+        phone.setCustomValidity(validInternational ? '' : phone.dataset.error);
+        phone.setAttribute('aria-invalid', String(!validInternational));
+        return validInternational;
+      }
+      const rule = phoneRules[detected];
       const digits = localDigits(phone.value, rule);
       const valid = rule.pattern.test(digits);
       phone.setCustomValidity(valid ? '' : phone.dataset.error);
@@ -93,7 +104,7 @@
     }
     function update() {
       detectCountry();
-      phone.placeholder = '+' + phoneRules[country].code;
+      phone.placeholder = country === 'INTL' ? '+' : '+' + phoneRules[country].code;
       if (phone.value) validate();
     }
     phone.addEventListener('input', update);
@@ -103,6 +114,7 @@
       profile: function () { return detectCountry(); },
       e164: function () {
         const detected = detectCountry();
+        if (detected === 'INTL') return '+' + phone.value.replace(/\D/g, '').slice(0, 15);
         const rule = phoneRules[detected];
         return '+' + rule.code + localDigits(phone.value, rule);
       },
@@ -146,17 +158,38 @@
   function setupMailingFields(form) {
     const serviceType = form.elements.service_type;
     const fields = form.querySelector('#mailing-fields');
+    const internationalFields = form.querySelector('#international-mailing-fields');
     const address = form.elements.mailing_address;
+    const unitNumber = form.elements.unit_number;
+    const returnCountry = form.elements.return_country;
+    const ownershipConfirmed = form.elements.ownership_confirmed;
+    const shippingAcknowledged = form.elements.international_shipping_ack;
     function update() {
       const mailIn = serviceType.value === 'Mail-In';
+      const international = mailIn && returnCountry.value && returnCountry.value !== 'CA';
       fields.hidden = !mailIn;
       address.required = mailIn;
+      address.disabled = !mailIn;
+      unitNumber.disabled = !mailIn;
+      returnCountry.required = mailIn;
+      returnCountry.disabled = !mailIn;
+      internationalFields.hidden = !international;
+      ownershipConfirmed.required = Boolean(international);
+      ownershipConfirmed.disabled = !international;
+      shippingAcknowledged.required = Boolean(international);
+      shippingAcknowledged.disabled = !international;
       if (!mailIn) {
         address.value = '';
-        form.elements.unit_number.value = '';
+        unitNumber.value = '';
+        returnCountry.value = '';
+      }
+      if (!international) {
+        ownershipConfirmed.checked = false;
+        shippingAcknowledged.checked = false;
       }
     }
     serviceType.addEventListener('change', update);
+    returnCountry.addEventListener('change', update);
     update();
     return update;
   }
@@ -178,17 +211,23 @@
       const model = clean(form.elements.model.value, 160);
       const requestType = form.elements.request_type.value;
       const serviceType = form.elements.service_type.value;
-      const mailingAddress = clean(form.elements.mailing_address.value, 300);
-      const unitNumber = clean(form.elements.unit_number.value, 30);
+      const mailingAddress = serviceType === 'Mail-In' ? clean(form.elements.mailing_address.value, 300) : '';
+      const unitNumber = serviceType === 'Mail-In' ? clean(form.elements.unit_number.value, 30) : '';
+      const returnCountry = serviceType === 'Mail-In' ? clean(form.elements.return_country.value, 10) : '';
+      const internationalMailIn = serviceType === 'Mail-In' && returnCountry && returnCountry !== 'CA';
+      const ownershipConfirmed = internationalMailIn && form.elements.ownership_confirmed.checked;
+      const shippingAcknowledged = internationalMailIn && form.elements.international_shipping_ack.checked;
       const replyPreference = form.elements.english_support_preference;
       const messageParts = [
         'Graphics card: ' + model,
         'Request type: ' + requestType,
         'Intake method: ' + serviceType,
+        returnCountry ? 'Return country: ' + returnCountry : '',
         mailingAddress ? 'Return address: ' + mailingAddress + (unitNumber ? ', ' + unitNumber : '') : '',
-        '',
-        'Request details: ' + message
-      ].filter(function (part, index) { return part || index === 4; });
+        ownershipConfirmed ? 'Ownership or owner authorization: confirmed' : '',
+        shippingAcknowledged ? 'International shipping and cross-border costs: accepted' : ''
+      ].filter(Boolean);
+      messageParts.push('', 'Request details: ' + message);
       const payload = {
         name: clean(form.elements.name.value, 100),
         email: clean(form.elements.email.value, 254),
@@ -203,6 +242,10 @@
           graphics_card_model: model,
           request_type: requestType,
           service_type: serviceType,
+          return_country: returnCountry || undefined,
+          international_mail_in: Boolean(internationalMailIn),
+          ownership_confirmed: ownershipConfirmed || undefined,
+          international_shipping_ack: shippingAcknowledged || undefined,
           site_language: document.documentElement.lang,
           english_support_preference: replyPreference ? replyPreference.value : undefined,
           accepted_privacy_and_terms: true,

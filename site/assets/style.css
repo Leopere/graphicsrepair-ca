@@ -117,6 +117,8 @@ h3 { font-size: 1.3rem; letter-spacing: -.02em; }
 .phone-detection { width: fit-content; border-radius: 999px; padding: .18rem .55rem; color: var(--navy); background: #dceaf1; font-size: .75rem; font-weight: 800; }
 .conditional-fields { display: grid; gap: 1rem; padding: 1rem; border-inline-start: 3px solid var(--blue); background: rgba(69, 123, 157, .07); }
 .conditional-fields[hidden] { display: none; }
+.conditional-fields-nested { border: 1px solid var(--line); border-inline-start: 3px solid var(--red); border-radius: 4px; background: white; }
+.conditional-fields-nested p { margin: .25rem 0 0; }
 .consent { grid-template-columns: 22px 1fr !important; align-items: start; font-weight: 500 !important; }
 .consent input { margin-top: .25rem; }
 .honeypot { position: absolute !important; inset-inline-start: -10000px; width: 1px; height: 1px; overflow: hidden; }

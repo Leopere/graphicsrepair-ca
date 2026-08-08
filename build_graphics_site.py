@@ -109,6 +109,10 @@ def render_index(locale: str) -> str:
         f'<li><span>{esc(number)}</span><div><h3>{esc(title)}</h3><p>{esc(body)}</p></div></li>'
         for number, title, body in c["steps"]
     )
+    country_options = "".join(
+        f'<option value="{esc(code)}">{esc(name)}</option>'
+        for code, name in f["country_options"]
+    )
     reply_language_field = ""
     if locale != "en":
         reply_language_field = f'''
@@ -172,7 +176,7 @@ def render_index(locale: str) -> str:
       <input type="hidden" name="form_id" value="graphics_card_repair_quote"><input type="hidden" name="start_time" value="">
       <fieldset><legend>{esc(f['contact_details'])}</legend>
         <div class="form-row"><label>{esc(c['name'])}<input name="name" type="text" autocomplete="name" maxlength="100" required></label><label>{esc(c['email'])}<input name="email" type="email" autocomplete="email" maxlength="254" aria-describedby="email-hint" required><small id="email-hint" class="form-hint">{esc(f['email_hint'])}</small></label></div>
-        <label>{esc(c['phone'])}<input name="phone" id="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" aria-describedby="phone-validation-profile phone-hint" data-error="{esc(f['phone_error'])}" required><span id="phone-validation-profile" class="phone-detection" aria-live="polite"></span><small id="phone-hint" class="form-hint">{esc(f['phone_hint'])}</small></label>{reply_language_field}
+        <label>{esc(c['phone'])}<input name="phone" id="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" aria-describedby="phone-validation-profile phone-hint" data-error="{esc(f['phone_error'])}" required><span id="phone-validation-profile" class="phone-detection" data-international-label="{esc(f['international_phone'])}" aria-live="polite"></span><small id="phone-hint" class="form-hint">{esc(f['phone_hint'])}</small></label>{reply_language_field}
       </fieldset>
       <fieldset><legend>{esc(f['card_details'])}</legend>
         <label>{esc(c['model'])}<input name="model" type="text" maxlength="160" required aria-describedby="model-hint"><small id="model-hint" class="form-hint">{esc(f['model_hint'])}</small></label>
@@ -184,8 +188,14 @@ def render_index(locale: str) -> str:
       <fieldset><legend>{esc(f['intake'])}</legend>
         <label>{esc(f['intake'])}<select name="service_type" id="service_type" required aria-describedby="intake-hint"><option value="">{esc(f['choose'])}</option><option value="In-Person">{esc(f['dropoff'])}</option><option value="Mail-In">{esc(f['mailin'])}</option></select><small id="intake-hint" class="form-hint">{esc(f['intake_hint'])}</small></label>
         <div id="mailing-fields" class="conditional-fields" hidden>
-          <label>{esc(f['address'])}<textarea name="mailing_address" rows="3" maxlength="300" autocomplete="street-address" aria-describedby="address-hint"></textarea><small id="address-hint" class="form-hint">{esc(f['address_hint'])}</small></label>
-          <label>{esc(f['unit'])}<input name="unit_number" type="text" maxlength="30" autocomplete="address-line2"></label>
+          <label>{esc(f['return_country'])}<select name="return_country" id="return_country" autocomplete="country-name" aria-describedby="country-hint" disabled><option value="">{esc(f['select_country'])}</option>{country_options}</select><small id="country-hint" class="form-hint">{esc(f['country_hint'])}</small></label>
+          <label>{esc(f['address'])}<textarea name="mailing_address" rows="3" maxlength="300" autocomplete="street-address" aria-describedby="address-hint" disabled></textarea><small id="address-hint" class="form-hint">{esc(f['address_hint'])}</small></label>
+          <label>{esc(f['unit'])}<input name="unit_number" type="text" maxlength="30" autocomplete="address-line2" disabled></label>
+          <div id="international-mailing-fields" class="conditional-fields conditional-fields-nested" role="group" aria-labelledby="international-title" hidden>
+            <div><strong id="international-title">{esc(f['international_title'])}</strong><p class="form-hint">{esc(f['international_hint'])}</p></div>
+            <label class="consent"><input name="ownership_confirmed" type="checkbox" value="confirmed" disabled><span>{esc(f['ownership_confirmed'])}</span></label>
+            <label class="consent"><input name="international_shipping_ack" type="checkbox" value="accepted" disabled><span>{esc(f['international_shipping_ack'])}</span></label>
+          </div>
         </div>
       </fieldset>
       <div class="honeypot" inert><label>Website<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
@@ -203,8 +213,8 @@ def render_legal(kind: str) -> str:
         title = "Privacy Policy"
         description = "How Graphics Repair Canada handles contact information, repair details, hosting metrics and service records."
         body = """
-        <h2>Information we collect</h2><p>When you submit the repair form, we receive the name, email, phone number and validation profile, card manufacturer and model, request type, symptoms and prior-work history you provide. For a mail-in request, we also receive the return address and optional unit number you provide. We use this information to assess, communicate about and, if accepted, deliver the requested service. We do not ask for the card serial number.</p>
-        <h2>Protected form processing</h2><p>The form is sent over HTTPS to MRC's Cloudflare Worker at forms.motherboardrepair.ca. Along with the fields shown, it sends the selected intake method, phone validation profile, page language, selected text-message reply language, consent confirmation and source site. It uses strict field validation, a hidden honeypot, a minimum completion time, rate limiting and a short-lived proof-of-work challenge. Do not include passwords, payment-card numbers or unrelated sensitive information.</p>
+        <h2>Information we collect</h2><p>When you submit the repair form, we receive the name, email, phone number and validation profile, card manufacturer and model, request type, symptoms and prior-work history you provide. For a mail-in request, we also receive the return country, return address and optional unit number you provide. For an international mail-in request, we receive your ownership or owner-authorization confirmation and your acknowledgement of cross-border shipping costs and instructions. We use this information to assess, communicate about and, if accepted, deliver the requested service. We do not ask for the card serial number.</p>
+        <h2>Protected form processing</h2><p>The form is sent over HTTPS to MRC's Cloudflare Worker at forms.motherboardrepair.ca. Along with the fields shown, it sends the selected intake method, phone validation profile, international-mail-in status, page language, selected text-message reply language, consent confirmation and source site. It uses strict field validation, a hidden honeypot, a minimum completion time, rate limiting and a short-lived proof-of-work challenge. Do not include passwords, payment-card numbers or unrelated sensitive information.</p>
         <h2>Language preference</h2><p>If you choose a language, the site stores that language code in your browser's local storage so it can open the same translation on a later visit. It is not a tracking identifier and is not sent with analytics.</p>
         <h2>Privacy-respecting operation</h2><p>We do not run advertising analytics, session replay, fingerprinting or a client-side analytics script. No form text is sent to analytics. GitHub Pages delivers the site and may temporarily process IP addresses, browser details, requested paths and timestamps in ordinary hosting and security logs. Cloudflare provides authoritative DNS only for this site and does not proxy page requests. Cloudflare does process requests sent to the separate form Worker and may receive ordinary security and network-error diagnostics for that endpoint; browser network-error reports do not contain the form body.</p>
         <h2>Privacy questions</h2><p>Use the contact form to ask MRC a privacy question. Do not send unrelated sensitive information through the form.</p>
@@ -213,7 +223,8 @@ def render_legal(kind: str) -> str:
         title = "Service Terms"
         description = "Basic request terms for Graphics Repair Canada."
         body = """
-        <h2>Request only</h2><p>Graphics Repair Canada is an MRC specialist site. Submitting the form sends a request for review; it does not reserve a time, authorize work or guarantee a repair. Do not mail a card until MRC provides shipping instructions.</p>
+        <h2>Request only</h2><p>Graphics Repair Canada is an MRC specialist site. Submitting the form sends a request for review; it does not reserve a time, authorize work or guarantee a repair. Canada is our main market. International mail-in service is available only for jobs MRC accepts. Do not mail a card until MRC provides shipping instructions.</p>
+        <h2>International mail-in</h2><p>International customers must wait for job-specific customs-broker, carrier and return-cost instructions. The customer is responsible for shipping, customs, duties, taxes, brokerage, insurance and return costs. Service availability and permitted shipping routes depend on the origin country, card and carrier restrictions.</p>
         <h2>GPU Certification</h2><p>The advertised $50 CAD plus tax covers one GPU Certification on one supported used desktop graphics card after model acceptance. MRC compares the card with its listing and expected reference configuration and records factual observations about its identifiers, model, memory, required chip population, board, cooler and other required assemblies. This can reveal missing, substituted or changed chips and other discrepancies found in deceptive marketplace or aftermarket sales. MRC also attempts to boot the card on the shop testing rig; if it boots, the customer receives a written test report describing the checks completed and observed results. GPU Certification reports only facts observed on the inspected card. It does not state that the card meets OEM standards and is not a repair diagnostic, authenticity guarantee, performance guarantee, warranty or proof that no latent fault exists. MRC does not determine seller intent, ownership or make legal findings of fraud. Shipping, repair and parts are extra, and the fee is non-refundable once certification begins.</p>
         <h2>Repair assessment, diagnostic and quote</h2><p>The free intake assessment is only used to decide whether MRC will accept the job. It is not the repair diagnostic. After an accepted card arrives, MRC performs a proper diagnostic and provides a quote before any repair work begins. Repair work starts only after the customer approves that quote. Only the scope, price and other job-specific details MRC actually provides for that job apply.</p>
         """

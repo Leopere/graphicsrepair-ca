@@ -1,0 +1,36 @@
+# This repository started from a local architectural snapshot. Publish only the
+# explicit Graphics Repair Canada source allowlist below.
+/*
+
+!/.github/
+!/.gitignore
+!/README.md
+!/PRODUCTION_RUNBOOK.md
+!/build_graphics_site.py
+!/ship.sh
+!/site/
+!/tests/
+!/docs/
+
+# Generated production artifact
+/_site/
+
+# Only these approved MRC assets are source inputs.
+/docs/*
+!/docs/SVG/
+!/docs/images/
+!/docs/boot-logo.svg
+/docs/SVG/*
+!/docs/SVG/MRC_Logo_Main_Color.svg
+!/docs/SVG/MRC_Logo_Secondary_White.svg
+/docs/images/*
+!/docs/images/graphics_card_repair.webp
+
+# Keep only the focused production test.
+/tests/*
+!/tests/test_graphics_site.py
+
+# Local noise
+**/__pycache__/
+*.py[cod]
+.DS_Store

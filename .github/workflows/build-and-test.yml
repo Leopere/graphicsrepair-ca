@@ -1,0 +1,23 @@
+name: Build and test GPU site
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build and validate the production artifact
+        run: python3 build_graphics_site.py --check
+      - name: JavaScript syntax check
+        run: node --check site/assets/site.js

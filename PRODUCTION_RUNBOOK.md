@@ -26,3 +26,7 @@ The browser uses the MRC Cloudflare Worker endpoint with a short-lived proof-of-
 ## Infrastructure direction
 
 Treat `leadform` and Woodpecker references as legacy context. New runtime services should use Cloudflare Workers, and automation or deployment should use GitHub Actions on local runners unless current production evidence requires a different path.
+
+## Metrics boundary
+
+The Notomo admin API has a distinct `graphicsrepair.ca` property. Do not reuse the motherboard site ID `2`. No Notomo browser snippet is installed: an API-created property has no public host allowlist until it is added to Notomo's checked-in fleet map, and Notomo replay can record literal form values. Until a separately reviewed, replay-disabled host policy is deployed, production metrics remain Cloudflare's aggregate edge request metrics only, as disclosed in the privacy policy.

@@ -80,6 +80,11 @@ def validate_site() -> None:
                     assert parsed.scheme == "https"
                     assert parsed.netloc in {"graphicsrepair.ca", "motherboardrepair.ca"}
 
+    english = (SITE / "index.html").read_text(encoding="utf-8").lower()
+    assert "used graphics card completeness check" in english
+    assert "this is not a repair diagnostic" in english
+    assert "material misrepresentation" in english
+
     js = (SITE / "assets/site.js").read_text(encoding="utf-8")
     for country in COUNTRIES:
         assert re.search(rf"\b{country}: \{{ code:", js), f"Missing phone rule for {country}"
@@ -96,6 +101,9 @@ def validate_site() -> None:
         assert f'href="/{legal_kind}/"' in legal_source
         assert 'href="../assets/style.css"' in legal_source
         assert 'src="../assets/mrc-logo-white.svg"' in legal_source
+
+    terms = (SITE / "terms" / "index.html").read_text(encoding="utf-8").lower()
+    assert "it is not a repair diagnostic" in terms
 
     not_found = (SITE / "404.html").read_text(encoding="utf-8")
     assert "Page not found" in not_found

@@ -34,6 +34,6 @@ DNS is managed separately in Cloudflare. Apex and `www` must not move until the 
 
 ## Service and privacy posture
 
-Service content deliberately avoids outcome guarantees. A form submission is a free assessment request, not acceptance. Customers are told not to ship until instructed. The fixed $50 CAD plus tax used-GPU check is described as one non-invasive attempt with explicit limits.
+Service content deliberately avoids outcome guarantees. A form submission is a free assessment request, not acceptance. Customers are told not to ship until instructed. The fixed $50 CAD plus tax service is a non-invasive used-card completeness and listing-consistency check, not a repair diagnostic, performance grade or legal finding of fraud.
 
 The site has no client-side analytics. Aggregate request metrics come from Cloudflare's edge; no session replay or typed form values are collected for analytics. Contact requests are sent to MRC's protected form processor at `forms.motherboardrepair.ca`.

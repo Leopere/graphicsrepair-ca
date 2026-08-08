@@ -119,7 +119,7 @@ def render_index(locale: str) -> str:
                 "provider": {"@id": f"{DOMAIN}/#organization"},
                 "areaServed": {"@type": "Country", "name": "Canada"},
                 "serviceType": "Board-level graphics card and GPU repair",
-                "offers": {"@type": "Offer", "name": "Used graphics card verification", "price": "50", "priceCurrency": "CAD"},
+                "offers": {"@type": "Offer", "name": "Used graphics card completeness check", "price": "50", "priceCurrency": "CAD"},
             },
         ],
     }
@@ -192,7 +192,7 @@ def render_legal(kind: str) -> str:
         body = """
         <h2>Scope and acceptance</h2><p>Graphics Repair Canada is an MRC specialist site. Submitting the form starts a free job assessment; it does not mean the card or job has been accepted. Do not ship until MRC confirms acceptance and supplies instructions.</p>
         <h2>Diagnostics and outcomes</h2><p>You authorize reasonable diagnostics for an accepted card. Any diagnostic charge, repair estimate, parts cost and practical test limitation will be disclosed before related billable work. Electronics diagnostics and repair are best-effort services. No outcome or turnaround is guaranteed unless MRC states it in writing.</p>
-        <h2>Used-GPU verification</h2><p>The advertised $50 CAD plus tax covers one non-invasive testing attempt on one supported desktop graphics card after model acceptance. It excludes shipping, teardown, repair, parts and deeper board-level diagnosis. Results are limited to “consistent with the listing,” “concerns found” or “inconclusive.” MRC does not determine seller intent, ownership or make legal findings of fraud. The fee is non-refundable once testing begins.</p>
+        <h2>Used-card completeness check</h2><p>The advertised $50 CAD plus tax covers one non-invasive completeness and listing-consistency check on one supported desktop graphics card after model acceptance. It is not a repair diagnostic and excludes shipping, teardown, repair, parts, performance grading and fault diagnosis. Results are limited to “consistent with the listing,” “concerns found” or “inconclusive.” The check can identify substitution, missing assemblies or other signs of material misrepresentation, but MRC does not determine seller intent, ownership or make legal findings of fraud. The fee is non-refundable once checking begins.</p>
         <h2>Payment, shipping and risk</h2><p>Most repairs are paid after approved work is complete and before release or return shipping. Special parts may require a disclosed deposit. Customers pay inbound and return shipping, insurance, customs, duties, taxes and brokerage unless agreed otherwise. Shipping risk is carried under the selected carrier and insurance terms.</p>
         <h2>Prior work and repair risk</h2><p>Heat, corrosion, prior repair, missing parts and latent faults increase risk. Diagnostic and repair processes may involve heat, cleaning and irreversible component removal or replacement. MRC is not responsible for pre-existing damage or faults that become apparent during reasonable work. Never send a card with a battery or undeclared hazardous contamination.</p>
         <h2>Warranty and governing terms</h2><p>Unless confirmed in writing for a work order, MRC does not promise a repair warranty. Any parts coverage is limited to the supplied part and its supplier terms. Ontario law and applicable Canadian federal law govern the service, without limiting non-waivable consumer rights.</p>

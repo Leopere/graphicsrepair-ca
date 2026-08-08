@@ -95,12 +95,13 @@ def validate_site() -> None:
         assert legal_canonical == [f"https://graphicsrepair.ca/{legal_kind}/"]
         assert f'href="/{legal_kind}/"' in legal_source
         assert 'href="../assets/style.css"' in legal_source
+        assert 'src="../assets/mrc-logo-white.svg"' in legal_source
 
     not_found = (SITE / "404.html").read_text(encoding="utf-8")
     assert "Page not found" in not_found
     assert 'content="noindex,follow"' in not_found
     assert 'href="assets/style.css"' in not_found
-    assert "Information we receive" not in not_found
+    assert "Information we collect" not in not_found
 
     privacy = (SITE / "privacy" / "index.html").read_text(encoding="utf-8").lower()
     for disclosure in ("no form text is sent to analytics", "do not run advertising analytics", "session replay", "aggregate edge traffic metrics", "cloudflare", "github"):

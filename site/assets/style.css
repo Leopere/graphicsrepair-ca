@@ -100,11 +100,18 @@ h3 { font-size: 1.3rem; letter-spacing: -.02em; }
 .reply-card { margin-top: 2.2rem; border-inline-start: 3px solid var(--blue); padding: .4rem 0 .4rem 1.4rem; }
 .reply-card p { color: var(--muted); }
 .repair-form { display: grid; gap: 1.1rem; border: 1px solid var(--line); border-radius: 8px; padding: clamp(1.4rem, 4vw, 2.6rem); background: var(--paper); box-shadow: var(--shadow); }
+.repair-form fieldset { display: grid; gap: 1rem; min-width: 0; margin: 0; padding: 0 0 1.35rem; border: 0; border-bottom: 1px solid var(--line); }
+.repair-form fieldset:last-of-type { padding-bottom: 0; border-bottom: 0; }
+.repair-form legend { width: 100%; margin: 0 0 .15rem; padding: 0; color: var(--navy); font-size: 1rem; font-weight: 900; letter-spacing: .02em; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .repair-form label { display: grid; gap: .4rem; font-size: .88rem; font-weight: 800; }
 .repair-form input, .repair-form select, .repair-form textarea { width: 100%; border: 1px solid #aeb9c6; border-radius: 4px; padding: .75rem .85rem; color: var(--ink); background: white; }
+.repair-form textarea { resize: vertical; }
 .repair-form input:focus, .repair-form select:focus, .repair-form textarea:focus { outline: 3px solid rgba(69, 123, 157, .24); border-color: var(--blue); }
 .repair-form [aria-invalid="true"] { border-color: var(--red); }
+.form-hint { color: var(--muted); font-size: .76rem; font-weight: 500; line-height: 1.45; }
+.conditional-fields { display: grid; gap: 1rem; padding: 1rem; border-inline-start: 3px solid var(--blue); background: rgba(69, 123, 157, .07); }
+.conditional-fields[hidden] { display: none; }
 .consent { grid-template-columns: 22px 1fr !important; align-items: start; font-weight: 500 !important; }
 .consent input { margin-top: .25rem; }
 .honeypot { position: absolute !important; inset-inline-start: -10000px; width: 1px; height: 1px; overflow: hidden; }

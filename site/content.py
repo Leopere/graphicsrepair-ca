@@ -110,3 +110,51 @@ LOCALES = {
         "contact_title": "無料の案件評価から開始", "contact_intro": "試験・修理範囲に合うか判断できる詳細を送ってください。通常はSMSで返信します。承認前に発送しないでください。", "name": "お名前", "email": "メール", "country_label": "電話の国", "phone": "SMSを受信できる電話", "model": "正確なメーカーと型番", "service": "依頼内容", "repair": "修理評価", "verify": "中古カードの完全性確認（50 CAD＋税）", "symptoms": "症状、履歴、過去の作業", "consent": "プライバシーポリシーと規約に同意し、送信が受入れや修理を保証するものではないことを理解します。", "send": "保護された依頼を送信", "sending": "確認して送信中…", "success": "依頼を送信しました。", "error": "送信できませんでした。入力を確認して再試行してください。", "form_privacy": "時間待機、ハニーポット、厳格な検証、短時間のProof-of-Workで保護します。フォーム内容は分析に送信しません。", "reply_title": "お問い合わせ", "reply_body": "新規依頼はこのフォームから開始します。留守番電話：226-702-0555（SMS不可）。営業時間内は予約なしで持ち込みできます。郵送はMRCから案内を受けてから行ってください。", "privacy": "プライバシー", "terms": "利用規約", "backlink": "マザーボード・その他電子機器修理", "copyright": "Graphics Repair CanadaはMRCの専門サイトです。", "machine_note": "言語レビュー未実施の機械翻訳です。",
     },
 }
+
+
+# Form-specific copy is kept separate so every approved locale renders the
+# complete intake flow without bloating the main page-copy records.
+FORM_COPY = {
+    "en": {
+        "contact_details": "Contact details", "email_hint": "Only expect invoices or receipts by email. We normally follow up by SMS.", "phone_hint": "Use an SMS-capable number. Choose its country first.",
+        "card_details": "Graphics card details", "model_hint": "Include the board partner, GPU model and memory size shown on the card.", "serial": "Serial number (optional)", "serial_hint": "Use the serial on the card label. Do not enter a Windows product key or password.",
+        "request_details": "Request details", "request_prompt": "What do you need help with?", "request_hint": "Describe the failure, when it began, what you tested, mining or liquid exposure, and any previous repair or disassembly.",
+        "intake": "Drop-off or mail-in?", "choose": "Choose one", "dropoff": "Drop-off during open hours (no appointment)", "mailin": "Mail-in after MRC provides instructions", "intake_hint": "Do not mail the card until MRC accepts the request and sends packing instructions.",
+        "address": "Return mailing address", "address_hint": "Required for mail-in requests and used only to coordinate return shipping.", "unit": "Unit or apartment (optional)",
+    },
+    "fr": {
+        "contact_details": "Coordonnées", "email_hint": "Attendez-vous seulement aux factures ou reçus par courriel. Nous répondons normalement par SMS.", "phone_hint": "Utilisez un numéro qui reçoit les SMS et choisissez d’abord son pays.",
+        "card_details": "Détails de la carte graphique", "model_hint": "Indiquez le fabricant, le modèle du GPU et la capacité mémoire inscrits sur la carte.", "serial": "Numéro de série (facultatif)", "serial_hint": "Utilisez le numéro sur l’étiquette de la carte. N’entrez aucun mot de passe ni clé Windows.",
+        "request_details": "Détails de la demande", "request_prompt": "De quoi avez-vous besoin ?", "request_hint": "Décrivez la panne, son début, vos essais, l’exposition au minage ou aux liquides et toute réparation ou ouverture antérieure.",
+        "intake": "Dépôt ou envoi postal ?", "choose": "Choisissez", "dropoff": "Dépôt pendant les heures d’ouverture (sans rendez-vous)", "mailin": "Envoi postal après réception des instructions de MRC", "intake_hint": "N’expédiez pas la carte avant l’acceptation et les instructions d’emballage de MRC.",
+        "address": "Adresse postale de retour", "address_hint": "Obligatoire pour l’envoi postal et utilisée uniquement pour organiser le retour.", "unit": "Unité ou appartement (facultatif)",
+    },
+    "es": {
+        "contact_details": "Datos de contacto", "email_hint": "Por correo solo recibirá facturas o recibos. Normalmente respondemos por SMS.", "phone_hint": "Use un número que reciba SMS y elija primero su país.",
+        "card_details": "Datos de la tarjeta gráfica", "model_hint": "Incluya el ensamblador, el modelo de GPU y la memoria indicados en la tarjeta.", "serial": "Número de serie (opcional)", "serial_hint": "Use el número de la etiqueta de la tarjeta. No escriba contraseñas ni claves de Windows.",
+        "request_details": "Datos de la solicitud", "request_prompt": "¿Con qué necesita ayuda?", "request_hint": "Describa la falla, cuándo comenzó, las pruebas realizadas, exposición a minería o líquidos y reparaciones o desmontajes previos.",
+        "intake": "¿Entrega o envío por correo?", "choose": "Elija una opción", "dropoff": "Entrega durante el horario de apertura (sin cita)", "mailin": "Envío después de recibir instrucciones de MRC", "intake_hint": "No envíe la tarjeta hasta que MRC acepte la solicitud y dé instrucciones de embalaje.",
+        "address": "Dirección postal de devolución", "address_hint": "Obligatoria para solicitudes por correo; solo se usa para coordinar la devolución.", "unit": "Unidad o apartamento (opcional)",
+    },
+    "vi": {
+        "contact_details": "Thông tin liên hệ", "email_hint": "Email chỉ dùng cho hóa đơn hoặc biên lai. Chúng tôi thường phản hồi bằng SMS.", "phone_hint": "Dùng số nhận được SMS và chọn quốc gia của số trước.",
+        "card_details": "Thông tin card đồ họa", "model_hint": "Ghi hãng sản xuất card, mẫu GPU và dung lượng bộ nhớ trên nhãn.", "serial": "Số sê-ri (không bắt buộc)", "serial_hint": "Dùng số trên nhãn card. Không nhập mật khẩu hoặc khóa Windows.",
+        "request_details": "Chi tiết yêu cầu", "request_prompt": "Bạn cần hỗ trợ việc gì?", "request_hint": "Mô tả lỗi, thời điểm bắt đầu, các thử nghiệm, lịch sử đào coin hoặc dính chất lỏng và mọi lần sửa hay tháo trước đây.",
+        "intake": "Mang đến hay gửi bưu điện?", "choose": "Chọn một", "dropoff": "Mang đến trong giờ mở cửa (không cần hẹn)", "mailin": "Gửi bưu điện sau khi MRC cung cấp hướng dẫn", "intake_hint": "Không gửi card cho đến khi MRC chấp nhận yêu cầu và gửi hướng dẫn đóng gói.",
+        "address": "Địa chỉ gửi trả", "address_hint": "Bắt buộc với yêu cầu gửi bưu điện và chỉ dùng để sắp xếp gửi trả.", "unit": "Số căn hộ hoặc phòng (không bắt buộc)",
+    },
+    "ar": {
+        "contact_details": "بيانات الاتصال", "email_hint": "لا تتوقع عبر البريد الإلكتروني إلا الفواتير أو الإيصالات. نتابع عادةً برسالة SMS.", "phone_hint": "استخدم رقماً يستقبل SMS واختر بلده أولاً.",
+        "card_details": "بيانات بطاقة الرسومات", "model_hint": "اذكر الشركة المصنّعة للبطاقة وطراز GPU وحجم الذاكرة المكتوب عليها.", "serial": "الرقم التسلسلي (اختياري)", "serial_hint": "استخدم الرقم الموجود على ملصق البطاقة. لا تدخل كلمة مرور أو مفتاح Windows.",
+        "request_details": "تفاصيل الطلب", "request_prompt": "ما المساعدة التي تحتاجها؟", "request_hint": "صِف العطل ووقت بدايته والاختبارات والتعدين أو تعرضها للسوائل وأي إصلاح أو تفكيك سابق.",
+        "intake": "تسليم أم إرسال بالبريد؟", "choose": "اختر واحداً", "dropoff": "التسليم خلال ساعات العمل (من دون موعد)", "mailin": "الإرسال بعد أن يقدم MRC التعليمات", "intake_hint": "لا ترسل البطاقة حتى يقبل MRC الطلب ويرسل تعليمات التغليف.",
+        "address": "عنوان الإرجاع البريدي", "address_hint": "مطلوب للطلبات البريدية ويُستخدم فقط لتنسيق شحن الإرجاع.", "unit": "رقم الوحدة أو الشقة (اختياري)",
+    },
+    "ja": {
+        "contact_details": "連絡先", "email_hint": "メールは請求書または領収書にのみ使用します。通常はSMSで連絡します。", "phone_hint": "SMSを受信できる番号を入力し、先に国を選択してください。",
+        "card_details": "グラフィックボード情報", "model_hint": "ボードメーカー、GPUモデル、カードに記載されたメモリ容量を入力してください。", "serial": "シリアル番号（任意）", "serial_hint": "カードのラベルにある番号を入力してください。パスワードやWindowsキーは入力しないでください。",
+        "request_details": "依頼内容", "request_prompt": "どのような対応が必要ですか？", "request_hint": "症状、発生時期、試したこと、マイニング・液体接触歴、過去の修理や分解を記載してください。",
+        "intake": "持ち込みまたは郵送", "choose": "選択してください", "dropoff": "営業時間内の持ち込み（予約不要）", "mailin": "MRCから案内を受けた後に郵送", "intake_hint": "MRCが依頼を受け付け、梱包方法を案内するまでは郵送しないでください。",
+        "address": "返送先住所", "address_hint": "郵送依頼では必須です。返送手配にのみ使用します。", "unit": "部屋番号（任意）",
+    },
+}

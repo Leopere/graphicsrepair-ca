@@ -24,6 +24,7 @@ if content_spec is None or content_spec.loader is None:
 content_module = importlib.util.module_from_spec(content_spec)
 content_spec.loader.exec_module(content_module)
 LOCALES = content_module.LOCALES
+FORM_COPY = content_module.FORM_COPY
 
 
 def esc(value: object) -> str:
@@ -91,6 +92,7 @@ def footer(content: dict[str, object], locale: str, asset_prefix: str | None = N
 
 def render_index(locale: str) -> str:
     c = LOCALES[locale]
+    f = FORM_COPY[locale]
     path = locale_path(locale)
     prefix = "" if locale == "en" else "../"
     canonical = f"{DOMAIN}/{path}"
@@ -160,11 +162,25 @@ def render_index(locale: str) -> str:
   <section class="section contact-section" id="contact"><div class="shell contact-grid"><div><p class="eyebrow">05 / REQUEST</p><h2>{esc(c['contact_title'])}</h2><p>{esc(c['contact_intro'])}</p><div class="reply-card"><h3>{esc(c['reply_title'])}</h3><p>{esc(c['reply_body'])}</p></div></div>
     <form id="repair-form" class="repair-form" novalidate data-sending="{esc(c['sending'])}" data-success="{esc(c['success'])}" data-error="{esc(c['error'])}">
       <input type="hidden" name="form_id" value="graphics_card_repair_quote"><input type="hidden" name="start_time" value="">
-      <div class="form-row"><label>{esc(c['name'])}<input name="name" autocomplete="name" maxlength="100" required></label><label>{esc(c['email'])}<input name="email" type="email" autocomplete="email" maxlength="254" required></label></div>
-      <div class="form-row"><label>{esc(c['country_label'])}<select name="country" id="country" autocomplete="country" required></select></label><label>{esc(c['phone'])}<input name="phone" id="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" required></label></div>
-      <label>{esc(c['model'])}<input name="model" maxlength="160" required placeholder="e.g. ASUS TUF RTX 3080 10GB"></label>
-      <label>{esc(c['service'])}<select name="service_type" required><option value="repair">{esc(c['repair'])}</option><option value="verification">{esc(c['verify'])}</option></select></label>
-      <label>{esc(c['symptoms'])}<textarea name="message" rows="6" minlength="20" maxlength="1000" required></textarea></label>
+      <fieldset><legend>{esc(f['contact_details'])}</legend>
+        <div class="form-row"><label>{esc(c['name'])}<input name="name" autocomplete="name" maxlength="100" required></label><label>{esc(c['email'])}<input name="email" type="email" autocomplete="email" maxlength="254" aria-describedby="email-hint" required><small id="email-hint" class="form-hint">{esc(f['email_hint'])}</small></label></div>
+        <div class="form-row"><label>{esc(c['country_label'])}<select name="country" id="country" autocomplete="country" required></select></label><label>{esc(c['phone'])}<input name="phone" id="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" aria-describedby="phone-hint" required><small id="phone-hint" class="form-hint">{esc(f['phone_hint'])}</small></label></div>
+      </fieldset>
+      <fieldset><legend>{esc(f['card_details'])}</legend>
+        <label>{esc(c['model'])}<input name="model" maxlength="160" required placeholder="e.g. ASUS TUF RTX 3080 10GB" aria-describedby="model-hint"><small id="model-hint" class="form-hint">{esc(f['model_hint'])}</small></label>
+        <label>{esc(f['serial'])}<input name="serial_number" maxlength="100" autocomplete="off" aria-describedby="serial-hint"><small id="serial-hint" class="form-hint">{esc(f['serial_hint'])}</small></label>
+      </fieldset>
+      <fieldset><legend>{esc(f['request_details'])}</legend>
+        <label>{esc(c['service'])}<select name="request_type" required><option value="repair">{esc(c['repair'])}</option><option value="verification">{esc(c['verify'])}</option></select></label>
+        <label>{esc(f['request_prompt'])}<textarea name="message" rows="6" minlength="20" maxlength="900" required aria-describedby="request-hint"></textarea><small id="request-hint" class="form-hint">{esc(f['request_hint'])}</small></label>
+      </fieldset>
+      <fieldset><legend>{esc(f['intake'])}</legend>
+        <label>{esc(f['intake'])}<select name="service_type" id="service_type" required aria-describedby="intake-hint"><option value="">{esc(f['choose'])}</option><option value="In-Person">{esc(f['dropoff'])}</option><option value="Mail-In">{esc(f['mailin'])}</option></select><small id="intake-hint" class="form-hint">{esc(f['intake_hint'])}</small></label>
+        <div id="mailing-fields" class="conditional-fields" hidden>
+          <label>{esc(f['address'])}<textarea name="mailing_address" rows="3" maxlength="300" autocomplete="street-address" aria-describedby="address-hint"></textarea><small id="address-hint" class="form-hint">{esc(f['address_hint'])}</small></label>
+          <label>{esc(f['unit'])}<input name="unit_number" maxlength="30" autocomplete="address-line2"></label>
+        </div>
+      </fieldset>
       <label class="honeypot" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
       <label class="consent"><input name="accept_terms" type="checkbox" required><span>{esc(c['consent'])} <a href="/privacy/" target="_blank" rel="noopener">{esc(c['privacy'])}</a> · <a href="/terms/" target="_blank" rel="noopener">{esc(c['terms'])}</a></span></label>
       <button class="button" type="submit">{esc(c['send'])}</button><p class="form-note">{esc(c['form_privacy'])}</p><p id="form-status" class="form-status" role="status" aria-live="polite"></p>
@@ -180,7 +196,7 @@ def render_legal(kind: str) -> str:
         title = "Privacy Policy"
         description = "How Graphics Repair Canada handles contact information, repair details, hosting metrics and service records."
         body = """
-        <h2>Information we collect</h2><p>When you submit the repair form, we receive the name, email, phone number, country, card model, request type, symptoms and prior-work history you provide. We use this information to assess, communicate about and, if accepted, deliver the requested service.</p>
+        <h2>Information we collect</h2><p>When you submit the repair form, we receive the name, email, phone number, country, card model, optional serial number, request type, symptoms and prior-work history you provide. For a mail-in request, we also receive the return address and optional unit number you provide. We use this information to assess, communicate about and, if accepted, deliver the requested service.</p>
         <h2>Protected form processing</h2><p>The form is sent over HTTPS to MRC's Cloudflare Worker at forms.motherboardrepair.ca. It uses strict field validation, a hidden honeypot, a minimum completion time, rate limiting and a short-lived proof-of-work challenge. Do not include passwords, payment-card numbers or unrelated sensitive information.</p>
         <h2>Privacy-respecting metrics</h2><p>We do not run advertising analytics, session replay, fingerprinting or a client-side analytics script. No form text is sent to analytics. Cloudflare and GitHub process standard request information needed to deliver and secure the site; Cloudflare provides aggregate edge traffic metrics. These providers may temporarily process IP addresses, browser details, requested paths and timestamps as part of ordinary hosting, security and network logs.</p>
         <h2>Privacy questions</h2><p>Use the contact form to ask MRC a privacy question. Do not send unrelated sensitive information through the form.</p>

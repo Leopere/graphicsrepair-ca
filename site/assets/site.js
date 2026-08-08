@@ -128,11 +128,29 @@
   }
 
   function clean(value, max) { return String(value || '').replace(/[<>\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max); }
+  function setupMailingFields(form) {
+    const serviceType = form.elements.service_type;
+    const fields = form.querySelector('#mailing-fields');
+    const address = form.elements.mailing_address;
+    function update() {
+      const mailIn = serviceType.value === 'Mail-In';
+      fields.hidden = !mailIn;
+      address.required = mailIn;
+      if (!mailIn) {
+        address.value = '';
+        form.elements.unit_number.value = '';
+      }
+    }
+    serviceType.addEventListener('change', update);
+    update();
+    return update;
+  }
   function setupForm() {
     const form = document.querySelector('#repair-form');
     if (!form) return;
     form.elements.start_time.value = String(Math.floor(Date.now() / 1000));
     const e164 = setupCountries(form);
+    const updateMailingFields = setupMailingFields(form);
     const button = form.querySelector('button[type="submit"]');
     const status = form.querySelector('#form-status');
     form.addEventListener('submit', async function (event) {
@@ -143,19 +161,37 @@
       status.textContent = form.dataset.sending;
       const message = clean(form.elements.message.value, 1000);
       const model = clean(form.elements.model.value, 160);
+      const serial = clean(form.elements.serial_number.value, 100);
+      const requestType = form.elements.request_type.value;
+      const serviceType = form.elements.service_type.value;
+      const mailingAddress = clean(form.elements.mailing_address.value, 300);
+      const unitNumber = clean(form.elements.unit_number.value, 30);
+      const messageParts = [
+        'Graphics card: ' + model,
+        serial ? 'Serial number: ' + serial : '',
+        'Request type: ' + requestType,
+        'Intake method: ' + serviceType,
+        mailingAddress ? 'Return address: ' + mailingAddress + (unitNumber ? ', ' + unitNumber : '') : '',
+        '',
+        'Request details: ' + message
+      ].filter(function (part, index) { return part || index === 5; });
       const payload = {
         name: clean(form.elements.name.value, 100),
         email: clean(form.elements.email.value, 254),
         phone: e164(),
         company: '',
-        message: 'GPU: ' + model + '\n\n' + message,
+        message: messageParts.join('\n'),
         form_id: 'graphics_card_repair_quote',
         website: form.elements.website.value,
         start_time: Number(form.elements.start_time.value),
         extra_fields: {
           country: form.elements.country.value,
           graphics_card_model: model,
-          service_type: form.elements.service_type.value,
+          serial_number: serial,
+          request_type: requestType,
+          service_type: serviceType,
+          mailing_address: mailingAddress,
+          unit_number: unitNumber,
           site_language: document.documentElement.lang,
           accepted_privacy_and_terms: true,
           source_site: 'graphicsrepair.ca'
@@ -168,6 +204,7 @@
         if (!response.ok) throw new Error(result.error || 'Submission failed.');
         form.reset();
         form.elements.start_time.value = String(Math.floor(Date.now() / 1000));
+        updateMailingFields();
         status.className = 'form-status success';
         status.textContent = form.dataset.success;
       } catch (error) {

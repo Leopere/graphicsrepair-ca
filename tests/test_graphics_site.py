@@ -86,6 +86,15 @@ def validate_site() -> None:
         assert "googletagmanager" not in source.lower()
         assert "plausible" not in source.lower()
         assert 'form_id" value="graphics_card_repair_quote"' in source
+        for field_name in (
+            "name", "email", "country", "phone", "model", "serial_number",
+            "request_type", "message", "service_type", "mailing_address",
+            "unit_number", "accept_terms",
+        ):
+            assert re.search(rf'name="{field_name}"', source), f"{path} is missing form field {field_name}"
+        assert 'option value="In-Person"' in source
+        assert 'option value="Mail-In"' in source
+        assert 'id="mailing-fields"' in source and " hidden" in source
         assert "https://motherboardrepair.ca/" in source
         assert source.count('rel="alternate" hreflang=') == 7
         canonical = [attrs.get("href") for name, attrs in parser.tags if name == "link" and attrs.get("rel") == "canonical"]
@@ -115,6 +124,12 @@ def validate_site() -> None:
     assert "document.cookie" not in js
     assert "sendBeacon" not in js
     assert "forms.motherboardrepair.ca/api/submit" in js
+    for intake_contract in (
+        "setupMailingFields", "address.required = mailIn", "serial_number",
+        "request_type", "mailing_address", "unit_number", "Graphics card:",
+        "Request details:",
+    ):
+        assert intake_contract in js
 
     for legal_kind in ("privacy", "terms"):
         legal_parser, legal_source = parse(SITE / legal_kind / "index.html")

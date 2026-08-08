@@ -55,8 +55,8 @@ def alternates(page: str = "") -> str:
     return "\n".join(tags)
 
 
-def header(content: dict[str, object], locale: str) -> str:
-    prefix = "" if locale == "en" else "../"
+def header(content: dict[str, object], locale: str, asset_prefix: str | None = None) -> str:
+    prefix = ("" if locale == "en" else "../") if asset_prefix is None else asset_prefix
     return f"""
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="network-bar"><div class="shell">{esc(content['network'])} <a href="https://motherboardrepair.ca/" rel="noopener">motherboardrepair.ca</a></div></div>
@@ -77,13 +77,13 @@ def header(content: dict[str, object], locale: str) -> str:
     </header>"""
 
 
-def footer(content: dict[str, object], locale: str) -> str:
-    prefix = "" if locale == "en" else "../"
+def footer(content: dict[str, object], locale: str, asset_prefix: str | None = None) -> str:
+    prefix = ("" if locale == "en" else "../") if asset_prefix is None else asset_prefix
     return f"""
     <footer class="site-footer">
       <div class="shell footer-grid">
         <div><img src="{prefix}assets/mrc-logo-white.svg" width="158" height="57" alt="MRC"><p>{esc(content['copyright'])}</p></div>
-        <div><p><a href="https://motherboardrepair.ca/graphics-card-repair.html" rel="noopener">{esc(content['backlink'])}</a></p><p><a href="{prefix}privacy.html">{esc(content['privacy'])}</a> · <a href="{prefix}terms.html">{esc(content['terms'])}</a></p></div>
+        <div><p><a href="https://motherboardrepair.ca/graphics-card-repair.html" rel="noopener">{esc(content['backlink'])}</a></p><p><a href="/privacy/">{esc(content['privacy'])}</a> · <a href="/terms/">{esc(content['terms'])}</a></p></div>
         <div class="languages" aria-label="Languages">{language_links(locale)}</div>
       </div>
     </footer>"""
@@ -166,7 +166,7 @@ def render_index(locale: str) -> str:
       <label>{esc(c['service'])}<select name="service_type" required><option value="repair">{esc(c['repair'])}</option><option value="verification">{esc(c['verify'])}</option></select></label>
       <label>{esc(c['symptoms'])}<textarea name="message" rows="6" minlength="20" maxlength="1000" required></textarea></label>
       <label class="honeypot" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
-      <label class="consent"><input name="accept_terms" type="checkbox" required><span>{esc(c['consent'])} <a href="{prefix}privacy.html" target="_blank" rel="noopener">{esc(c['privacy'])}</a> · <a href="{prefix}terms.html" target="_blank" rel="noopener">{esc(c['terms'])}</a></span></label>
+      <label class="consent"><input name="accept_terms" type="checkbox" required><span>{esc(c['consent'])} <a href="/privacy/" target="_blank" rel="noopener">{esc(c['privacy'])}</a> · <a href="/terms/" target="_blank" rel="noopener">{esc(c['terms'])}</a></span></label>
       <button class="button" type="submit">{esc(c['send'])}</button><p class="form-note">{esc(c['form_privacy'])}</p><p id="form-status" class="form-status" role="status" aria-live="polite"></p>
     </form>
   </div></section>
@@ -197,7 +197,15 @@ def render_legal(kind: str) -> str:
         <h2>Prior work and repair risk</h2><p>Heat, corrosion, prior repair, missing parts and latent faults increase risk. Diagnostic and repair processes may involve heat, cleaning and irreversible component removal or replacement. MRC is not responsible for pre-existing damage or faults that become apparent during reasonable work. Never send a card with a battery or undeclared hazardous contamination.</p>
         <h2>Warranty and governing terms</h2><p>Unless confirmed in writing for a work order, MRC does not promise a repair warranty. Any parts coverage is limited to the supplied part and its supplier terms. Ontario law and applicable Canadian federal law govern the service, without limiting non-waivable consumer rights.</p>
         """
-    return f"""<!doctype html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="index,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'"><title>{title} | Graphics Repair Canada</title><link rel="canonical" href="{DOMAIN}/{kind}.html"><link rel="stylesheet" href="assets/style.css"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><script src="assets/site.js" defer></script></head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en')}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC · Updated {date.today().isoformat()}</p><h1>{title}</h1><p class="lede">{description}</p>{body}<p><a class="button" href="/#contact">Start a repair</a></p></div></section></main>{footer(LOCALES['en'], 'en')}</body></html>"""
+    prefix = "../"
+    canonical = f"{DOMAIN}/{kind}/"
+    return f"""<!doctype html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="index,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'"><title>{title} | Graphics Repair Canada</title><link rel="canonical" href="{canonical}"><link rel="stylesheet" href="{prefix}assets/style.css"><link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml"><script src="{prefix}assets/site.js" defer></script></head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en', asset_prefix=prefix)}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC · Updated {date.today().isoformat()}</p><h1>{title}</h1><p class="lede">{description}</p>{body}<p><a class="button" href="/#contact">Start a repair</a></p></div></section></main>{footer(LOCALES['en'], 'en', asset_prefix=prefix)}</body></html>"""
+
+
+def render_not_found() -> str:
+    title = "Page not found"
+    description = "The requested page does not exist. Return to the Graphics Repair Canada home page."
+    return f"""<!doctype html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="noindex,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'"><title>{title} | Graphics Repair Canada</title><link rel="stylesheet" href="assets/style.css"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><script src="assets/site.js" defer></script></head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en', asset_prefix='')}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC</p><h1>{title}</h1><p class="lede">{description}</p><p><a class="button" href="/">Return home</a></p></div></section></main>{footer(LOCALES['en'], 'en')}</body></html>"""
 
 
 def build() -> None:
@@ -221,13 +229,15 @@ def build() -> None:
         destination = OUTPUT if locale == "en" else OUTPUT / locale
         destination.mkdir(exist_ok=True)
         (destination / "index.html").write_text(render_index(locale), encoding="utf-8")
-    (OUTPUT / "privacy.html").write_text(render_legal("privacy"), encoding="utf-8")
-    (OUTPUT / "terms.html").write_text(render_legal("terms"), encoding="utf-8")
-    (OUTPUT / "404.html").write_text(render_legal("privacy").replace("Privacy Policy", "Page not found").replace("How Graphics Repair Canada handles contact information, repair details, hosting metrics and service records.", "The requested page does not exist. Return to the Graphics Repair Canada home page."), encoding="utf-8")
+    for kind in ("privacy", "terms"):
+        destination = OUTPUT / kind
+        destination.mkdir()
+        (destination / "index.html").write_text(render_legal(kind), encoding="utf-8")
+    (OUTPUT / "404.html").write_text(render_not_found(), encoding="utf-8")
     (OUTPUT / "CNAME").write_text("graphicsrepair.ca\n", encoding="utf-8")
     (OUTPUT / ".nojekyll").write_text("", encoding="utf-8")
     (OUTPUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {DOMAIN}/sitemap.xml\n", encoding="utf-8")
-    urls = [f"{DOMAIN}/", *(f"{DOMAIN}/{locale}/" for locale in LOCALE_ORDER if locale != "en"), f"{DOMAIN}/privacy.html", f"{DOMAIN}/terms.html"]
+    urls = [f"{DOMAIN}/", *(f"{DOMAIN}/{locale}/" for locale in LOCALE_ORDER if locale != "en"), f"{DOMAIN}/privacy/", f"{DOMAIN}/terms/"]
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"  <url><loc>{url}</loc></url>\n" for url in urls) + "</urlset>\n"
     (OUTPUT / "sitemap.xml").write_text(sitemap, encoding="utf-8")
 

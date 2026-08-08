@@ -43,7 +43,7 @@ def parse(path: Path) -> tuple[PageParser, str]:
 
 def validate_site() -> None:
     assert (SITE / "CNAME").read_text(encoding="utf-8") == "graphicsrepair.ca\n"
-    expected_pages = {"index.html", "privacy.html", "terms.html", "404.html"}
+    expected_pages = {"index.html", "privacy/index.html", "terms/index.html", "404.html"}
     expected_pages.update(f"{locale}/index.html" for locale in LOCALES if locale != "en")
     actual_pages = {path.relative_to(SITE).as_posix() for path in SITE.rglob("*.html")}
     assert actual_pages == expected_pages, f"Unexpected production pages: {sorted(actual_pages ^ expected_pages)}"
@@ -89,7 +89,20 @@ def validate_site() -> None:
     assert "sendBeacon" not in js
     assert "forms.motherboardrepair.ca/api/submit" in js
 
-    privacy = (SITE / "privacy.html").read_text(encoding="utf-8").lower()
+    for legal_kind in ("privacy", "terms"):
+        legal_parser, legal_source = parse(SITE / legal_kind / "index.html")
+        legal_canonical = [attrs.get("href") for name, attrs in legal_parser.tags if name == "link" and attrs.get("rel") == "canonical"]
+        assert legal_canonical == [f"https://graphicsrepair.ca/{legal_kind}/"]
+        assert f'href="/{legal_kind}/"' in legal_source
+        assert 'href="../assets/style.css"' in legal_source
+
+    not_found = (SITE / "404.html").read_text(encoding="utf-8")
+    assert "Page not found" in not_found
+    assert 'content="noindex,follow"' in not_found
+    assert 'href="assets/style.css"' in not_found
+    assert "Information we receive" not in not_found
+
+    privacy = (SITE / "privacy" / "index.html").read_text(encoding="utf-8").lower()
     for disclosure in ("no form text is sent to analytics", "do not run advertising analytics", "session replay", "aggregate edge traffic metrics", "cloudflare", "github"):
         assert disclosure in privacy
 
@@ -98,6 +111,8 @@ def validate_site() -> None:
     urls = {node.text for node in sitemap.findall("s:url/s:loc", namespace)}
     assert len(urls) == 8
     assert "https://graphicsrepair.ca/" in urls
+    assert "https://graphicsrepair.ca/privacy/" in urls
+    assert "https://graphicsrepair.ca/terms/" in urls
     assert all(url and url.startswith("https://graphicsrepair.ca/") for url in urls)
 
 

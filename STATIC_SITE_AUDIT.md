@@ -1,7 +1,7 @@
 # Static site production audit
 
 Audit date: 2026-08-08  
-Scope: generated `_site` artifact and the public `https://graphicsrepair.ca` deployment, across all six approved locales, legal routes, assets, forms, GitHub Pages and Cloudflare delivery.
+Scope: generated `_site` artifact and the public `https://graphicsrepair.ca` deployment, across all six approved locales, legal routes, assets, forms, GitHub Pages and Cloudflare DNS.
 
 ## Repeatable gate
 
@@ -32,11 +32,11 @@ Production checks also cover every sitemap route, a nested unknown route, canoni
 
 Baseline live Lighthouse scores were 100 performance, 97 accessibility, 93 best practices and 92 SEO on desktop; mobile performance was 97. After the corrections, the loopback-built artifact scored 100 accessibility and 100 best practices on both profiles, with performance 100 desktop and 99 mobile. Lighthouse's only SEO finding was inability to download `robots.txt`; direct requests repeatedly returned the valid file with HTTP 200, so this was treated as a scanner false positive.
 
-## External edge findings
+## DNS-only correction
 
-Cloudflare currently injects its Web Analytics beacon into browser-delivered HTML. The site's CSP blocks that script, so it neither functions nor sends analytics, but the injection causes a console error and conflicts with the disclosed no-client-script posture. The available DNS token and Wrangler OAuth session both receive HTTP 403 from the Web Analytics/RUM configuration API. Resolution requires disabling Web Analytics automatic setup in the Cloudflare dashboard or using a token with Web Analytics/RUM edit permission. The CSP must not be weakened.
+The initial audit found that proxied Cloudflare web records injected a Web Analytics beacon. The site's CSP blocked it, but the injection caused a console error and contradicted the intended no-client-analytics posture. On 2026-08-08, all four apex GitHub Pages A records and the `www` CNAME were changed to `proxied: false`. MX and TXT records were preserved. Public DNS now resolves apex and `www` directly to GitHub Pages IPv4 and IPv6 targets.
 
-The live edge does not currently emit HSTS, an HTTP CSP with `frame-ancestors`, `X-Content-Type-Options`, `Permissions-Policy` or COOP. GitHub Pages cannot configure these headers, and the available Cloudflare token is DNS-scoped. Add them only through a reviewed Cloudflare response-header rule that preserves every existing DNS record and Worker binding.
+After the DNS-only change, browser-facing HTML contains no Cloudflare beacon, the CSP console error is gone and live desktop Lighthouse best practices scores 100. Cloudflare is not in the HTTP path and its WAF is not used for this site. GitHub Pages does not provide project-defined response headers such as HSTS or `frame-ancestors`; this limitation is accepted rather than adding an unwanted reverse proxy.
 
 ## Intentional boundaries
 

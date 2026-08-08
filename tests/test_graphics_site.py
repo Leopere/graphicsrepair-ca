@@ -177,7 +177,7 @@ def validate_site() -> None:
     privacy = (SITE / "privacy" / "index.html").read_text(encoding="utf-8").lower()
     for disclosure in (
         "no form text is sent to analytics", "do not run advertising analytics", "session replay",
-        "aggregate edge traffic metrics", "cloudflare", "github", "selected intake method",
+        "authoritative dns only", "does not proxy page requests", "cloudflare", "github", "selected intake method",
         "detected phone country", "page language", "local storage",
     ):
         assert disclosure in privacy

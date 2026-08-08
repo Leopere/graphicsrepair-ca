@@ -6,7 +6,7 @@
 2. GitHub Pages deploys the `_site` artifact from `main` and the `Leopere/graphicsrepair-ca` Pages URL returns the GPU site.
 3. The form proof endpoint returns a valid challenge for both `https://graphicsrepair.ca` and `https://www.graphicsrepair.ca` origins.
 4. Only then replace the parked apex and `www` records with proven GitHub Pages targets.
-5. Confirm the custom domain, certificate and redirects before optionally enabling the Cloudflare proxy for aggregate edge metrics.
+5. Confirm the custom domain, certificate and redirects, then keep apex and `www` DNS-only. Do not enable the Cloudflare proxy or WAF for this site.
 
 ## DNS safety record
 
@@ -29,10 +29,10 @@ Treat `leadform` and Woodpecker references as legacy context. New runtime servic
 
 ## Metrics boundary
 
-The Notomo admin API has a distinct `graphicsrepair.ca` property. Do not reuse the motherboard site ID `2`. No Notomo browser snippet is installed: an API-created property has no public host allowlist until it is added to Notomo's checked-in fleet map, and Notomo replay can record literal form values. Until a separately reviewed, replay-disabled host policy is deployed, production metrics remain Cloudflare's aggregate edge request metrics only, as disclosed in the privacy policy.
+The Notomo admin API has a distinct `graphicsrepair.ca` property. Do not reuse the motherboard site ID `2`. No Notomo browser snippet is installed: an API-created property has no public host allowlist until it is added to Notomo's checked-in fleet map, and Notomo replay can record literal form values. No web-analytics integration is active.
 
-Cloudflare Web Analytics automatic setup must remain disabled for this zone. Automatic setup injects a browser beacon, which conflicts with the site's disclosed no-client-analytics posture and is intentionally blocked by the page CSP. Validate production HTML through a browser-facing request and confirm it contains no `static.cloudflareinsights.com` script. Do not relax the CSP to admit the beacon.
+Cloudflare is authoritative DNS only. Apex and `www` must have `proxied: false`; this keeps the WAF, edge HTML rewriting and automatic Web Analytics beacon out of the HTTP path. Validate browser-facing HTML contains no `static.cloudflareinsights.com` script. Do not relax the CSP to admit a beacon.
 
 ## Edge security controls
 
-The HTML contains a restrictive meta CSP, but response-only controls such as HSTS and `frame-ancestors` require Cloudflare response-header configuration. Preserve all DNS and Worker bindings when adding them. Recheck the complete live header set after any edge change.
+The HTML contains a restrictive meta CSP. GitHub Pages does not provide project-defined response headers such as HSTS or `frame-ancestors`; do not put Cloudflare's proxy or WAF in front of the site merely to add them.

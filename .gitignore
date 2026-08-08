@@ -10,6 +10,7 @@
 !/STATIC_SITE_AUDIT.md
 !/build_graphics_site.py
 !/ship.sh
+!/sst.yml
 !/site/
 !/tests/
 !/docs/

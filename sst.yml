@@ -1,0 +1,187 @@
+# Graphics Repair Canada SST policy
+#
+# This file deliberately sets no minimum keyword density. A minimum would turn
+# the scanner into an incentive to repeat search phrases. The maximums are
+# guardrails calibrated to the site's current, human-written copy. SST removes
+# navigation, header, and footer text before calculating density.
+
+global:
+  keywords:
+    primary: []
+    secondary: []
+
+pages:
+  "/":
+    keywords:
+      primary:
+        - "graphics card"
+      secondary:
+        - "GPU Certification"
+        - "used GPU"
+      min_density: 0.0
+      max_density: 3.0
+      min_occurrences: 1
+      check_title: true
+      check_h1: true
+      check_meta: true
+
+  "/fr":
+    keywords:
+      primary:
+        - "réparation de cartes graphiques"
+      secondary:
+        - "Certification GPU"
+        - "GPU d’occasion"
+      min_density: 0.0
+      max_density: 4.0
+      min_occurrences: 1
+      check_title: true
+      check_h1: true
+      check_meta: true
+
+  "/es":
+    keywords:
+      primary:
+        - "reparación de tarjetas gráficas"
+      secondary:
+        - "Certificación de GPU"
+        - "GPU usadas"
+      min_density: 0.0
+      max_density: 3.5
+      min_occurrences: 1
+      check_title: true
+      check_h1: true
+      check_meta: true
+
+  "/vi":
+    keywords:
+      primary:
+        - "sửa card đồ họa"
+      secondary:
+        - "Chứng nhận GPU"
+        - "GPU đã qua sử dụng"
+      min_density: 0.0
+      # SST's current word counter only counts ASCII tokens. Ten percent is its
+      # strictest valid ceiling for localized copy with a small ASCII sample.
+      max_density: 10.0
+      min_occurrences: 1
+      check_title: true
+      check_h1: true
+      check_meta: true
+
+  "/ar":
+    keywords:
+      primary:
+        - "إصلاح بطاقات الرسومات"
+      secondary:
+        - "اعتماد GPU"
+        - "البطاقات المستعملة"
+      min_density: 0.0
+      # SST counts embedded Latin product names but not Arabic words yet.
+      max_density: 10.0
+      min_occurrences: 1
+      check_title: true
+      check_h1: true
+      check_meta: true
+
+  "/ja":
+    keywords:
+      primary:
+        - "グラフィックボード修理"
+      secondary:
+        - "GPU認証"
+        - "中古GPU"
+      min_density: 0.0
+      # SST counts embedded Latin product names but not Japanese words yet.
+      max_density: 10.0
+      min_occurrences: 1
+      check_title: true
+      check_h1: true
+      check_meta: true
+
+  "/privacy":
+    keywords:
+      primary:
+        - "Privacy Policy"
+      secondary:
+        - "contact information"
+        - "hosting metrics"
+      min_density: 0.0
+      max_density: 2.5
+      min_occurrences: 1
+      check_title: true
+      check_h1: true
+      check_meta: true
+
+  "/terms":
+    keywords:
+      primary:
+        - "Service Terms"
+      secondary:
+        - "repair request"
+        - "GPU Certification"
+      min_density: 0.0
+      max_density: 5.0
+      min_occurrences: 1
+      check_title: true
+      check_h1: true
+      check_meta: true
+
+defaults:
+  keywords:
+    min_density: 0.0
+    max_density: 3.0
+    min_occurrences: 1
+    check_title: true
+    check_h1: true
+    check_meta: true
+
+  content:
+    min_word_count: 100
+    max_word_count: 5000
+    allow_thin_content: false
+
+  readability:
+    line_height_min: 1.4
+    sentence_length_max: 25
+    meta_flesch_min: 45
+    early_content_flesch_min: 40
+
+  seo:
+    title_min_length: 20
+    title_max_length: 65
+    meta_description_min_length: 45
+    meta_description_max_length: 170
+    require_canonical: true
+    check_open_graph: true
+    check_structured_data: true
+
+  technical_seo:
+    response_time_max: 1.0
+    require_html_lang: true
+    require_viewport: true
+    require_charset: true
+    require_og_tags: true
+    require_twitter_cards: true
+    require_json_ld: true
+    require_robots_txt: true
+    require_favicon: true
+    require_seo_snippets: true
+
+  favicon:
+    default_path: "./assets/favicon.svg"
+    require_svg: true
+    enforce_consistency: true
+
+  external_resources:
+    whitelist:
+      - "forms.motherboardrepair.ca"
+      - "motherboardrepair.ca"
+
+  tracking:
+    services: []
+
+  ignores:
+    files:
+      - "404.html"
+    patterns: []

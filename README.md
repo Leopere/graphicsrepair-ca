@@ -22,6 +22,18 @@ The checks prove:
 - no session replay, advertising tracker, analytics cookies or form-field analytics;
 - a production artifact with no copied motherboard-service pages.
 
+Run the project-specific static-site policy with the local SST installation:
+
+```bash
+/Volumes/macmini\ dump/Dev/static-site-tests/dist/sst run "$PWD" --parallel --json
+```
+
+[`sst.yml`](sst.yml) sets no minimum keyword density, so the test suite never
+pressures authors to repeat phrases. It defines a maximum per page, tracks the
+approved service vocabulary in every locale, and requires configuration for
+every sitemap URL. The localized-page notes document SST's current ASCII-only
+word denominator; every configured ceiling remains within SST's valid range.
+
 ## Deployment
 
 GitHub Actions builds `_site/` and deploys it with the official GitHub Pages artifact workflow from `main`. Run:

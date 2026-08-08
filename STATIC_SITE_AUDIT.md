@@ -42,7 +42,7 @@ After the DNS-only change, browser-facing HTML contains no Cloudflare beacon, th
 
 - Mail-in requests ask for a return address during intake to retain the approved MRC contact workflow; the field is conditional and the privacy policy discloses it.
 - The approved locale and hreflang set remains `en-CA`, `fr-FR`, `es-419`, `vi-VN`, `ar` and `ja-JP`.
-- The $50 CAD plus tax service is only a non-invasive used-card completeness and listing-consistency check. It is not a repair diagnostic or a legal determination of fraud.
+- The $50 CAD plus tax service validates an accepted used card against its marketplace or aftermarket listing and expected configuration, including required chips and assemblies. MRC attempts a boot on the shop testing rig and provides a written test report if it boots. It is not a repair diagnostic, performance guarantee, warranty or legal determination of fraud.
 - Intel graphics cards are normally not accepted.
 - Drop-offs are welcome whenever MRC is open; the site does not claim appointments are scheduled.
 - Notomo site ID 2 is never reused. The separately created graphics property remains inactive until a replay-free, host-scoped integration can be proven.

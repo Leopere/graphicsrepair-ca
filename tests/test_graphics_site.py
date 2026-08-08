@@ -120,9 +120,14 @@ def validate_site() -> None:
                     assert parsed.netloc in {"graphicsrepair.ca", "motherboardrepair.ca"}
 
     english = (SITE / "index.html").read_text(encoding="utf-8").lower()
-    assert "used graphics card completeness check" in english
+    assert "used graphics card purchase validation" in english
     assert "this is not a repair diagnostic" in english
-    assert "material misrepresentation" in english
+    assert "material inconsistencies" in english
+    assert "certified as complete" in english
+    assert "marketplace and other aftermarket purchases" in english
+    assert "required chip population" in english
+    assert "shop testing rig" in english
+    assert "written shop-rig test report" in english
     assert "intel graphics cards are normally not accepted" in english
     assert "nvidia · amd · intel" not in english
     assert "nvidia · amd</small>" in english
@@ -162,6 +167,9 @@ def validate_site() -> None:
 
     terms = (SITE / "terms" / "index.html").read_text(encoding="utf-8").lower()
     assert "it is not a repair diagnostic" in terms
+    assert "required chips and assemblies are present" in terms
+    assert "written test report" in terms
+    assert "shop testing rig" in terms
 
     not_found = (SITE / "404.html").read_text(encoding="utf-8")
     assert "Page not found" in not_found

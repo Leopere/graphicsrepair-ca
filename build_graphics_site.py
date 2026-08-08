@@ -125,7 +125,7 @@ def render_index(locale: str) -> str:
                 "provider": {"@id": f"{DOMAIN}/#organization"},
                 "areaServed": {"@type": "Country", "name": "Canada"},
                 "serviceType": "Board-level graphics card and GPU repair",
-                "offers": {"@type": "Offer", "name": "Used graphics card completeness check", "price": "50", "priceCurrency": "CAD"},
+                "offers": {"@type": "Offer", "name": "Used graphics card purchase validation", "price": "50", "priceCurrency": "CAD"},
             },
         ],
     }
@@ -211,7 +211,7 @@ def render_legal(kind: str) -> str:
         description = "Basic request terms for Graphics Repair Canada."
         body = """
         <h2>Request only</h2><p>Graphics Repair Canada is an MRC specialist site. Submitting the form sends a request for review; it does not reserve a time, authorize work or guarantee a repair. Do not mail a card until MRC provides shipping instructions.</p>
-        <h2>Used-card completeness check</h2><p>The advertised $50 CAD plus tax covers one non-invasive completeness and listing-consistency check on one supported desktop graphics card after model acceptance. It is not a repair diagnostic and excludes shipping, teardown, repair, parts, performance grading and fault diagnosis. Results are limited to “consistent with the listing,” “concerns found” or “inconclusive.” The check can identify substitution, missing assemblies or other signs of material misrepresentation, but MRC does not determine seller intent, ownership or make legal findings of fraud. The fee is non-refundable once checking begins.</p>
+        <h2>Used-card purchase validation</h2><p>The advertised $50 CAD plus tax covers one purchase-validation check on one supported used desktop graphics card after model acceptance. MRC compares the card with its listing and expected reference configuration, checks that required chips and assemblies are present, determines whether the inspected configuration can be certified as complete, and attempts to boot it on the shop testing rig. If the card boots, MRC provides a written test report describing the checks completed and observed results. The service is intended to help validate marketplace and other aftermarket purchases. It is not a repair diagnostic, performance guarantee, warranty or proof that no latent fault exists, and excludes shipping, repair and parts. MRC does not determine seller intent, ownership or make legal findings of fraud. The fee is non-refundable once checking begins.</p>
         <h2>Job-specific details</h2><p>Any proposed scope, price or other job-specific detail is communicated separately by MRC. Only the details MRC actually provides for that job apply.</p>
         """
     prefix = "../"

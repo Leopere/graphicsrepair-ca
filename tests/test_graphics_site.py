@@ -99,6 +99,15 @@ def validate_site() -> None:
         assert 'id="mailing-fields"' in source and " hidden" in source
         assert 'id="phone-validation-profile"' in source
         assert 'data-error="' in source
+        if locale == "en":
+            assert 'name="english_support_preference"' not in source
+        else:
+            assert re.search(
+                r'name="english_support_preference" required[^>]*>.*?'
+                r'<option value="no">.*?</option><option value="yes">',
+                source,
+                re.DOTALL,
+            )
         assert 'name="country"' not in source
         assert 'placeholder="e.g. ASUS TUF RTX 3080 10GB"' not in source
         assert '<div class="honeypot" inert>' in source
@@ -177,6 +186,7 @@ def validate_site() -> None:
         "setupMailingFields", "setupPhone", "address.required = mailIn",
         "request_type", "mailing_address", "unit_number", "Graphics card:",
         "Request details:", "digits.startsWith('1') ? 'CA'", "phoneSetup.profile()",
+        "english_support_preference", "replyPreference ? replyPreference.value : undefined",
     ):
         assert intake_contract in js
     assert "serial" not in js.lower()
@@ -226,6 +236,7 @@ def validate_site() -> None:
         "no form text is sent to analytics", "do not run advertising analytics", "session replay",
         "authoritative dns only", "does not proxy page requests", "cloudflare", "github", "selected intake method",
         "phone validation profile", "page language", "local storage",
+        "selected text-message reply language",
         "browser network-error reports do not contain the form body",
     ):
         assert disclosure in privacy

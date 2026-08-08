@@ -180,6 +180,7 @@
       const serviceType = form.elements.service_type.value;
       const mailingAddress = clean(form.elements.mailing_address.value, 300);
       const unitNumber = clean(form.elements.unit_number.value, 30);
+      const replyPreference = form.elements.english_support_preference;
       const messageParts = [
         'Graphics card: ' + model,
         'Request type: ' + requestType,
@@ -203,6 +204,7 @@
           request_type: requestType,
           service_type: serviceType,
           site_language: document.documentElement.lang,
+          english_support_preference: replyPreference ? replyPreference.value : undefined,
           accepted_privacy_and_terms: true,
           source_site: 'graphicsrepair.ca'
         }

@@ -109,6 +109,10 @@ def render_index(locale: str) -> str:
         f'<li><span>{esc(number)}</span><div><h3>{esc(title)}</h3><p>{esc(body)}</p></div></li>'
         for number, title, body in c["steps"]
     )
+    reply_language_field = ""
+    if locale != "en":
+        reply_language_field = f'''
+        <label>{esc(f['reply_language'])}<select name="english_support_preference" required aria-describedby="reply-language-hint"><option value="">{esc(f['choose'])}</option><option value="no">{esc(f['reply_page_language'])}</option><option value="yes">{esc(f['reply_english'])}</option></select><small id="reply-language-hint" class="form-hint">{esc(f['reply_language_hint'])}</small></label>'''
     schema = {
         "@context": "https://schema.org",
         "@graph": [
@@ -168,7 +172,7 @@ def render_index(locale: str) -> str:
       <input type="hidden" name="form_id" value="graphics_card_repair_quote"><input type="hidden" name="start_time" value="">
       <fieldset><legend>{esc(f['contact_details'])}</legend>
         <div class="form-row"><label>{esc(c['name'])}<input name="name" type="text" autocomplete="name" maxlength="100" required></label><label>{esc(c['email'])}<input name="email" type="email" autocomplete="email" maxlength="254" aria-describedby="email-hint" required><small id="email-hint" class="form-hint">{esc(f['email_hint'])}</small></label></div>
-        <label>{esc(c['phone'])}<input name="phone" id="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" aria-describedby="phone-validation-profile phone-hint" data-error="{esc(f['phone_error'])}" required><span id="phone-validation-profile" class="phone-detection" aria-live="polite"></span><small id="phone-hint" class="form-hint">{esc(f['phone_hint'])}</small></label>
+        <label>{esc(c['phone'])}<input name="phone" id="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" aria-describedby="phone-validation-profile phone-hint" data-error="{esc(f['phone_error'])}" required><span id="phone-validation-profile" class="phone-detection" aria-live="polite"></span><small id="phone-hint" class="form-hint">{esc(f['phone_hint'])}</small></label>{reply_language_field}
       </fieldset>
       <fieldset><legend>{esc(f['card_details'])}</legend>
         <label>{esc(c['model'])}<input name="model" type="text" maxlength="160" required aria-describedby="model-hint"><small id="model-hint" class="form-hint">{esc(f['model_hint'])}</small></label>
@@ -200,7 +204,7 @@ def render_legal(kind: str) -> str:
         description = "How Graphics Repair Canada handles contact information, repair details, hosting metrics and service records."
         body = """
         <h2>Information we collect</h2><p>When you submit the repair form, we receive the name, email, phone number and validation profile, card manufacturer and model, request type, symptoms and prior-work history you provide. For a mail-in request, we also receive the return address and optional unit number you provide. We use this information to assess, communicate about and, if accepted, deliver the requested service. We do not ask for the card serial number.</p>
-        <h2>Protected form processing</h2><p>The form is sent over HTTPS to MRC's Cloudflare Worker at forms.motherboardrepair.ca. Along with the fields shown, it sends the selected intake method, phone validation profile, page language, consent confirmation and source site. It uses strict field validation, a hidden honeypot, a minimum completion time, rate limiting and a short-lived proof-of-work challenge. Do not include passwords, payment-card numbers or unrelated sensitive information.</p>
+        <h2>Protected form processing</h2><p>The form is sent over HTTPS to MRC's Cloudflare Worker at forms.motherboardrepair.ca. Along with the fields shown, it sends the selected intake method, phone validation profile, page language, selected text-message reply language, consent confirmation and source site. It uses strict field validation, a hidden honeypot, a minimum completion time, rate limiting and a short-lived proof-of-work challenge. Do not include passwords, payment-card numbers or unrelated sensitive information.</p>
         <h2>Language preference</h2><p>If you choose a language, the site stores that language code in your browser's local storage so it can open the same translation on a later visit. It is not a tracking identifier and is not sent with analytics.</p>
         <h2>Privacy-respecting operation</h2><p>We do not run advertising analytics, session replay, fingerprinting or a client-side analytics script. No form text is sent to analytics. GitHub Pages delivers the site and may temporarily process IP addresses, browser details, requested paths and timestamps in ordinary hosting and security logs. Cloudflare provides authoritative DNS only for this site and does not proxy page requests. Cloudflare does process requests sent to the separate form Worker and may receive ordinary security and network-error diagnostics for that endpoint; browser network-error reports do not contain the form body.</p>
         <h2>Privacy questions</h2><p>Use the contact form to ask MRC a privacy question. Do not send unrelated sensitive information through the form.</p>

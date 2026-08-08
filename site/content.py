@@ -121,6 +121,7 @@ FORM_COPY = {
         "request_details": "Request details", "request_prompt": "What do you need help with?", "request_hint": "Describe the failure, when it began, what you tested, mining or liquid exposure, and any previous repair or disassembly.",
         "intake": "Drop-off or mail-in?", "choose": "Choose one", "dropoff": "Drop-off during open hours (no appointment)", "mailin": "Mail-in after MRC provides instructions", "intake_hint": "Do not mail the card until MRC accepts the request and sends packing instructions.",
         "address": "Return mailing address", "address_hint": "Required for mail-in requests and used only to coordinate return shipping.", "unit": "Unit or apartment (optional)",
+        "reply_language": "Text-message reply language", "reply_language_hint": "Choose whether MRC should reply in this page's language or in English.", "reply_page_language": "Reply in English", "reply_english": "Reply in English",
     },
     "fr": {
         "contact_details": "Coordonnées", "email_hint": "Attendez-vous seulement aux factures ou reçus par courriel. Nous répondons normalement par SMS.", "phone_hint": "Ajoutez l’indicatif du pays (par exemple +33). Le format téléphonique correspondant est sélectionné automatiquement.", "phone_error": "Saisissez un numéro compatible SMS valide pour le format téléphonique affiché.",
@@ -128,6 +129,7 @@ FORM_COPY = {
         "request_details": "Détails de la demande", "request_prompt": "De quoi avez-vous besoin ?", "request_hint": "Décrivez la panne, son début, vos essais, l’exposition au minage ou aux liquides et toute réparation ou ouverture antérieure.",
         "intake": "Dépôt ou envoi postal ?", "choose": "Choisissez", "dropoff": "Dépôt pendant les heures d’ouverture (sans rendez-vous)", "mailin": "Envoi postal après réception des instructions de MRC", "intake_hint": "N’expédiez pas la carte avant l’acceptation et les instructions d’emballage de MRC.",
         "address": "Adresse postale de retour", "address_hint": "Obligatoire pour l’envoi postal et utilisée uniquement pour organiser le retour.", "unit": "Unité ou appartement (facultatif)",
+        "reply_language": "Langue des réponses par SMS", "reply_language_hint": "Choisissez si MRC doit répondre dans la langue de cette page ou en anglais.", "reply_page_language": "Répondre en français", "reply_english": "Répondre en anglais",
     },
     "es": {
         "contact_details": "Datos de contacto", "email_hint": "Por correo solo recibirá facturas o recibos. Normalmente respondemos por SMS.", "phone_hint": "Incluya el prefijo del país (por ejemplo +52). El formato telefónico correspondiente se selecciona automáticamente.", "phone_error": "Introduzca un número válido con SMS para el formato telefónico mostrado.",
@@ -135,6 +137,7 @@ FORM_COPY = {
         "request_details": "Datos de la solicitud", "request_prompt": "¿Con qué necesita ayuda?", "request_hint": "Describa la falla, cuándo comenzó, las pruebas realizadas, exposición a minería o líquidos y reparaciones o desmontajes previos.",
         "intake": "¿Entrega o envío por correo?", "choose": "Elija una opción", "dropoff": "Entrega durante el horario de apertura (sin cita)", "mailin": "Envío después de recibir instrucciones de MRC", "intake_hint": "No envíe la tarjeta hasta que MRC acepte la solicitud y dé instrucciones de embalaje.",
         "address": "Dirección postal de devolución", "address_hint": "Obligatoria para solicitudes por correo; solo se usa para coordinar la devolución.", "unit": "Unidad o apartamento (opcional)",
+        "reply_language": "Idioma de las respuestas por SMS", "reply_language_hint": "Elija si MRC debe responder en el idioma de esta página o en inglés.", "reply_page_language": "Responder en español", "reply_english": "Responder en inglés",
     },
     "vi": {
         "contact_details": "Thông tin liên hệ", "email_hint": "Email chỉ dùng cho hóa đơn hoặc biên lai. Chúng tôi thường phản hồi bằng SMS.", "phone_hint": "Thêm mã quốc gia (ví dụ +84). Định dạng điện thoại tương ứng được chọn tự động.", "phone_error": "Nhập số điện thoại nhận SMS hợp lệ theo định dạng đang hiển thị.",
@@ -142,6 +145,7 @@ FORM_COPY = {
         "request_details": "Chi tiết yêu cầu", "request_prompt": "Bạn cần hỗ trợ việc gì?", "request_hint": "Mô tả lỗi, thời điểm bắt đầu, các thử nghiệm, lịch sử đào coin hoặc dính chất lỏng và mọi lần sửa hay tháo trước đây.",
         "intake": "Mang đến hay gửi bưu điện?", "choose": "Chọn một", "dropoff": "Mang đến trong giờ mở cửa (không cần hẹn)", "mailin": "Gửi bưu điện sau khi MRC cung cấp hướng dẫn", "intake_hint": "Không gửi card cho đến khi MRC chấp nhận yêu cầu và gửi hướng dẫn đóng gói.",
         "address": "Địa chỉ gửi trả", "address_hint": "Bắt buộc với yêu cầu gửi bưu điện và chỉ dùng để sắp xếp gửi trả.", "unit": "Số căn hộ hoặc phòng (không bắt buộc)",
+        "reply_language": "Ngôn ngữ trả lời qua SMS", "reply_language_hint": "Chọn để MRC trả lời bằng ngôn ngữ của trang này hoặc bằng tiếng Anh.", "reply_page_language": "Trả lời bằng tiếng Việt", "reply_english": "Trả lời bằng tiếng Anh",
     },
     "ar": {
         "contact_details": "بيانات الاتصال", "email_hint": "لا تتوقع عبر البريد الإلكتروني إلا الفواتير أو الإيصالات. نتابع عادةً برسالة SMS.", "phone_hint": "أدخل رمز الدولة (مثل +966). يُحدد تنسيق الهاتف المقابل تلقائياً.", "phone_error": "أدخل رقماً صالحاً يستقبل SMS وفق تنسيق الهاتف المعروض.",
@@ -149,6 +153,7 @@ FORM_COPY = {
         "request_details": "تفاصيل الطلب", "request_prompt": "ما المساعدة التي تحتاجها؟", "request_hint": "صِف العطل ووقت بدايته والاختبارات والتعدين أو تعرضها للسوائل وأي إصلاح أو تفكيك سابق.",
         "intake": "تسليم أم إرسال بالبريد؟", "choose": "اختر واحداً", "dropoff": "التسليم خلال ساعات العمل (من دون موعد)", "mailin": "الإرسال بعد أن يقدم MRC التعليمات", "intake_hint": "لا ترسل البطاقة حتى يقبل MRC الطلب ويرسل تعليمات التغليف.",
         "address": "عنوان الإرجاع البريدي", "address_hint": "مطلوب للطلبات البريدية ويُستخدم فقط لتنسيق شحن الإرجاع.", "unit": "رقم الوحدة أو الشقة (اختياري)",
+        "reply_language": "لغة الرد عبر SMS", "reply_language_hint": "اختر ما إذا كان على MRC الرد بلغة هذه الصفحة أو بالإنجليزية.", "reply_page_language": "الرد بالعربية", "reply_english": "الرد بالإنجليزية",
     },
     "ja": {
         "contact_details": "連絡先", "email_hint": "メールは請求書または領収書にのみ使用します。通常はSMSで連絡します。", "phone_hint": "国番号（例：+81）を含めてください。対応する電話形式が自動選択されます。", "phone_error": "表示された電話形式に合うSMS受信可能な番号を入力してください。",
@@ -156,6 +161,7 @@ FORM_COPY = {
         "request_details": "依頼内容", "request_prompt": "どのような対応が必要ですか？", "request_hint": "症状、発生時期、試したこと、マイニング・液体接触歴、過去の修理や分解を記載してください。",
         "intake": "持ち込みまたは郵送", "choose": "選択してください", "dropoff": "営業時間内の持ち込み（予約不要）", "mailin": "MRCから案内を受けた後に郵送", "intake_hint": "MRCが依頼を受け付け、梱包方法を案内するまでは郵送しないでください。",
         "address": "返送先住所", "address_hint": "郵送依頼では必須です。返送手配にのみ使用します。", "unit": "部屋番号（任意）",
+        "reply_language": "SMSの返信言語", "reply_language_hint": "MRCからの返信をこのページの言語または英語から選択してください。", "reply_page_language": "日本語で返信", "reply_english": "英語で返信",
     },
 }
 

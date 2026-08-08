@@ -48,6 +48,19 @@ def validate_site() -> None:
     actual_pages = {path.relative_to(SITE).as_posix() for path in SITE.rglob("*.html")}
     assert actual_pages == expected_pages, f"Unexpected production pages: {sorted(actual_pages ^ expected_pages)}"
 
+    public_copy = "\n".join(path.read_text(encoding="utf-8").lower() for path in SITE.rglob("*.html"))
+    for unsupported_scheduling_claim in (
+        "appointment",
+        "scheduled drop-off",
+        "scheduled kitchener",
+        "dépôt planifié",
+        "entrega programada",
+        "giao theo lịch",
+        "تسليم مجدول",
+        "予約持込",
+    ):
+        assert unsupported_scheduling_claim not in public_copy
+
     for locale, tag in LOCALES.items():
         path = SITE / ("index.html" if locale == "en" else f"{locale}/index.html")
         parser, source = parse(path)

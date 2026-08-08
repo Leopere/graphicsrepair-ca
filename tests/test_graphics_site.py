@@ -131,6 +131,10 @@ def validate_site() -> None:
     ):
         assert intake_contract in js
 
+    css = (SITE / "assets/style.css").read_text(encoding="utf-8")
+    assert ".form-row { display: grid; grid-template-columns: 1fr 1fr; align-items: start;" in css
+    assert '.repair-form input:not([type="checkbox"]), .repair-form select { min-height: 48px; }' in css
+
     for legal_kind in ("privacy", "terms"):
         legal_parser, legal_source = parse(SITE / legal_kind / "index.html")
         legal_canonical = [attrs.get("href") for name, attrs in legal_parser.tags if name == "link" and attrs.get("rel") == "canonical"]

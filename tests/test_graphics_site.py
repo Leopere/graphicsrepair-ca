@@ -50,7 +50,6 @@ def validate_site() -> None:
 
     public_copy = "\n".join(path.read_text(encoding="utf-8").lower() for path in SITE.rglob("*.html"))
     for unsupported_scheduling_claim in (
-        "appointment",
         "scheduled drop-off",
         "scheduled kitchener",
         "dépôt planifié",
@@ -60,6 +59,16 @@ def validate_site() -> None:
         "予約持込",
     ):
         assert unsupported_scheduling_claim not in public_copy
+
+    for walk_in_copy in (
+        "drop-offs are welcome whenever we are open",
+        "sans rendez-vous",
+        "cuando estemos abiertos",
+        "không cần hẹn trước",
+        "من دون موعد",
+        "予約なしで持ち込み",
+    ):
+        assert walk_in_copy in public_copy
 
     for locale, tag in LOCALES.items():
         path = SITE / ("index.html" if locale == "en" else f"{locale}/index.html")

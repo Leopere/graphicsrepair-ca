@@ -117,6 +117,9 @@ def validate_site() -> None:
     assert "used graphics card completeness check" in english
     assert "this is not a repair diagnostic" in english
     assert "material misrepresentation" in english
+    assert "intel graphics cards are normally not accepted" in english
+    assert "nvidia · amd · intel" not in english
+    assert "nvidia · amd</small>" in english
 
     js = (SITE / "assets/site.js").read_text(encoding="utf-8")
     for country in COUNTRIES:

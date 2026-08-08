@@ -152,7 +152,7 @@ def render_index(locale: str) -> str:
     <div class="shell hero-grid"><div class="hero-copy">
       <p class="eyebrow">{esc(c['eyebrow'])}</p><h1>{esc(c['hero'])}</h1><p class="lede">{esc(c['hero_body'])}</p>
       <div class="hero-actions"><a class="button" href="#contact">{esc(c['hero_cta'])}</a><span>{esc(c['hero_note'])}</span></div>
-    </div><div class="board-card" aria-label="Service scope"><span>GPU</span><strong>DIAG / REPAIR</strong><small>NVIDIA · AMD · INTEL</small></div></div>
+    </div><div class="board-card" aria-label="Service scope"><span>GPU</span><strong>DIAG / REPAIR</strong><small>NVIDIA · AMD</small></div></div>
   </section>
   <aside class="language-notice"><div class="shell"><span>{esc(c['notice'])}</span><div class="languages">{language_links(locale)}</div></div></aside>
   <section class="section" id="faults"><div class="shell"><div class="section-heading"><p class="eyebrow">01 / DIAGNOSIS</p><h2>{esc(c['faults_title'])}</h2><p>{esc(c['faults_intro'])}</p></div><div class="fault-grid">{fault_cards}</div></div></section>

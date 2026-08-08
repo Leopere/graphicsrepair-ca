@@ -125,6 +125,8 @@ def validate_site() -> None:
 
     english = (SITE / "index.html").read_text(encoding="utf-8").lower()
     assert "mrc repairs desktop graphics cards at board level and checks used gpus" in english
+    assert "displayed phone format" in english
+    assert "detected country" not in english
     assert "gpu certification" in english
     assert "not a repair diagnostic" in english
     assert "missing, substituted or changed chips" in english

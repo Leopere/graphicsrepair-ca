@@ -116,42 +116,42 @@ LOCALES = {
 # complete intake flow without bloating the main page-copy records.
 FORM_COPY = {
     "en": {
-        "contact_details": "Contact details", "email_hint": "Only expect invoices or receipts by email. We normally follow up by SMS.", "phone_hint": "Include the country code (for example +1). Starting with 1 selects Canada automatically.", "phone_error": "Enter a valid SMS-capable number for the detected country.",
+        "contact_details": "Contact details", "email_hint": "Only expect invoices or receipts by email. We normally follow up by SMS.", "phone_hint": "Include the country code (for example +1). Starting with 1 selects the Canada phone format automatically.", "phone_error": "Enter a valid SMS-capable number for the displayed phone format.",
         "card_details": "Graphics card details", "model_hint": "Enter only the manufacturer and exact model shown on the card.",
         "request_details": "Request details", "request_prompt": "What do you need help with?", "request_hint": "Describe the failure, when it began, what you tested, mining or liquid exposure, and any previous repair or disassembly.",
         "intake": "Drop-off or mail-in?", "choose": "Choose one", "dropoff": "Drop-off during open hours (no appointment)", "mailin": "Mail-in after MRC provides instructions", "intake_hint": "Do not mail the card until MRC accepts the request and sends packing instructions.",
         "address": "Return mailing address", "address_hint": "Required for mail-in requests and used only to coordinate return shipping.", "unit": "Unit or apartment (optional)",
     },
     "fr": {
-        "contact_details": "Coordonnées", "email_hint": "Attendez-vous seulement aux factures ou reçus par courriel. Nous répondons normalement par SMS.", "phone_hint": "Ajoutez l’indicatif du pays (par exemple +33). Le pays est détecté automatiquement.", "phone_error": "Saisissez un numéro compatible SMS valide pour le pays détecté.",
+        "contact_details": "Coordonnées", "email_hint": "Attendez-vous seulement aux factures ou reçus par courriel. Nous répondons normalement par SMS.", "phone_hint": "Ajoutez l’indicatif du pays (par exemple +33). Le format téléphonique correspondant est sélectionné automatiquement.", "phone_error": "Saisissez un numéro compatible SMS valide pour le format téléphonique affiché.",
         "card_details": "Détails de la carte graphique", "model_hint": "Indiquez uniquement le fabricant et le modèle exact inscrits sur la carte.",
         "request_details": "Détails de la demande", "request_prompt": "De quoi avez-vous besoin ?", "request_hint": "Décrivez la panne, son début, vos essais, l’exposition au minage ou aux liquides et toute réparation ou ouverture antérieure.",
         "intake": "Dépôt ou envoi postal ?", "choose": "Choisissez", "dropoff": "Dépôt pendant les heures d’ouverture (sans rendez-vous)", "mailin": "Envoi postal après réception des instructions de MRC", "intake_hint": "N’expédiez pas la carte avant l’acceptation et les instructions d’emballage de MRC.",
         "address": "Adresse postale de retour", "address_hint": "Obligatoire pour l’envoi postal et utilisée uniquement pour organiser le retour.", "unit": "Unité ou appartement (facultatif)",
     },
     "es": {
-        "contact_details": "Datos de contacto", "email_hint": "Por correo solo recibirá facturas o recibos. Normalmente respondemos por SMS.", "phone_hint": "Incluya el prefijo del país (por ejemplo +52). El país se detecta automáticamente.", "phone_error": "Introduzca un número válido con SMS para el país detectado.",
+        "contact_details": "Datos de contacto", "email_hint": "Por correo solo recibirá facturas o recibos. Normalmente respondemos por SMS.", "phone_hint": "Incluya el prefijo del país (por ejemplo +52). El formato telefónico correspondiente se selecciona automáticamente.", "phone_error": "Introduzca un número válido con SMS para el formato telefónico mostrado.",
         "card_details": "Datos de la tarjeta gráfica", "model_hint": "Introduzca solo el fabricante y el modelo exacto indicados en la tarjeta.",
         "request_details": "Datos de la solicitud", "request_prompt": "¿Con qué necesita ayuda?", "request_hint": "Describa la falla, cuándo comenzó, las pruebas realizadas, exposición a minería o líquidos y reparaciones o desmontajes previos.",
         "intake": "¿Entrega o envío por correo?", "choose": "Elija una opción", "dropoff": "Entrega durante el horario de apertura (sin cita)", "mailin": "Envío después de recibir instrucciones de MRC", "intake_hint": "No envíe la tarjeta hasta que MRC acepte la solicitud y dé instrucciones de embalaje.",
         "address": "Dirección postal de devolución", "address_hint": "Obligatoria para solicitudes por correo; solo se usa para coordinar la devolución.", "unit": "Unidad o apartamento (opcional)",
     },
     "vi": {
-        "contact_details": "Thông tin liên hệ", "email_hint": "Email chỉ dùng cho hóa đơn hoặc biên lai. Chúng tôi thường phản hồi bằng SMS.", "phone_hint": "Thêm mã quốc gia (ví dụ +84). Quốc gia được nhận dạng tự động.", "phone_error": "Nhập số điện thoại nhận SMS hợp lệ cho quốc gia đã nhận dạng.",
+        "contact_details": "Thông tin liên hệ", "email_hint": "Email chỉ dùng cho hóa đơn hoặc biên lai. Chúng tôi thường phản hồi bằng SMS.", "phone_hint": "Thêm mã quốc gia (ví dụ +84). Định dạng điện thoại tương ứng được chọn tự động.", "phone_error": "Nhập số điện thoại nhận SMS hợp lệ theo định dạng đang hiển thị.",
         "card_details": "Thông tin card đồ họa", "model_hint": "Chỉ nhập hãng sản xuất và mẫu chính xác ghi trên card.",
         "request_details": "Chi tiết yêu cầu", "request_prompt": "Bạn cần hỗ trợ việc gì?", "request_hint": "Mô tả lỗi, thời điểm bắt đầu, các thử nghiệm, lịch sử đào coin hoặc dính chất lỏng và mọi lần sửa hay tháo trước đây.",
         "intake": "Mang đến hay gửi bưu điện?", "choose": "Chọn một", "dropoff": "Mang đến trong giờ mở cửa (không cần hẹn)", "mailin": "Gửi bưu điện sau khi MRC cung cấp hướng dẫn", "intake_hint": "Không gửi card cho đến khi MRC chấp nhận yêu cầu và gửi hướng dẫn đóng gói.",
         "address": "Địa chỉ gửi trả", "address_hint": "Bắt buộc với yêu cầu gửi bưu điện và chỉ dùng để sắp xếp gửi trả.", "unit": "Số căn hộ hoặc phòng (không bắt buộc)",
     },
     "ar": {
-        "contact_details": "بيانات الاتصال", "email_hint": "لا تتوقع عبر البريد الإلكتروني إلا الفواتير أو الإيصالات. نتابع عادةً برسالة SMS.", "phone_hint": "أدخل رمز الدولة (مثل +966). يتم اكتشاف الدولة تلقائياً.", "phone_error": "أدخل رقم هاتف صالحاً يستقبل SMS للدولة المكتشفة.",
+        "contact_details": "بيانات الاتصال", "email_hint": "لا تتوقع عبر البريد الإلكتروني إلا الفواتير أو الإيصالات. نتابع عادةً برسالة SMS.", "phone_hint": "أدخل رمز الدولة (مثل +966). يُحدد تنسيق الهاتف المقابل تلقائياً.", "phone_error": "أدخل رقماً صالحاً يستقبل SMS وفق تنسيق الهاتف المعروض.",
         "card_details": "بيانات بطاقة الرسومات", "model_hint": "أدخل الشركة المصنّعة والطراز الدقيق المكتوبين على البطاقة فقط.",
         "request_details": "تفاصيل الطلب", "request_prompt": "ما المساعدة التي تحتاجها؟", "request_hint": "صِف العطل ووقت بدايته والاختبارات والتعدين أو تعرضها للسوائل وأي إصلاح أو تفكيك سابق.",
         "intake": "تسليم أم إرسال بالبريد؟", "choose": "اختر واحداً", "dropoff": "التسليم خلال ساعات العمل (من دون موعد)", "mailin": "الإرسال بعد أن يقدم MRC التعليمات", "intake_hint": "لا ترسل البطاقة حتى يقبل MRC الطلب ويرسل تعليمات التغليف.",
         "address": "عنوان الإرجاع البريدي", "address_hint": "مطلوب للطلبات البريدية ويُستخدم فقط لتنسيق شحن الإرجاع.", "unit": "رقم الوحدة أو الشقة (اختياري)",
     },
     "ja": {
-        "contact_details": "連絡先", "email_hint": "メールは請求書または領収書にのみ使用します。通常はSMSで連絡します。", "phone_hint": "国番号（例：+81）を含めてください。国は自動判定されます。", "phone_error": "判定された国でSMSを受信できる有効な番号を入力してください。",
+        "contact_details": "連絡先", "email_hint": "メールは請求書または領収書にのみ使用します。通常はSMSで連絡します。", "phone_hint": "国番号（例：+81）を含めてください。対応する電話形式が自動選択されます。", "phone_error": "表示された電話形式に合うSMS受信可能な番号を入力してください。",
         "card_details": "グラフィックボード情報", "model_hint": "カードに記載されたメーカーと正確なモデルのみを入力してください。",
         "request_details": "依頼内容", "request_prompt": "どのような対応が必要ですか？", "request_hint": "症状、発生時期、試したこと、マイニング・液体接触歴、過去の修理や分解を記載してください。",
         "intake": "持ち込みまたは郵送", "choose": "選択してください", "dropoff": "営業時間内の持ち込み（予約不要）", "mailin": "MRCから案内を受けた後に郵送", "intake_hint": "MRCが依頼を受け付け、梱包方法を案内するまでは郵送しないでください。",

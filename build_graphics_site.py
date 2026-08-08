@@ -73,7 +73,7 @@ def header(content: dict[str, object], locale: str, asset_prefix: str | None = N
         <nav id="site-nav" aria-label="{esc(ui['primary'])}">
           <a href="{anchor_prefix}#faults">{esc(content['nav_faults'])}</a>
           <a href="{anchor_prefix}#process">{esc(content['nav_process'])}</a>
-          <a href="{anchor_prefix}#used-check">{esc(content['nav_check'])}</a>
+          <a href="{anchor_prefix}#gpu-certification">{esc(content['nav_check'])}</a>
           <a class="button button-small" href="{anchor_prefix}#contact">{esc(content['nav_contact'])}</a>
         </nav>
       </div>
@@ -125,7 +125,7 @@ def render_index(locale: str) -> str:
                 "provider": {"@id": f"{DOMAIN}/#organization"},
                 "areaServed": {"@type": "Country", "name": "Canada"},
                 "serviceType": "Board-level graphics card and GPU repair",
-                "offers": {"@type": "Offer", "name": "Used graphics card purchase validation", "price": "50", "priceCurrency": "CAD"},
+                "offers": {"@type": "Offer", "name": "GPU Certification", "price": "50", "priceCurrency": "CAD"},
             },
         ],
     }
@@ -162,7 +162,7 @@ def render_index(locale: str) -> str:
   <section class="section" id="faults"><div class="shell"><div class="section-heading"><p class="eyebrow">01 / {esc(c['nav_faults'])}</p><h2>{esc(c['faults_title'])}</h2><p>{esc(c['faults_intro'])}</p></div><div class="fault-grid">{fault_cards}</div></div></section>
   <section class="section section-dark"><div class="shell split"><div><p class="eyebrow">02 / {esc(c['scope_title'])}</p><h2>{esc(c['scope_title'])}</h2><p>{esc(c['scope_body'])}</p><ul class="check-list">{list_items(c['scope_items'])}</ul></div><div class="limit-card"><h3>{esc(c['limits_title'])}</h3><ul>{list_items(c['limits_items'])}</ul></div></div></section>
   <section class="section" id="process"><div class="shell"><div class="section-heading"><p class="eyebrow">03 / {esc(c['nav_process'])}</p><h2>{esc(c['process_title'])}</h2></div><ol class="steps">{steps}</ol></div></section>
-  <section class="section verification" id="used-check"><div class="shell split"><div><p class="eyebrow">04 / {esc(c['nav_check'])}</p><h2>{esc(c['check_title'])}</h2><p>{esc(c['check_body'])}</p><ul class="check-list">{list_items(c['check_items'])}</ul></div><div class="price-card"><span>{esc(c['check_price'])}</span><small>{esc(c['hero_note'])}</small><a class="button" href="#contact">{esc(c['nav_check'])}</a></div></div></section>
+  <section class="section verification" id="gpu-certification"><div class="shell split"><div><p class="eyebrow">04 / {esc(c['nav_check'])}</p><h2>{esc(c['check_title'])}</h2><p>{esc(c['check_body'])}</p><ul class="check-list">{list_items(c['check_items'])}</ul></div><div class="price-card"><span>{esc(c['check_price'])}</span><small>{esc(c['hero_note'])}</small><a class="button" href="#contact">{esc(c['nav_check'])}</a></div></div></section>
   <section class="section contact-section" id="contact"><div class="shell contact-grid"><div><p class="eyebrow">05 / {esc(c['nav_contact'])}</p><h2>{esc(c['contact_title'])}</h2><p>{esc(c['contact_intro'])}</p><div class="reply-card"><h3>{esc(c['reply_title'])}</h3><p>{esc(c['reply_body'])}</p></div></div>
     <form id="repair-form" class="repair-form" novalidate data-sending="{esc(c['sending'])}" data-success="{esc(c['success'])}" data-error="{esc(c['error'])}">
       <input type="hidden" name="form_id" value="graphics_card_repair_quote"><input type="hidden" name="start_time" value="">
@@ -210,7 +210,7 @@ def render_legal(kind: str) -> str:
         description = "Basic request terms for Graphics Repair Canada."
         body = """
         <h2>Request only</h2><p>Graphics Repair Canada is an MRC specialist site. Submitting the form sends a request for review; it does not reserve a time, authorize work or guarantee a repair. Do not mail a card until MRC provides shipping instructions.</p>
-        <h2>Used-card purchase validation</h2><p>The advertised $50 CAD plus tax covers one purchase-validation check on one supported used desktop graphics card after model acceptance. MRC compares the card with its listing and expected reference configuration, checks that required chips and assemblies are present, determines whether the inspected configuration can be certified as complete, and attempts to boot it on the shop testing rig. If the card boots, MRC provides a written test report describing the checks completed and observed results. The service is intended to help validate marketplace and other aftermarket purchases. It is not a repair diagnostic, performance guarantee, warranty or proof that no latent fault exists, and excludes shipping, repair and parts. MRC does not determine seller intent, ownership or make legal findings of fraud. The fee is non-refundable once checking begins.</p>
+        <h2>GPU Certification</h2><p>The advertised $50 CAD plus tax covers one GPU Certification on one supported used desktop graphics card after model acceptance. MRC compares the card with its listing and expected reference configuration and records factual observations about its identifiers, model, memory, required chip population, board, cooler and other required assemblies. This can reveal missing, substituted or changed chips and other discrepancies found in deceptive marketplace or aftermarket sales. MRC also attempts to boot the card on the shop testing rig; if it boots, the customer receives a written test report describing the checks completed and observed results. GPU Certification reports only facts observed on the inspected card. It does not state that the card meets OEM standards and is not a repair diagnostic, authenticity guarantee, performance guarantee, warranty or proof that no latent fault exists. MRC does not determine seller intent, ownership or make legal findings of fraud. Shipping, repair and parts are extra, and the fee is non-refundable once certification begins.</p>
         <h2>Job-specific details</h2><p>Any proposed scope, price or other job-specific detail is communicated separately by MRC. Only the details MRC actually provides for that job apply.</p>
         """
     prefix = "../"

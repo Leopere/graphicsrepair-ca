@@ -77,7 +77,7 @@ def validate_site() -> None:
         html_tags = [attrs for name, attrs in parser.tags if name == "html"]
         assert html_tags and html_tags[0].get("lang") == tag
         assert len([1 for name, _attrs in parser.tags if name == "h1"]) == 1
-        assert {"faults", "process", "used-check", "contact", "repair-form", "form-status"} <= parser.ids
+        assert {"faults", "process", "gpu-certification", "contact", "repair-form", "form-status"} <= parser.ids
         text = " ".join(parser.text).lower()
         for required in ("mrc", "gpu", "50"):
             assert required in text, f"{path} is missing {required}"
@@ -102,7 +102,7 @@ def validate_site() -> None:
         assert 'name="country"' not in source
         assert all(attrs.get("type") for name, attrs in parser.tags if name == "input")
         assert 'srcset="' in source and "gpu-repair-480.webp 480w" in source and "gpu-repair-720.webp 720w" in source
-        for fragment in ("faults", "process", "used-check", "contact"):
+        for fragment in ("faults", "process", "gpu-certification", "contact"):
             assert f'href="#{fragment}"' in source
         assert "https://motherboardrepair.ca/" in source
         assert source.count('rel="alternate" hreflang=') == 7
@@ -121,11 +121,11 @@ def validate_site() -> None:
                     assert parsed.netloc in {"graphicsrepair.ca", "motherboardrepair.ca"}
 
     english = (SITE / "index.html").read_text(encoding="utf-8").lower()
-    assert "used graphics card purchase validation" in english
-    assert "this is not a repair diagnostic" in english
-    assert "material inconsistencies" in english
-    assert "certified as complete" in english
-    assert "marketplace and other aftermarket purchases" in english
+    assert "gpu certification" in english
+    assert "not a repair diagnostic" in english
+    assert "missing, substituted or changed chips" in english
+    assert "deceptive online sales" in english
+    assert "does not state that the card meets oem standards" in english
     assert "required chip population" in english
     assert "shop testing rig" in english
     assert "written shop-rig test report" in english
@@ -164,12 +164,13 @@ def validate_site() -> None:
         assert f'href="/{legal_kind}/"' in legal_source
         assert 'href="../assets/style.css"' in legal_source
         assert 'src="../assets/mrc-logo-white.svg"' in legal_source
-        for fragment in ("faults", "process", "used-check", "contact"):
+        for fragment in ("faults", "process", "gpu-certification", "contact"):
             assert f'href="/#{fragment}"' in legal_source
 
     terms = (SITE / "terms" / "index.html").read_text(encoding="utf-8").lower()
-    assert "it is not a repair diagnostic" in terms
-    assert "required chips and assemblies are present" in terms
+    assert "is not a repair diagnostic" in terms
+    assert "missing, substituted or changed chips" in terms
+    assert "does not state that the card meets oem standards" in terms
     assert "written test report" in terms
     assert "shop testing rig" in terms
 
@@ -180,7 +181,7 @@ def validate_site() -> None:
     assert 'src="/assets/site.js"' in not_found
     assert 'src="/assets/mrc-logo.svg"' in not_found
     assert 'src="/assets/mrc-logo-white.svg"' in not_found
-    for fragment in ("faults", "process", "used-check", "contact"):
+    for fragment in ("faults", "process", "gpu-certification", "contact"):
         assert f'href="/#{fragment}"' in not_found
     assert "Information we collect" not in not_found
 

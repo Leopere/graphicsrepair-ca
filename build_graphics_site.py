@@ -83,6 +83,7 @@ def header(content: dict[str, object], locale: str, asset_prefix: str | None = N
 def footer(content: dict[str, object], locale: str, asset_prefix: str | None = None) -> str:
     prefix = ("" if locale == "en" else "../") if asset_prefix is None else asset_prefix
     ui = UI_COPY[locale]
+    repair_href = f"/{locale_path(locale)}#contact"
     return f"""
     <footer class="site-footer">
       <div class="shell footer-grid">
@@ -90,7 +91,11 @@ def footer(content: dict[str, object], locale: str, asset_prefix: str | None = N
         <div><p><a href="https://motherboardrepair.ca/graphics-card-repair.html" rel="noopener">{esc(content['backlink'])}</a></p><p><a href="/privacy/">{esc(content['privacy'])}</a> · <a href="/terms/">{esc(content['terms'])}</a></p></div>
         <nav class="languages" aria-label="{esc(ui['footer_languages'])}">{language_links(locale)}</nav>
       </div>
-    </footer>"""
+    </footer>
+    <div class="repair-prompt" data-repair-prompt hidden>
+      <a class="repair-prompt__open" href="{repair_href}" data-repair-open>{esc(content['nav_contact'])}</a>
+      <button class="repair-prompt__dismiss" type="button" data-repair-dismiss aria-label="{esc(ui['dismiss_repair'])}">&times;</button>
+    </div>"""
 
 
 def render_index(locale: str) -> str:
@@ -198,9 +203,9 @@ def render_index(locale: str) -> str:
           </div>
         </div>
       </fieldset>
-      <div class="honeypot" inert><label>Website<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
-      <label class="consent"><input name="accept_terms" type="checkbox" required><span>{esc(c['consent'])} <a href="/privacy/" target="_blank" rel="noopener">{esc(c['privacy'])}</a> · <a href="/terms/" target="_blank" rel="noopener">{esc(c['terms'])}</a></span></label>
-      <button class="button" type="submit">{esc(c['send'])}</button><p class="form-note">{esc(c['form_privacy'])}</p><p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+      <div class="auxiliary-field" inert><label>Website<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
+      <label class="consent"><input name="accept_terms" type="checkbox" required><span>{esc(c['consent'])} <a href="/privacy/" target="_blank" rel="noopener">{esc(c['privacy'])}</a> {esc(f['consent_joiner'])} <a href="/terms/" target="_blank" rel="noopener">{esc(c['terms'])}</a>.</span></label>
+      <button class="button" type="submit">{esc(c['send'])}</button><p id="form-status" class="form-status" role="status" aria-live="polite"></p>
     </form>
   </div></section>
 </main>
@@ -214,9 +219,9 @@ def render_legal(kind: str) -> str:
         description = "How Graphics Repair Canada handles contact information, repair details, hosting metrics and service records."
         body = """
         <h2>Information we collect</h2><p>When you submit the repair form, we receive the name, email, phone number and validation profile, card manufacturer and model, request type, symptoms and prior-work history you provide. For a mail-in request, we also receive the return country, return address and optional unit number you provide. For an international mail-in request, we receive your ownership or owner-authorization confirmation and your acknowledgement of cross-border shipping costs and instructions. We use this information to assess, communicate about and, if accepted, deliver the requested service. We do not ask for the card serial number.</p>
-        <h2>Protected form processing</h2><p>The form is sent over HTTPS to MRC's Cloudflare Worker at forms.motherboardrepair.ca. Along with the fields shown, it sends the selected intake method, phone validation profile, international-mail-in status, page language, selected text-message reply language, consent confirmation and source site. It uses strict field validation, a hidden honeypot, a minimum completion time, rate limiting and a short-lived proof-of-work challenge. Do not include passwords, payment-card numbers or unrelated sensitive information.</p>
+        <h2>Form processing</h2><p>The form is sent to MRC's form service at forms.motherboardrepair.ca. Along with the fields shown, it sends the selected intake method, phone validation profile, international-mail-in status, page language, selected text-message reply language, consent confirmation and source site. Do not include passwords, payment-card numbers or unrelated sensitive information.</p>
         <h2>Language preference</h2><p>If you choose a language, the site stores that language code in your browser's local storage so it can open the same translation on a later visit. It is not a tracking identifier and is not sent with analytics.</p>
-        <h2>Privacy-respecting operation</h2><p>We do not run advertising analytics, session replay, fingerprinting or a client-side analytics script. No form text is sent to analytics. GitHub Pages delivers the site and may temporarily process IP addresses, browser details, requested paths and timestamps in ordinary hosting and security logs. Cloudflare provides authoritative DNS only for this site and does not proxy page requests. Cloudflare does process requests sent to the separate form Worker and may receive ordinary security and network-error diagnostics for that endpoint; browser network-error reports do not contain the form body.</p>
+        <h2>Website operation</h2><p>We do not run advertising analytics, session replay, fingerprinting or a client-side analytics script. GitHub Pages delivers the site and may temporarily process IP addresses, browser details, requested paths and timestamps in ordinary hosting logs. Cloudflare provides authoritative DNS for this site and processes requests sent to the separate form service.</p>
         <h2>Privacy questions</h2><p>Use the contact form to ask MRC a privacy question. Do not send unrelated sensitive information through the form.</p>
         """
     else:

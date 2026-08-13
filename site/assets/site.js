@@ -2,7 +2,7 @@
   'use strict';
 
   const FORM_URL = 'https://forms.motherboardrepair.ca/api/submit';
-  const PROOF_URL = 'https://forms.motherboardrepair.ca/api/form-proof';
+  const SUBMISSION_SETUP_URL = 'https://forms.motherboardrepair.ca/api/form-proof';
   const encoder = new TextEncoder();
   const phoneRules = {
     CA: { code: '1', trunk: false, pattern: /^[2-9]\d{2}[2-9]\d{6}$/ },
@@ -123,7 +123,7 @@
   }
 
   function stringValue(value) { return value === undefined || value === null ? '' : String(value); }
-  function proofBinding(payload) {
+  function submissionBinding(payload) {
     return JSON.stringify(['mrc-form-proof-v1', stringValue(payload.form_id || payload.source), stringValue(payload.name || payload.full_name), stringValue(payload.email), stringValue(payload.phone || payload.phone_number), stringValue(payload.company), stringValue(payload.message || payload.notes), stringValue(payload.slack_profile)]);
   }
   async function digest(value) { return new Uint8Array(await crypto.subtle.digest('SHA-256', encoder.encode(value))); }
@@ -132,26 +132,26 @@
     for (let offset = 0; offset < bytes.length; offset += 0x8000) binary += String.fromCharCode.apply(null, bytes.subarray(offset, offset + 0x8000));
     return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
   }
-  function leadingZeros(bytes, bitCount) {
+  function meetsTarget(bytes, bitCount) {
     const whole = Math.floor(bitCount / 8);
     for (let index = 0; index < whole; index += 1) if (bytes[index] !== 0) return false;
     const rest = bitCount % 8;
     return !rest || (bytes[whole] & (0xff << (8 - rest))) === 0;
   }
-  async function formProof(payload) {
-    if (!crypto || !crypto.subtle) throw new Error('Secure verification is unavailable.');
-    const response = await fetch(PROOF_URL, { headers: { Accept: 'application/json' }, cache: 'no-store' });
-    const challenge = await response.json();
-    if (!response.ok || !challenge.challenge || !Number.isInteger(challenge.difficulty)) throw new Error(challenge.error || 'Verification unavailable.');
-    const wait = Number(challenge.ready_at) - Date.now();
+  async function prepareSubmission(payload) {
+    if (!crypto || !crypto.subtle) throw new Error('Submission is unavailable.');
+    const response = await fetch(SUBMISSION_SETUP_URL, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+    const setupData = await response.json();
+    if (!response.ok || !setupData.challenge || !Number.isInteger(setupData.difficulty)) throw new Error(setupData.error || 'Submission setup is unavailable.');
+    const wait = Number(setupData.ready_at) - Date.now();
     if (wait > 0) await new Promise(function (resolve) { setTimeout(resolve, wait); });
-    const binding = base64url(await digest(proofBinding(payload)));
+    const binding = base64url(await digest(submissionBinding(payload)));
     for (let counter = 0; counter <= 10000000; counter += 1) {
-      if (leadingZeros(await digest(challenge.challenge + '.' + binding + '.' + counter), challenge.difficulty)) {
-        return { form_proof_token: challenge.challenge, form_proof_counter: counter };
+      if (meetsTarget(await digest(setupData.challenge + '.' + binding + '.' + counter), setupData.difficulty)) {
+        return { form_proof_token: setupData.challenge, form_proof_counter: counter };
       }
     }
-    throw new Error('Verification could not be completed.');
+    throw new Error('Submission setup could not be completed.');
   }
 
   function clean(value, max) { return String(value || '').replace(/[<>\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max); }
@@ -253,8 +253,8 @@
         }
       };
       try {
-        const proof = await formProof(payload);
-        const response = await fetch(FORM_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(Object.assign(payload, proof)) });
+        const submissionCredentials = await prepareSubmission(payload);
+        const response = await fetch(FORM_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(Object.assign(payload, submissionCredentials)) });
         const result = await response.json().catch(function () { return {}; });
         if (!response.ok) throw new Error(result.error || 'Submission failed.');
         form.reset();
@@ -264,7 +264,7 @@
         status.className = 'form-status success';
         status.textContent = form.dataset.success;
       } catch (error) {
-        console.error('Protected form submission failed:', error);
+        console.error('Form submission failed:', error);
         status.className = 'form-status error';
         status.textContent = form.dataset.error;
       } finally {
@@ -273,7 +273,57 @@
     });
   }
 
+  function setupRepairPrompt() {
+    const prompt = document.querySelector('[data-repair-prompt]');
+    const openLink = document.querySelector('[data-repair-open]');
+    const dismissButton = document.querySelector('[data-repair-dismiss]');
+    if (!prompt || !openLink) return;
+    const dismissKey = 'graphicsrepair-repair-prompt-dismissed';
+    let revealTimer = null;
+
+    function dismissed() {
+      try { return sessionStorage.getItem(dismissKey) === '1'; } catch (error) { return false; }
+    }
+    function rememberDismissal() {
+      try { sessionStorage.setItem(dismissKey, '1'); } catch (error) {}
+    }
+    function removeTriggers() {
+      if (revealTimer !== null) window.clearTimeout(revealTimer);
+      revealTimer = null;
+      window.removeEventListener('scroll', checkScrollProgress);
+    }
+    function reveal() {
+      if (dismissed()) return;
+      if (document.visibilityState === 'hidden') {
+        document.addEventListener('visibilitychange', reveal, { once: true });
+        return;
+      }
+      removeTriggers();
+      prompt.hidden = false;
+      window.requestAnimationFrame(function () { prompt.classList.add('is-visible'); });
+    }
+    function checkScrollProgress() {
+      const distance = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
+      if (distance && Math.max(window.scrollY, document.documentElement.scrollTop, 0) / distance >= 1 / 3) reveal();
+    }
+    function dismiss() {
+      rememberDismissal();
+      removeTriggers();
+      prompt.classList.remove('is-visible');
+      window.setTimeout(function () { prompt.hidden = true; }, 250);
+    }
+
+    openLink.addEventListener('click', dismiss);
+    if (dismissButton) dismissButton.addEventListener('click', dismiss);
+    if (!dismissed()) {
+      revealTimer = window.setTimeout(reveal, 35000);
+      window.addEventListener('scroll', checkScrollProgress, { passive: true });
+      checkScrollProgress();
+    }
+  }
+
   setupMenu();
   setupLanguages();
   setupForm();
+  setupRepairPrompt();
 }());

@@ -125,8 +125,12 @@ def validate_site() -> None:
             )
         assert 'name="country"' not in source
         assert 'placeholder="e.g. ASUS TUF RTX 3080 10GB"' not in source
-        assert '<div class="honeypot" inert>' in source
-        assert 'class="honeypot" aria-hidden=' not in source
+        assert '<div class="auxiliary-field" inert>' in source
+        assert 'data-repair-prompt hidden' in source
+        assert 'data-repair-dismiss' in source
+        assert 'name="accept_terms" type="checkbox" required' in source
+        assert 'href="/privacy/" target="_blank" rel="noopener"' in source
+        assert 'href="/terms/" target="_blank" rel="noopener"' in source
         assert all(attrs.get("type") for name, attrs in parser.tags if name == "input")
         assert 'srcset="' in source and "gpu-repair-480.webp 480w" in source and "gpu-repair-720.webp 720w" in source
         for fragment in ("faults", "process", "gpu-certification", "contact"):
@@ -167,6 +171,9 @@ def validate_site() -> None:
     assert "nvidia · amd · intel" not in english
     assert "nvidia · amd</small>" in english
     assert "country where the card is located and will be returned" in english
+    assert "i&#x27;ve been provided the time to review, and i accept, the" in english
+    assert "send protected request" not in english
+    assert "protected by a time delay" not in english
     assert "international mail-in details" in english
     assert "shipping, customs, duties, taxes, brokerage, insurance and return costs" in english
     for stale_claim in (
@@ -205,8 +212,11 @@ def validate_site() -> None:
     js = (SITE / "assets/site.js").read_text(encoding="utf-8")
     for country in COUNTRIES:
         assert re.search(rf"\b{country}: \{{ code:", js), f"Missing phone rule for {country}"
-    for protection in ("form-proof", "form_proof_token", "form_proof_counter", "leadingZeros", "website", "start_time"):
-        assert protection in js
+    for submission_contract in ("form-proof", "form_proof_token", "form_proof_counter", "website", "start_time"):
+        assert submission_contract in js
+    for local_name in ("prepareSubmission", "submissionBinding", "meetsTarget", "setupRepairPrompt"):
+        assert local_name in js
+    assert "Protected form submission" not in js
     assert "document.cookie" not in js
     assert "sendBeacon" not in js
     assert "forms.motherboardrepair.ca/api/submit" in js
@@ -237,6 +247,7 @@ def validate_site() -> None:
     assert ".form-row { display: grid; grid-template-columns: 1fr 1fr; align-items: start;" in css
     assert '.repair-form input:not([type="checkbox"]), .repair-form select { min-height: 48px; }' in css
     assert "#faults, #process, #gpu-certification, #contact { scroll-margin-block-start: 7rem; }" in css
+    assert "@keyframes repair-prompt-shimmer" in css
 
     for legal_kind in ("privacy", "terms"):
         legal_parser, legal_source = parse(SITE / legal_kind / "index.html")
@@ -274,15 +285,15 @@ def validate_site() -> None:
 
     privacy = (SITE / "privacy" / "index.html").read_text(encoding="utf-8").lower()
     for disclosure in (
-        "no form text is sent to analytics", "do not run advertising analytics", "session replay",
-        "authoritative dns only", "does not proxy page requests", "cloudflare", "github", "selected intake method",
+        "do not run advertising analytics", "session replay", "cloudflare", "github", "selected intake method",
         "phone validation profile", "page language", "local storage",
         "selected text-message reply language",
         "return country", "ownership or owner-authorization confirmation",
         "international-mail-in status", "cross-border shipping costs",
-        "browser network-error reports do not contain the form body",
     ):
         assert disclosure in privacy
+    for exposed_implementation in ("honeypot", "minimum completion time", "rate limiting", "proof-of-work", "protected form processing"):
+        assert exposed_implementation not in privacy
 
     deploy = (ROOT / ".github/workflows/deploy.yml").read_text(encoding="utf-8")
     build_workflow = (ROOT / ".github/workflows/build-and-test.yml").read_text(encoding="utf-8")
@@ -314,5 +325,5 @@ if __name__ == "__main__":
     test_production_artifact()
     print("✓ distinct GPU production artifact")
     print("✓ six approved locales and hreflang graph")
-    print("✓ protected country-aware form")
+    print("✓ country-aware repair form")
     print("✓ cookie-free, replay-free metrics posture")

@@ -155,6 +155,10 @@
   }
 
   function clean(value, max) { return String(value || '').replace(/[<>\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max); }
+  function normalizeSiteLanguage(value) {
+    const normalized = String(value || '').trim().replace(/_/g, '-');
+    return /^(?:fr|fr-ca)$/i.test(normalized) ? 'fr-CA' : normalized;
+  }
   function setupMailingFields(form) {
     const serviceType = form.elements.service_type;
     const fields = form.querySelector('#mailing-fields');
@@ -162,6 +166,7 @@
     const address = form.elements.mailing_address;
     const unitNumber = form.elements.unit_number;
     const returnCountry = form.elements.return_country;
+    const province = form.elements.province;
     const ownershipConfirmed = form.elements.ownership_confirmed;
     const shippingAcknowledged = form.elements.international_shipping_ack;
     function update() {
@@ -173,6 +178,8 @@
       unitNumber.disabled = !mailIn;
       returnCountry.required = mailIn;
       returnCountry.disabled = !mailIn;
+      province.required = mailIn;
+      province.disabled = !mailIn;
       internationalFields.hidden = !international;
       ownershipConfirmed.required = Boolean(international);
       ownershipConfirmed.disabled = !international;
@@ -182,6 +189,7 @@
         address.value = '';
         unitNumber.value = '';
         returnCountry.value = '';
+        province.value = '';
       }
       if (!international) {
         ownershipConfirmed.checked = false;
@@ -192,6 +200,59 @@
     returnCountry.addEventListener('change', update);
     update();
     return update;
+  }
+  function buildLeadPayload(form, phoneSetup, siteLanguage) {
+    const message = form.elements.message.value;
+    const model = clean(form.elements.model.value, 160);
+    const requestType = form.elements.request_type.value;
+    const serviceType = form.elements.service_type.value;
+    const mailIn = serviceType === 'Mail-In';
+    const mailingAddress = mailIn ? clean(form.elements.mailing_address.value, 300) : '';
+    const unitNumber = mailIn ? clean(form.elements.unit_number.value, 30) : '';
+    const returnCountry = mailIn ? clean(form.elements.return_country.value, 10) : '';
+    const province = mailIn ? clean(form.elements.province.value, 100) : '';
+    const internationalMailIn = Boolean(mailIn && returnCountry && returnCountry !== 'CA');
+    const ownershipConfirmed = internationalMailIn && form.elements.ownership_confirmed.checked;
+    const shippingAcknowledged = internationalMailIn && form.elements.international_shipping_ack.checked;
+    const replyPreference = form.elements.english_support_preference;
+    return {
+      name: clean(form.elements.name.value, 100),
+      email: clean(form.elements.email.value, 254),
+      phone: phoneSetup.e164(),
+      company: '',
+      message: message,
+      form_id: 'graphics_card_repair_quote',
+      website: form.elements.website.value,
+      start_time: Number(form.elements.start_time.value),
+      extra_fields: {
+        phone_validation_profile: phoneSetup.profile(),
+        graphics_card_model: model,
+        request_type: requestType,
+        service_type: serviceType,
+        mailing_address: mailingAddress || undefined,
+        unit_number: unitNumber || undefined,
+        province: province || undefined,
+        country: returnCountry || undefined,
+        return_country: returnCountry || undefined,
+        international_mail_in: internationalMailIn,
+        ownership_confirmed: ownershipConfirmed || undefined,
+        international_shipping_ack: shippingAcknowledged || undefined,
+        site_language: normalizeSiteLanguage(siteLanguage),
+        english_support_preference: replyPreference ? replyPreference.value : undefined,
+        accepted_privacy_and_terms: true,
+        source_site: 'graphicsrepair.ca'
+      }
+    };
+  }
+  async function sendLeadPayload(payload, submissionCredentials, fetchImplementation) {
+    const response = await fetchImplementation(FORM_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(Object.assign({}, payload, submissionCredentials))
+    });
+    const result = await response.json().catch(function () { return {}; });
+    if (!response.ok) throw new Error(result.error || 'Submission failed.');
+    return result;
   }
   function setupForm() {
     const form = document.querySelector('#repair-form');
@@ -207,56 +268,10 @@
       button.disabled = true;
       status.className = 'form-status';
       status.textContent = form.dataset.sending;
-      const message = clean(form.elements.message.value, 1000);
-      const model = clean(form.elements.model.value, 160);
-      const requestType = form.elements.request_type.value;
-      const serviceType = form.elements.service_type.value;
-      const mailingAddress = serviceType === 'Mail-In' ? clean(form.elements.mailing_address.value, 300) : '';
-      const unitNumber = serviceType === 'Mail-In' ? clean(form.elements.unit_number.value, 30) : '';
-      const returnCountry = serviceType === 'Mail-In' ? clean(form.elements.return_country.value, 10) : '';
-      const internationalMailIn = serviceType === 'Mail-In' && returnCountry && returnCountry !== 'CA';
-      const ownershipConfirmed = internationalMailIn && form.elements.ownership_confirmed.checked;
-      const shippingAcknowledged = internationalMailIn && form.elements.international_shipping_ack.checked;
-      const replyPreference = form.elements.english_support_preference;
-      const messageParts = [
-        'Graphics card: ' + model,
-        'Request type: ' + requestType,
-        'Intake method: ' + serviceType,
-        returnCountry ? 'Return country: ' + returnCountry : '',
-        mailingAddress ? 'Return address: ' + mailingAddress + (unitNumber ? ', ' + unitNumber : '') : '',
-        ownershipConfirmed ? 'Ownership or owner authorization: confirmed' : '',
-        shippingAcknowledged ? 'International shipping and cross-border costs: accepted' : ''
-      ].filter(Boolean);
-      messageParts.push('', 'Request details: ' + message);
-      const payload = {
-        name: clean(form.elements.name.value, 100),
-        email: clean(form.elements.email.value, 254),
-        phone: phoneSetup.e164(),
-        company: '',
-        message: messageParts.join('\n'),
-        form_id: 'graphics_card_repair_quote',
-        website: form.elements.website.value,
-        start_time: Number(form.elements.start_time.value),
-        extra_fields: {
-          phone_validation_profile: phoneSetup.profile(),
-          graphics_card_model: model,
-          request_type: requestType,
-          service_type: serviceType,
-          return_country: returnCountry || undefined,
-          international_mail_in: Boolean(internationalMailIn),
-          ownership_confirmed: ownershipConfirmed || undefined,
-          international_shipping_ack: shippingAcknowledged || undefined,
-          site_language: document.documentElement.lang,
-          english_support_preference: replyPreference ? replyPreference.value : undefined,
-          accepted_privacy_and_terms: true,
-          source_site: 'graphicsrepair.ca'
-        }
-      };
+      const payload = buildLeadPayload(form, phoneSetup, document.documentElement.lang);
       try {
         const submissionCredentials = await prepareSubmission(payload);
-        const response = await fetch(FORM_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(Object.assign(payload, submissionCredentials)) });
-        const result = await response.json().catch(function () { return {}; });
-        if (!response.ok) throw new Error(result.error || 'Submission failed.');
+        await sendLeadPayload(payload, submissionCredentials, fetch);
         form.reset();
         form.elements.start_time.value = String(Math.floor(Date.now() / 1000));
         phoneSetup.update();
@@ -322,8 +337,13 @@
     }
   }
 
-  setupMenu();
-  setupLanguages();
-  setupForm();
-  setupRepairPrompt();
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { buildLeadPayload: buildLeadPayload, normalizeSiteLanguage: normalizeSiteLanguage, sendLeadPayload: sendLeadPayload };
+  }
+  if (typeof document !== 'undefined') {
+    setupMenu();
+    setupLanguages();
+    setupForm();
+    setupRepairPrompt();
+  }
 }());

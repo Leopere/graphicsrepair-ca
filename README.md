@@ -9,6 +9,7 @@ The production artifact is generated into `_site/`. It contains only the GPU-foc
 ```bash
 python3 build_graphics_site.py --check
 node --check site/assets/site.js
+node --test tests/test_lead_payload.js
 python3 tests/test_graphics_site.py
 ```
 

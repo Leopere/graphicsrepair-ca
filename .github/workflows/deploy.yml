@@ -47,3 +47,4 @@ jobs:
           python-version: "3.12"
       - run: python3 build_graphics_site.py --check
       - run: node --check site/assets/site.js
+      - run: node --test tests/test_lead_payload.js

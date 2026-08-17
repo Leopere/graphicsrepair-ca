@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "_site"
-LOCALES = {"en": "en-CA", "fr": "fr-FR", "es": "es-419", "vi": "vi-VN", "ar": "ar", "ja": "ja-JP"}
+LOCALES = {"en": "en-CA", "fr": "fr-CA", "es": "es-419", "vi": "vi-VN", "ar": "ar", "ja": "ja-JP"}
 COUNTRIES = {"CA", "FR", "ES", "VN", "SA", "MX", "JP", "CO", "EG", "MA"}
 
 
@@ -90,7 +90,7 @@ def validate_site() -> None:
         for field_name in (
             "name", "email", "phone", "model",
             "request_type", "message", "service_type", "mailing_address",
-            "unit_number", "return_country", "ownership_confirmed",
+            "unit_number", "return_country", "province", "ownership_confirmed",
             "international_shipping_ack", "accept_terms",
         ):
             assert re.search(rf'name="{field_name}"', source), f"{path} is missing form field {field_name}"
@@ -106,6 +106,7 @@ def validate_site() -> None:
         assert 'autocomplete="country-name"' in source
         assert 'name="mailing_address" rows="3" maxlength="300" autocomplete="street-address" aria-describedby="address-hint" disabled' in source
         assert 'name="unit_number" type="text" maxlength="30" autocomplete="address-line2" disabled' in source
+        assert 'name="province" type="text" maxlength="100" autocomplete="address-level1" disabled' in source
         assert 'role="group" aria-labelledby="international-title" hidden' in source
         assert 'name="ownership_confirmed" type="checkbox" value="confirmed" disabled' in source
         assert 'name="international_shipping_ack" type="checkbox" value="accepted" disabled' in source
@@ -222,17 +223,17 @@ def validate_site() -> None:
     assert "forms.motherboardrepair.ca/api/submit" in js
     for intake_contract in (
         "setupMailingFields", "setupPhone", "address.required = mailIn",
-        "request_type", "mailing_address", "unit_number", "Graphics card:",
-        "Request details:", "digits.startsWith('1') ? 'CA'", "phoneSetup.profile()",
+        "request_type", "mailing_address", "unit_number", "buildLeadPayload", "sendLeadPayload",
+        "normalizeSiteLanguage", "digits.startsWith('1') ? 'CA'", "phoneSetup.profile()",
         "english_support_preference", "replyPreference ? replyPreference.value : undefined",
         "returnCountry.required = mailIn", "returnCountry.disabled = !mailIn",
+        "province.required = mailIn", "province.disabled = !mailIn",
         "address.disabled = !mailIn", "unitNumber.disabled = !mailIn",
         "returnCountry.value !== 'CA'", "internationalFields.hidden = !international",
         "ownershipConfirmed.required = Boolean(international)",
         "shippingAcknowledged.required = Boolean(international)",
-        "Return country:", "Ownership or owner authorization: confirmed",
-        "International shipping and cross-border costs: accepted",
-        "return_country: returnCountry || undefined", "international_mail_in: Boolean(internationalMailIn)",
+        "province: province || undefined", "country: returnCountry || undefined",
+        "return_country: returnCountry || undefined", "international_mail_in: internationalMailIn",
         "country = match || 'INTL'", "detected === 'INTL'", "^[1-9]\\d{6,14}$",
         "return '+' + phone.value.replace(/\\D/g, '').slice(0, 15)",
     ):
@@ -240,8 +241,10 @@ def validate_site() -> None:
     assert "serial" not in js.lower()
     assert "phone.setCustomValidity(valid ? '' : phone.dataset.error)" in js
     assert "form.dataset.error + ' ('" not in js
-    assert "mailing_address: mailingAddress" not in js
-    assert "unit_number: unitNumber" not in js
+    assert "message: message" in js
+    assert "messageParts" not in js
+    assert "mailing_address: mailingAddress || undefined" in js
+    assert "unit_number: unitNumber || undefined" in js
 
     css = (SITE / "assets/style.css").read_text(encoding="utf-8")
     assert ".form-row { display: grid; grid-template-columns: 1fr 1fr; align-items: start;" in css
@@ -288,7 +291,7 @@ def validate_site() -> None:
         "do not run advertising analytics", "session replay", "cloudflare", "github", "selected intake method",
         "phone validation profile", "page language", "local storage",
         "selected text-message reply language",
-        "return country", "ownership or owner-authorization confirmation",
+        "return country", "province, state or region", "ownership or owner-authorization confirmation",
         "international-mail-in status", "cross-border shipping costs",
     ):
         assert disclosure in privacy
@@ -305,6 +308,8 @@ def validate_site() -> None:
     assert deploy.count("pages: write") == 1
     assert deploy.count("id-token: write") == 1
     assert "node --check site/assets/site.js" in deploy
+    assert "node --test tests/test_lead_payload.js" in deploy
+    assert "node --test tests/test_lead_payload.js" in build_workflow
 
     sitemap = ET.parse(SITE / "sitemap.xml").getroot()
     namespace = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}

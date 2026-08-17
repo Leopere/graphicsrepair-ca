@@ -21,3 +21,5 @@ jobs:
         run: python3 build_graphics_site.py --check
       - name: JavaScript syntax check
         run: node --check site/assets/site.js
+      - name: Lead payload contract tests
+        run: node --test tests/test_lead_payload.js

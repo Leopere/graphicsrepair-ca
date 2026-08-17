@@ -32,6 +32,7 @@
 # Keep only the focused production test.
 /tests/*
 !/tests/test_graphics_site.py
+!/tests/test_lead_payload.js
 
 # Local noise
 **/__pycache__/

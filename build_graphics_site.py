@@ -15,7 +15,7 @@ SOURCE = ROOT / "site"
 OUTPUT = ROOT / "_site"
 DOMAIN = "https://graphicsrepair.ca"
 LOCALE_ORDER = ("en", "fr", "es", "vi", "ar", "ja")
-HREFLANG = {"en": "en-CA", "fr": "fr-FR", "es": "es-419", "vi": "vi-VN", "ar": "ar", "ja": "ja-JP"}
+HREFLANG = {"en": "en-CA", "fr": "fr-CA", "es": "es-419", "vi": "vi-VN", "ar": "ar", "ja": "ja-JP"}
 LEGAL_REVIEWED_DATE = "2026-08-08"
 
 content_spec = importlib.util.spec_from_file_location("graphics_site_content", SOURCE / "content.py")
@@ -194,6 +194,7 @@ def render_index(locale: str) -> str:
         <label>{esc(f['intake'])}<select name="service_type" id="service_type" required aria-describedby="intake-hint"><option value="">{esc(f['choose'])}</option><option value="In-Person">{esc(f['dropoff'])}</option><option value="Mail-In">{esc(f['mailin'])}</option></select><small id="intake-hint" class="form-hint">{esc(f['intake_hint'])}</small></label>
         <div id="mailing-fields" class="conditional-fields" hidden>
           <label>{esc(f['return_country'])}<select name="return_country" id="return_country" autocomplete="country-name" aria-describedby="country-hint" disabled><option value="">{esc(f['select_country'])}</option>{country_options}</select><small id="country-hint" class="form-hint">{esc(f['country_hint'])}</small></label>
+          <label>{esc(f['province_region'])}<input name="province" type="text" maxlength="100" autocomplete="address-level1" disabled></label>
           <label>{esc(f['address'])}<textarea name="mailing_address" rows="3" maxlength="300" autocomplete="street-address" aria-describedby="address-hint" disabled></textarea><small id="address-hint" class="form-hint">{esc(f['address_hint'])}</small></label>
           <label>{esc(f['unit'])}<input name="unit_number" type="text" maxlength="30" autocomplete="address-line2" disabled></label>
           <div id="international-mailing-fields" class="conditional-fields conditional-fields-nested" role="group" aria-labelledby="international-title" hidden>
@@ -218,7 +219,7 @@ def render_legal(kind: str) -> str:
         title = "Privacy Policy"
         description = "How Graphics Repair Canada handles contact information, repair details, hosting metrics and service records."
         body = """
-        <h2>Information we collect</h2><p>When you submit the repair form, we receive the name, email, phone number and validation profile, card manufacturer and model, request type, symptoms and prior-work history you provide. For a mail-in request, we also receive the return country, return address and optional unit number you provide. For an international mail-in request, we receive your ownership or owner-authorization confirmation and your acknowledgement of cross-border shipping costs and instructions. We use this information to assess, communicate about and, if accepted, deliver the requested service. We do not ask for the card serial number.</p>
+        <h2>Information we collect</h2><p>When you submit the repair form, we receive the name, email, phone number and validation profile, card manufacturer and model, request type, symptoms and prior-work history you provide. For a mail-in request, we also receive the return country, province, state or region, return address and optional unit number you provide. For an international mail-in request, we receive your ownership or owner-authorization confirmation and your acknowledgement of cross-border shipping costs and instructions. We use this information to assess, communicate about and, if accepted, deliver the requested service. We do not ask for the card serial number.</p>
         <h2>Form processing</h2><p>The form is sent to MRC's form service at forms.motherboardrepair.ca. Along with the fields shown, it sends the selected intake method, phone validation profile, international-mail-in status, page language, selected text-message reply language, consent confirmation and source site. Do not include passwords, payment-card numbers or unrelated sensitive information.</p>
         <h2>Language preference</h2><p>If you choose a language, the site stores that language code in your browser's local storage so it can open the same translation on a later visit. It is not a tracking identifier and is not sent with analytics.</p>
         <h2>Website operation</h2><p>We do not run advertising analytics, session replay, fingerprinting or a client-side analytics script. GitHub Pages delivers the site and may temporarily process IP addresses, browser details, requested paths and timestamps in ordinary hosting logs. Cloudflare provides authoritative DNS for this site and processes requests sent to the separate form service.</p>

@@ -34,7 +34,7 @@ Treat `leadform` and Woodpecker references as legacy context. New runtime servic
 
 ## Metrics boundary
 
-The Notomo admin API has a distinct `graphicsrepair.ca` property. Do not reuse the motherboard site ID `2`. No Notomo browser snippet is installed: an API-created property has no public host allowlist until it is added to Notomo's checked-in fleet map, and Notomo replay can record literal form values. No web-analytics integration is active.
+Notomo uses the dedicated property ID `graphicsrepair.ca`; never reuse the motherboard site ID `2`. The checked-in Notomo fleet map must allow `graphicsrepair.ca` and `www.graphicsrepair.ca`. Keep `replay_enabled` set to `true`, `replay_sample_rate` set to `1` and literal input recording enabled. Before and after deployment, confirm `https://notomo.colinknapp.com/n-config/graphicsrepair.ca` matches that full-capture policy. The browser snippet reports pageviews, technical errors and complete session replay, including literal repair-form values.
 
 Cloudflare is authoritative DNS only. Apex and `www` must have `proxied: false`; this keeps the WAF, edge HTML rewriting and automatic Web Analytics beacon out of the HTTP path. Validate browser-facing HTML contains no `static.cloudflareinsights.com` script. Do not relax the CSP to admit a beacon.
 

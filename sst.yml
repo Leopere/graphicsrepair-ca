@@ -179,9 +179,11 @@ defaults:
       - "motherboardrepair.ca"
       - "graphicsrepair.ca"
       - "schema.org"
+      - "notomo.colinknapp.com"
 
   tracking:
-    services: []
+    services:
+      - "notomo"
 
   ignores:
     files:

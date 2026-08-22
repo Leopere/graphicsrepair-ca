@@ -14,9 +14,12 @@ ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "site"
 OUTPUT = ROOT / "_site"
 DOMAIN = "https://graphicsrepair.ca"
+NOTOMO_ORIGIN = "https://notomo.colinknapp.com"
+NOTOMO_SITE_ID = "graphicsrepair.ca"
+NOTOMO_INTEGRITY = "sha384-GiIsHAJaGiskGKXhsyXkx3GTzdrk1Y6rTl2rbQobHlSCZ/KptHaXC4/UGy88UNB4"
 LOCALE_ORDER = ("en", "fr", "es", "vi", "ar", "ja")
 HREFLANG = {"en": "en-CA", "fr": "fr-CA", "es": "es-419", "vi": "vi-VN", "ar": "ar", "ja": "ja-JP"}
-LEGAL_REVIEWED_DATE = "2026-08-08"
+LEGAL_REVIEWED_DATE = "2026-08-22"
 
 content_spec = importlib.util.spec_from_file_location("graphics_site_content", SOURCE / "content.py")
 if content_spec is None or content_spec.loader is None:
@@ -30,6 +33,13 @@ UI_COPY = content_module.UI_COPY
 
 def esc(value: object) -> str:
     return html.escape(str(value), quote=True)
+
+
+def notomo_script() -> str:
+    return (
+        f'<script async src="{NOTOMO_ORIGIN}/n.js" data-site-id="{NOTOMO_SITE_ID}" '
+        f'integrity="{NOTOMO_INTEGRITY}" crossorigin="anonymous"></script>'
+    )
 
 
 def locale_path(locale: str) -> str:
@@ -150,7 +160,7 @@ def render_index(locale: str) -> str:
   <meta name="description" content="{esc(c['description'])}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src https://forms.motherboardrepair.ca; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src https://forms.motherboardrepair.ca {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_ORIGIN}/n-config/{NOTOMO_SITE_ID}; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
   <title>{esc(c['title'])}</title>
   <link rel="canonical" href="{canonical}">
   {alternates()}
@@ -159,6 +169,7 @@ def render_index(locale: str) -> str:
   <link rel="stylesheet" href="{prefix}assets/style.css">
   <link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml">
   <script type="application/ld+json">{json.dumps(schema, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')}</script>
+  {notomo_script()}
   <script src="{prefix}assets/site.js" defer></script>
 </head>
 <body data-locale="{locale}" data-default-country="{esc(c['country'])}">
@@ -221,8 +232,9 @@ def render_legal(kind: str) -> str:
         body = """
         <h2>Information we collect</h2><p>When you submit the repair form, we receive the name, email, phone number and validation profile, card manufacturer and model, request type, symptoms and prior-work history you provide. For a mail-in request, we also receive the return country, province, state or region, return address and optional unit number you provide. For an international mail-in request, we receive your ownership or owner-authorization confirmation and your acknowledgement of cross-border shipping costs and instructions. We use this information to assess, communicate about and, if accepted, deliver the requested service. We do not ask for the card serial number.</p>
         <h2>Form processing</h2><p>The form is sent to MRC's form service at forms.motherboardrepair.ca. Along with the fields shown, it sends the selected intake method, phone validation profile, international-mail-in status, page language, selected text-message reply language, consent confirmation and source site. Do not include passwords, payment-card numbers or unrelated sensitive information.</p>
-        <h2>Language preference</h2><p>If you choose a language, the site stores that language code in your browser's local storage so it can open the same translation on a later visit. It is not a tracking identifier and is not sent with analytics.</p>
-        <h2>Website operation</h2><p>We do not run advertising analytics, session replay, fingerprinting or a client-side analytics script. GitHub Pages delivers the site and may temporarily process IP addresses, browser details, requested paths and timestamps in ordinary hosting logs. Cloudflare provides authoritative DNS for this site and processes requests sent to the separate form service.</p>
+        <h2>Language preference</h2><p>If you choose a language, the site stores that language code in your browser's local storage so it can open the same translation on a later visit. It is not sent with analytics.</p>
+        <h2>Website analytics and session replay</h2><p>We use our self-hosted Notomo service to understand page visits, navigation, visit duration, browser errors and how people use the site. Notomo stores random visitor and session identifiers in local and session storage. It receives the page path without query or fragment details, the referring path, page title, campaign tags, screen and viewport size, visit duration and technical error details. Notomo also records page contents and your interactions as a session replay. This recording includes literal text entered into website fields as you type, including repair-form fields before you submit the form. Do not enter passwords, payment-card numbers or unrelated sensitive information. We do not use advertising analytics or fingerprinting.</p>
+        <h2>Website operation</h2><p>GitHub Pages delivers the site and may temporarily process IP addresses, browser details, requested paths and timestamps in ordinary hosting logs. Cloudflare provides authoritative DNS for this site and processes requests sent to the separate form service.</p>
         <h2>Privacy questions</h2><p>Use the contact form to ask MRC a privacy question. Do not send unrelated sensitive information through the form.</p>
         """
     else:
@@ -236,13 +248,13 @@ def render_legal(kind: str) -> str:
         """
     prefix = "../"
     canonical = f"{DOMAIN}/{kind}/"
-    return f"""<!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="index,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'"><title>{title} | Graphics Repair Canada</title><link rel="canonical" href="{canonical}"><link rel="stylesheet" href="{prefix}assets/style.css"><link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml"><script src="{prefix}assets/site.js" defer></script></head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en', asset_prefix=prefix, anchor_prefix='/')}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC · Updated {LEGAL_REVIEWED_DATE}</p><h1>{title}</h1><p class="lede">{description}</p>{body}<p><a class="button" href="/#contact">Start a repair</a></p></div></section></main>{footer(LOCALES['en'], 'en', asset_prefix=prefix)}</body></html>"""
+    return f"""<!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="index,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_ORIGIN}/n-config/{NOTOMO_SITE_ID}; object-src 'none'; base-uri 'self'"><title>{title} | Graphics Repair Canada</title><link rel="canonical" href="{canonical}"><link rel="stylesheet" href="{prefix}assets/style.css"><link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml">{notomo_script()}<script src="{prefix}assets/site.js" defer></script></head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en', asset_prefix=prefix, anchor_prefix='/')}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC · Updated {LEGAL_REVIEWED_DATE}</p><h1>{title}</h1><p class="lede">{description}</p>{body}<p><a class="button" href="/#contact">Start a repair</a></p></div></section></main>{footer(LOCALES['en'], 'en', asset_prefix=prefix)}</body></html>"""
 
 
 def render_not_found() -> str:
     title = "Page not found"
     description = "The requested page does not exist. Return to the Graphics Repair Canada home page."
-    return f"""<!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="noindex,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'"><title>{title} | Graphics Repair Canada</title><link rel="stylesheet" href="/assets/style.css"><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"><script src="/assets/site.js" defer></script></head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en', asset_prefix='/', anchor_prefix='/')}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC</p><h1>{title}</h1><p class="lede">{description}</p><p><a class="button" href="/">Return home</a></p></div></section></main>{footer(LOCALES['en'], 'en', asset_prefix='/')}</body></html>"""
+    return f"""<!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="noindex,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_ORIGIN}/n-config/{NOTOMO_SITE_ID}; object-src 'none'; base-uri 'self'"><title>{title} | Graphics Repair Canada</title><link rel="stylesheet" href="/assets/style.css"><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">{notomo_script()}<script src="/assets/site.js" defer></script></head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en', asset_prefix='/', anchor_prefix='/')}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC</p><h1>{title}</h1><p class="lede">{description}</p><p><a class="button" href="/">Return home</a></p></div></section></main>{footer(LOCALES['en'], 'en', asset_prefix='/')}</body></html>"""
 
 
 def build() -> None:

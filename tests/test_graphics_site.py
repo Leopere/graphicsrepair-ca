@@ -82,7 +82,13 @@ def validate_site() -> None:
         for required in ("mrc", "gpu", "50"):
             assert required in text, f"{path} is missing {required}"
         assert "session replay" not in source.lower()
-        assert "notomo" not in source.lower()
+        assert source.count('src="https://notomo.colinknapp.com/n.js"') == 1
+        assert source.count('data-site-id="graphicsrepair.ca"') == 1
+        assert 'data-site-id="2"' not in source
+        assert "script-src 'self' https://notomo.colinknapp.com/n.js" in source
+        assert "script-src 'self' https://notomo.colinknapp.com/n.js https://notomo.colinknapp.com/n-rrweb.js" in source
+        assert "connect-src https://forms.motherboardrepair.ca https://notomo.colinknapp.com/collect https://notomo.colinknapp.com/replay https://notomo.colinknapp.com/n-config/graphicsrepair.ca" in source
+        assert "sha384-GiIsHAJaGiskGKXhsyXkx3GTzdrk1Y6rTl2rbQobHlSCZ/KptHaXC4/UGy88UNB4" in source
         assert "google-analytics" not in source.lower()
         assert "googletagmanager" not in source.lower()
         assert "plausible" not in source.lower()
@@ -150,7 +156,7 @@ def validate_site() -> None:
                 parsed = urlparse(target)
                 if parsed.scheme:
                     assert parsed.scheme == "https"
-                    assert parsed.netloc in {"graphicsrepair.ca", "motherboardrepair.ca"}
+                    assert parsed.netloc in {"graphicsrepair.ca", "motherboardrepair.ca", "notomo.colinknapp.com"}
 
     english = (SITE / "index.html").read_text(encoding="utf-8").lower()
     assert "mrc repairs desktop graphics cards at board level and checks used gpus" in english
@@ -221,6 +227,8 @@ def validate_site() -> None:
     assert "document.cookie" not in js
     assert "sendBeacon" not in js
     assert "forms.motherboardrepair.ca/api/submit" in js
+    assert "result.error || 'Submission failed.'" in js
+    assert "console.error('Form submission failed:', error)" in js
     for intake_contract in (
         "setupMailingFields", "setupPhone", "address.required = mailIn",
         "request_type", "mailing_address", "unit_number", "buildLeadPayload", "sendLeadPayload",
@@ -256,7 +264,7 @@ def validate_site() -> None:
         legal_parser, legal_source = parse(SITE / legal_kind / "index.html")
         legal_canonical = [attrs.get("href") for name, attrs in legal_parser.tags if name == "link" and attrs.get("rel") == "canonical"]
         assert legal_canonical == [f"https://graphicsrepair.ca/{legal_kind}/"]
-        assert "MRC · Updated 2026-08-08" in legal_source
+        assert "MRC · Updated 2026-08-22" in legal_source
         assert f'href="/{legal_kind}/"' in legal_source
         assert 'href="../assets/style.css"' in legal_source
         assert 'src="../assets/mrc-logo-white.svg"' in legal_source
@@ -285,16 +293,28 @@ def validate_site() -> None:
     for fragment in ("faults", "process", "gpu-certification", "contact"):
         assert f'href="/#{fragment}"' in not_found
     assert "Information we collect" not in not_found
+    assert not_found.count('src="https://notomo.colinknapp.com/n.js"') == 1
+    assert 'data-site-id="graphicsrepair.ca"' in not_found
+    assert "script-src 'self' https://notomo.colinknapp.com/n.js" in not_found
+    assert "https://notomo.colinknapp.com/n-rrweb.js" in not_found
 
     privacy = (SITE / "privacy" / "index.html").read_text(encoding="utf-8").lower()
     for disclosure in (
-        "do not run advertising analytics", "session replay", "cloudflare", "github", "selected intake method",
+        "self-hosted notomo", "random visitor and session identifiers", "session replay",
+        "literal text entered into website fields as you type", "before you submit the form",
+        "cloudflare", "github", "selected intake method",
         "phone validation profile", "page language", "local storage",
         "selected text-message reply language",
         "return country", "province, state or region", "ownership or owner-authorization confirmation",
         "international-mail-in status", "cross-border shipping costs",
     ):
         assert disclosure in privacy
+    for legal_kind in ("privacy", "terms"):
+        legal_source = (SITE / legal_kind / "index.html").read_text(encoding="utf-8")
+        assert legal_source.count('src="https://notomo.colinknapp.com/n.js"') == 1
+        assert 'data-site-id="graphicsrepair.ca"' in legal_source
+        assert "script-src 'self' https://notomo.colinknapp.com/n.js" in legal_source
+        assert "https://notomo.colinknapp.com/n-rrweb.js" in legal_source
     for exposed_implementation in ("honeypot", "minimum completion time", "rate limiting", "proof-of-work", "protected form processing"):
         assert exposed_implementation not in privacy
 
@@ -331,4 +351,4 @@ if __name__ == "__main__":
     print("✓ distinct GPU production artifact")
     print("✓ six approved locales and hreflang graph")
     print("✓ country-aware repair form")
-    print("✓ cookie-free, replay-free metrics posture")
+    print("✓ dedicated full-capture Notomo posture")

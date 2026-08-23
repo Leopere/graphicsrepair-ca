@@ -1,9 +1,6 @@
 (function () {
   'use strict';
 
-  const FORM_URL = 'https://forms.motherboardrepair.ca/api/submit';
-  const SUBMISSION_SETUP_URL = 'https://forms.motherboardrepair.ca/api/form-proof';
-  const encoder = new TextEncoder();
   const phoneRules = {
     CA: { code: '1', trunk: false, pattern: /^[2-9]\d{2}[2-9]\d{6}$/ },
     FR: { code: '33', trunk: true, pattern: /^[67]\d{8}$/ },
@@ -122,38 +119,6 @@
     };
   }
 
-  function stringValue(value) { return value === undefined || value === null ? '' : String(value); }
-  function submissionBinding(payload) {
-    return JSON.stringify(['mrc-form-proof-v1', stringValue(payload.form_id || payload.source), stringValue(payload.name || payload.full_name), stringValue(payload.email), stringValue(payload.phone || payload.phone_number), stringValue(payload.company), stringValue(payload.message || payload.notes), stringValue(payload.slack_profile)]);
-  }
-  async function digest(value) { return new Uint8Array(await crypto.subtle.digest('SHA-256', encoder.encode(value))); }
-  function base64url(bytes) {
-    let binary = '';
-    for (let offset = 0; offset < bytes.length; offset += 0x8000) binary += String.fromCharCode.apply(null, bytes.subarray(offset, offset + 0x8000));
-    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
-  }
-  function meetsTarget(bytes, bitCount) {
-    const whole = Math.floor(bitCount / 8);
-    for (let index = 0; index < whole; index += 1) if (bytes[index] !== 0) return false;
-    const rest = bitCount % 8;
-    return !rest || (bytes[whole] & (0xff << (8 - rest))) === 0;
-  }
-  async function prepareSubmission(payload) {
-    if (!crypto || !crypto.subtle) throw new Error('Submission is unavailable.');
-    const response = await fetch(SUBMISSION_SETUP_URL, { headers: { Accept: 'application/json' }, cache: 'no-store' });
-    const setupData = await response.json();
-    if (!response.ok || !setupData.challenge || !Number.isInteger(setupData.difficulty)) throw new Error(setupData.error || 'Submission setup is unavailable.');
-    const wait = Number(setupData.ready_at) - Date.now();
-    if (wait > 0) await new Promise(function (resolve) { setTimeout(resolve, wait); });
-    const binding = base64url(await digest(submissionBinding(payload)));
-    for (let counter = 0; counter <= 10000000; counter += 1) {
-      if (meetsTarget(await digest(setupData.challenge + '.' + binding + '.' + counter), setupData.difficulty)) {
-        return { form_proof_token: setupData.challenge, form_proof_counter: counter };
-      }
-    }
-    throw new Error('Submission setup could not be completed.');
-  }
-
   function clean(value, max) { return String(value || '').replace(/[<>\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max); }
   function normalizeSiteLanguage(value) {
     const normalized = String(value || '').trim().replace(/_/g, '-');
@@ -244,15 +209,11 @@
       }
     };
   }
-  async function sendLeadPayload(payload, submissionCredentials, fetchImplementation) {
-    const response = await fetchImplementation(FORM_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify(Object.assign({}, payload, submissionCredentials))
-    });
-    const result = await response.json().catch(function () { return {}; });
-    if (!response.ok) throw new Error(result.error || 'Submission failed.');
-    return result;
+  function submitLeadPayload(payload, contactForm) {
+    if (!contactForm || typeof contactForm.submitProtectedPayload !== 'function') {
+      return Promise.reject(new Error('Submission is unavailable.'));
+    }
+    return contactForm.submitProtectedPayload(payload);
   }
   function setupForm() {
     const form = document.querySelector('#repair-form');
@@ -270,8 +231,7 @@
       status.textContent = form.dataset.sending;
       const payload = buildLeadPayload(form, phoneSetup, document.documentElement.lang);
       try {
-        const submissionCredentials = await prepareSubmission(payload);
-        await sendLeadPayload(payload, submissionCredentials, fetch);
+        await submitLeadPayload(payload, window.ContactForm);
         form.reset();
         form.elements.start_time.value = String(Math.floor(Date.now() / 1000));
         phoneSetup.update();
@@ -338,7 +298,7 @@
   }
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { buildLeadPayload: buildLeadPayload, normalizeSiteLanguage: normalizeSiteLanguage, sendLeadPayload: sendLeadPayload };
+    module.exports = { buildLeadPayload: buildLeadPayload, normalizeSiteLanguage: normalizeSiteLanguage, submitLeadPayload: submitLeadPayload };
   }
   if (typeof document !== 'undefined') {
     setupMenu();

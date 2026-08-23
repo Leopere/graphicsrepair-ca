@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, ARM64, leopere, local]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -23,3 +23,7 @@ jobs:
         run: node --check site/assets/site.js
       - name: Lead payload contract tests
         run: node --test tests/test_lead_payload.js
+      - name: Install browser contract runtime
+        run: python3 -m pip install --disable-pip-version-check playwright==1.55.0
+      - name: WASM browser contract
+        run: python3 tests/test_wasm_browser.py

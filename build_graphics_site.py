@@ -17,6 +17,8 @@ DOMAIN = "https://graphicsrepair.ca"
 NOTOMO_ORIGIN = "https://notomo.colinknapp.com"
 NOTOMO_SITE_ID = "graphicsrepair.ca"
 NOTOMO_INTEGRITY = "sha384-GiIsHAJaGiskGKXhsyXkx3GTzdrk1Y6rTl2rbQobHlSCZ/KptHaXC4/UGy88UNB4"
+CONTACT_EMBED_SOURCE = SOURCE / "contact-embed"
+CONTACT_FALLBACK_SOURCE = SOURCE / "js/contact-form.min.js"
 LOCALE_ORDER = ("en", "fr", "es", "vi", "ar", "ja")
 HREFLANG = {"en": "en-CA", "fr": "fr-CA", "es": "es-419", "vi": "vi-VN", "ar": "ar", "ja": "ja-JP"}
 LEGAL_REVIEWED_DATE = "2026-08-22"
@@ -40,6 +42,10 @@ def notomo_script() -> str:
         f'<script async src="{NOTOMO_ORIGIN}/n.js" data-site-id="{NOTOMO_SITE_ID}" '
         f'integrity="{NOTOMO_INTEGRITY}" crossorigin="anonymous"></script>'
     )
+
+
+def contact_scripts() -> str:
+    return '<script src="/contact-embed/loader.js" defer></script>\n  <script src="/assets/site.js" defer></script>'
 
 
 def locale_path(locale: str) -> str:
@@ -160,7 +166,7 @@ def render_index(locale: str) -> str:
   <meta name="description" content="{esc(c['description'])}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src https://forms.motherboardrepair.ca {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_ORIGIN}/n-config/{NOTOMO_SITE_ID}; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self' 'wasm-unsafe-eval' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src 'self' https://forms.motherboardrepair.ca {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_ORIGIN}/n-config/{NOTOMO_SITE_ID}; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
   <title>{esc(c['title'])}</title>
   <link rel="canonical" href="{canonical}">
   {alternates()}
@@ -170,7 +176,7 @@ def render_index(locale: str) -> str:
   <link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml">
   <script type="application/ld+json">{json.dumps(schema, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')}</script>
   {notomo_script()}
-  <script src="{prefix}assets/site.js" defer></script>
+  {contact_scripts()}
 </head>
 <body data-locale="{locale}" data-default-country="{esc(c['country'])}">
 {header(c, locale)}
@@ -248,19 +254,27 @@ def render_legal(kind: str) -> str:
         """
     prefix = "../"
     canonical = f"{DOMAIN}/{kind}/"
-    return f"""<!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="index,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_ORIGIN}/n-config/{NOTOMO_SITE_ID}; object-src 'none'; base-uri 'self'"><title>{title} | Graphics Repair Canada</title><link rel="canonical" href="{canonical}"><link rel="stylesheet" href="{prefix}assets/style.css"><link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml">{notomo_script()}<script src="{prefix}assets/site.js" defer></script></head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en', asset_prefix=prefix, anchor_prefix='/')}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC · Updated {LEGAL_REVIEWED_DATE}</p><h1>{title}</h1><p class="lede">{description}</p>{body}<p><a class="button" href="/#contact">Start a repair</a></p></div></section></main>{footer(LOCALES['en'], 'en', asset_prefix=prefix)}</body></html>"""
+    return f"""<!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="index,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self' 'wasm-unsafe-eval' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_ORIGIN}/n-config/{NOTOMO_SITE_ID}; object-src 'none'; base-uri 'self'"><title>{title} | Graphics Repair Canada</title><link rel="canonical" href="{canonical}"><link rel="stylesheet" href="{prefix}assets/style.css"><link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml">{notomo_script()}{contact_scripts()}</head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en', asset_prefix=prefix, anchor_prefix='/')}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC · Updated {LEGAL_REVIEWED_DATE}</p><h1>{title}</h1><p class="lede">{description}</p>{body}<p><a class="button" href="/#contact">Start a repair</a></p></div></section></main>{footer(LOCALES['en'], 'en', asset_prefix=prefix)}</body></html>"""
 
 
 def render_not_found() -> str:
     title = "Page not found"
     description = "The requested page does not exist. Return to the Graphics Repair Canada home page."
-    return f"""<!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="noindex,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_ORIGIN}/n-config/{NOTOMO_SITE_ID}; object-src 'none'; base-uri 'self'"><title>{title} | Graphics Repair Canada</title><link rel="stylesheet" href="/assets/style.css"><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">{notomo_script()}<script src="/assets/site.js" defer></script></head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en', asset_prefix='/', anchor_prefix='/')}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC</p><h1>{title}</h1><p class="lede">{description}</p><p><a class="button" href="/">Return home</a></p></div></section></main>{footer(LOCALES['en'], 'en', asset_prefix='/')}</body></html>"""
+    return f"""<!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="noindex,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self' 'wasm-unsafe-eval' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_ORIGIN}/n-config/{NOTOMO_SITE_ID}; object-src 'none'; base-uri 'self'"><title>{title} | Graphics Repair Canada</title><link rel="stylesheet" href="/assets/style.css"><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">{notomo_script()}{contact_scripts()}</head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en', asset_prefix='/', anchor_prefix='/')}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC</p><h1>{title}</h1><p class="lede">{description}</p><p><a class="button" href="/">Return home</a></p></div></section></main>{footer(LOCALES['en'], 'en', asset_prefix='/')}</body></html>"""
 
 
 def build() -> None:
     if OUTPUT.exists():
         shutil.rmtree(OUTPUT)
     (OUTPUT / "assets").mkdir(parents=True)
+    contact_embed = OUTPUT / "contact-embed"
+    contact_embed.mkdir()
+    for source in CONTACT_EMBED_SOURCE.iterdir():
+        if source.is_file():
+            shutil.copy2(source, contact_embed / source.name)
+    fallback = OUTPUT / "js"
+    fallback.mkdir()
+    shutil.copy2(CONTACT_FALLBACK_SOURCE, fallback / "contact-form.min.js")
     for source in (SOURCE / "assets").iterdir():
         if source.is_file():
             shutil.copy2(source, OUTPUT / "assets" / source.name)
@@ -277,6 +291,10 @@ def build() -> None:
     for locale in LOCALE_ORDER:
         destination = OUTPUT if locale == "en" else OUTPUT / locale
         destination.mkdir(exist_ok=True)
+        if locale != "en":
+            localized_fallback = destination / "js"
+            localized_fallback.mkdir()
+            shutil.copy2(SOURCE / locale / "js/contact-form.min.js", localized_fallback / "contact-form.min.js")
         (destination / "index.html").write_text(render_index(locale), encoding="utf-8")
     for kind in ("privacy", "terms"):
         destination = OUTPUT / kind

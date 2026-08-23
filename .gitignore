@@ -31,6 +31,7 @@
 
 # Keep only the focused production test.
 /tests/*
+!/tests/test_wasm_browser.py
 !/tests/test_graphics_site.py
 !/tests/test_lead_payload.js
 

@@ -22,7 +22,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, ARM64, leopere, local]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -39,7 +39,7 @@ jobs:
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, ARM64, leopere, local]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -48,3 +48,5 @@ jobs:
       - run: python3 build_graphics_site.py --check
       - run: node --check site/assets/site.js
       - run: node --test tests/test_lead_payload.js
+      - run: python3 -m pip install --disable-pip-version-check playwright==1.55.0
+      - run: python3 tests/test_wasm_browser.py

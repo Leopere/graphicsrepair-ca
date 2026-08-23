@@ -1,0 +1,8 @@
+{
+  "source_repository": "Leopere/motherboardrepair-contact",
+  "source_revision": "sha256:42a303992cfb28efd5746dd235cf4a88ebb2cc14a959649cb834eda15edcabce",
+  "sha256": "1d608f6bad6e2fa5cb6431be16880846bd072f79b9213e8f37e7dc83ce5805ff",
+  "wasm_exec_sha256": "0c949f4996f9a89698e4b5c586de32249c3b69b7baadb64d220073cc04acba14",
+  "loader_sha256": "b2b0968c5dc3d741868ac44bae11a0bc3f8901f6b16cf94f03ee1e4eda5b81fc",
+  "go_version": "go1.26.7"
+}

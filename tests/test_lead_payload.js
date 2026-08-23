@@ -53,20 +53,18 @@ function fakeForm({ message, province, returnCountry = 'CA', languagePreference 
   return { elements };
 }
 
-const { buildLeadPayload, normalizeSiteLanguage, sendLeadPayload } = loadLeadHelpers();
+const { buildLeadPayload, normalizeSiteLanguage, submitLeadPayload } = loadLeadHelpers();
 
-async function sendToFormApi(payload) {
-  let request;
-  await sendLeadPayload(payload, {
-    form_proof_token: 'test-proof',
-    form_proof_counter: 42,
-  }, async (url, options) => {
-    request = { url, options };
-    return { ok: true, json: async () => ({ ok: true }) };
+async function sendThroughContactRuntime(payload) {
+  let submitted;
+  await submitLeadPayload(payload, {
+    submitProtectedPayload: async (candidate) => {
+      submitted = candidate;
+      return { ok: true, success: true };
+    },
   });
-  assert.equal(request.url, 'https://forms.motherboardrepair.ca/api/submit');
-  assert.equal(request.options.method, 'POST');
-  return JSON.parse(request.options.body);
+  assert.equal(submitted, payload);
+  return submitted;
 }
 
 test('French Quebec lead preserves the original message and sends French/location metadata', async () => {
@@ -80,7 +78,7 @@ test('French Quebec lead preserves the original message and sends French/locatio
     e164: () => '+15145550123',
     profile: () => 'CA',
   }, 'fr_CA');
-  const leadApiBody = await sendToFormApi(payload);
+  const leadApiBody = await sendThroughContactRuntime(payload);
 
   assert.equal(leadApiBody.message, originalMessage);
   assert.equal(normalizeSiteLanguage('fr_CA'), 'fr-CA');
@@ -102,7 +100,7 @@ test('English Quebec lead preserves the original message without English duplica
     e164: () => '+15145550123',
     profile: () => 'CA',
   }, 'en-CA');
-  const leadApiBody = await sendToFormApi(payload);
+  const leadApiBody = await sendThroughContactRuntime(payload);
 
   assert.equal(leadApiBody.message, originalMessage);
   assert.equal(leadApiBody.extra_fields.service_type, 'Mail-In');

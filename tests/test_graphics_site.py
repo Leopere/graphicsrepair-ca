@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 import subprocess
 import xml.etree.ElementTree as ET
@@ -85,9 +87,10 @@ def validate_site() -> None:
         assert source.count('src="https://notomo.colinknapp.com/n.js"') == 1
         assert source.count('data-site-id="graphicsrepair.ca"') == 1
         assert 'data-site-id="2"' not in source
-        assert "script-src 'self' https://notomo.colinknapp.com/n.js" in source
-        assert "script-src 'self' https://notomo.colinknapp.com/n.js https://notomo.colinknapp.com/n-rrweb.js" in source
-        assert "connect-src https://forms.motherboardrepair.ca https://notomo.colinknapp.com/collect https://notomo.colinknapp.com/replay https://notomo.colinknapp.com/n-config/graphicsrepair.ca" in source
+        assert "script-src 'self' 'wasm-unsafe-eval'" in source
+        assert "https://notomo.colinknapp.com/n.js" in source
+        assert "https://notomo.colinknapp.com/n-rrweb.js" in source
+        assert "connect-src 'self' https://forms.motherboardrepair.ca https://notomo.colinknapp.com/collect https://notomo.colinknapp.com/replay https://notomo.colinknapp.com/n-config/graphicsrepair.ca" in source
         assert "sha384-GiIsHAJaGiskGKXhsyXkx3GTzdrk1Y6rTl2rbQobHlSCZ/KptHaXC4/UGy88UNB4" in source
         assert "google-analytics" not in source.lower()
         assert "googletagmanager" not in source.lower()
@@ -219,19 +222,20 @@ def validate_site() -> None:
     js = (SITE / "assets/site.js").read_text(encoding="utf-8")
     for country in COUNTRIES:
         assert re.search(rf"\b{country}: \{{ code:", js), f"Missing phone rule for {country}"
-    for submission_contract in ("form-proof", "form_proof_token", "form_proof_counter", "website", "start_time"):
+    for submission_contract in ("contactForm.submitProtectedPayload", "website", "start_time"):
         assert submission_contract in js
-    for local_name in ("prepareSubmission", "submissionBinding", "meetsTarget", "setupRepairPrompt"):
+    for local_name in ("submitLeadPayload", "setupRepairPrompt"):
         assert local_name in js
+    for removed_proof_implementation in ("prepareSubmission", "submissionBinding", "meetsTarget", "form_proof_token"):
+        assert removed_proof_implementation not in js
     assert "Protected form submission" not in js
     assert "document.cookie" not in js
     assert "sendBeacon" not in js
-    assert "forms.motherboardrepair.ca/api/submit" in js
-    assert "result.error || 'Submission failed.'" in js
+    assert "forms.motherboardrepair.ca/api/submit" not in js
     assert "console.error('Form submission failed:', error)" in js
     for intake_contract in (
         "setupMailingFields", "setupPhone", "address.required = mailIn",
-        "request_type", "mailing_address", "unit_number", "buildLeadPayload", "sendLeadPayload",
+        "request_type", "mailing_address", "unit_number", "buildLeadPayload", "submitLeadPayload",
         "normalizeSiteLanguage", "digits.startsWith('1') ? 'CA'", "phoneSetup.profile()",
         "english_support_preference", "replyPreference ? replyPreference.value : undefined",
         "returnCountry.required = mailIn", "returnCountry.disabled = !mailIn",
@@ -253,6 +257,26 @@ def validate_site() -> None:
     assert "messageParts" not in js
     assert "mailing_address: mailingAddress || undefined" in js
     assert "unit_number: unitNumber || undefined" in js
+
+    manifest = json.loads((SITE / "contact-embed/manifest.json").read_text(encoding="utf-8"))
+    for filename, key in (
+        ("contact-form.wasm", "sha256"),
+        ("loader.js", "loader_sha256"),
+        ("wasm_exec.js", "wasm_exec_sha256"),
+    ):
+        assert hashlib.sha256((SITE / "contact-embed" / filename).read_bytes()).hexdigest() == manifest[key]
+    assert manifest["source_repository"] == "Leopere/motherboardrepair-contact"
+    assert (SITE / "js/contact-form.min.js").is_file()
+    assert "ContactForm" in (SITE / "js/contact-form.min.js").read_text(encoding="utf-8")
+    for locale in LOCALES:
+        if locale != "en":
+            assert (SITE / locale / "js/contact-form.min.js").is_file()
+
+    for locale in LOCALES:
+        page = SITE / ("index.html" if locale == "en" else f"{locale}/index.html")
+        source = page.read_text(encoding="utf-8")
+        assert source.index('src="/contact-embed/loader.js"') < source.index('src="/assets/site.js"')
+        assert "'wasm-unsafe-eval'" in source
 
     css = (SITE / "assets/style.css").read_text(encoding="utf-8")
     assert ".form-row { display: grid; grid-template-columns: 1fr 1fr; align-items: start;" in css
@@ -295,7 +319,7 @@ def validate_site() -> None:
     assert "Information we collect" not in not_found
     assert not_found.count('src="https://notomo.colinknapp.com/n.js"') == 1
     assert 'data-site-id="graphicsrepair.ca"' in not_found
-    assert "script-src 'self' https://notomo.colinknapp.com/n.js" in not_found
+    assert "script-src 'self' 'wasm-unsafe-eval'" in not_found
     assert "https://notomo.colinknapp.com/n-rrweb.js" in not_found
 
     privacy = (SITE / "privacy" / "index.html").read_text(encoding="utf-8").lower()
@@ -313,7 +337,7 @@ def validate_site() -> None:
         legal_source = (SITE / legal_kind / "index.html").read_text(encoding="utf-8")
         assert legal_source.count('src="https://notomo.colinknapp.com/n.js"') == 1
         assert 'data-site-id="graphicsrepair.ca"' in legal_source
-        assert "script-src 'self' https://notomo.colinknapp.com/n.js" in legal_source
+        assert "script-src 'self' 'wasm-unsafe-eval'" in legal_source
         assert "https://notomo.colinknapp.com/n-rrweb.js" in legal_source
     for exposed_implementation in ("honeypot", "minimum completion time", "rate limiting", "proof-of-work", "protected form processing"):
         assert exposed_implementation not in privacy
@@ -330,6 +354,8 @@ def validate_site() -> None:
     assert "node --check site/assets/site.js" in deploy
     assert "node --test tests/test_lead_payload.js" in deploy
     assert "node --test tests/test_lead_payload.js" in build_workflow
+    assert "ubuntu-latest" not in deploy + build_workflow
+    assert (deploy + build_workflow).count("runs-on: [self-hosted, Linux, ARM64, leopere, local]") == 3
 
     sitemap = ET.parse(SITE / "sitemap.xml").getroot()
     namespace = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}

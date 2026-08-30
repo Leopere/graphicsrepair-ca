@@ -52,4 +52,5 @@ jobs:
       - run: node --check site/assets/site.js
       - run: node --test tests/test_lead_payload.js
       - run: python3 -m pip install --disable-pip-version-check playwright==1.55.0
+      - run: python3 -m playwright install --with-deps chromium
       - run: python3 tests/test_wasm_browser.py

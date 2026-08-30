@@ -28,5 +28,7 @@ jobs:
         run: node --test tests/test_lead_payload.js
       - name: Install browser contract runtime
         run: python3 -m pip install --disable-pip-version-check playwright==1.55.0
+      - name: Install Chromium for browser contract
+        run: python3 -m playwright install --with-deps chromium
       - name: WASM browser contract
         run: python3 tests/test_wasm_browser.py

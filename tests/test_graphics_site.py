@@ -91,7 +91,7 @@ def validate_site() -> None:
         assert "https://notomo.colinknapp.com/n.js" in source
         assert "https://notomo.colinknapp.com/n-rrweb.js" in source
         assert "connect-src 'self' https://forms.motherboardrepair.ca https://notomo.colinknapp.com/collect https://notomo.colinknapp.com/replay https://notomo.colinknapp.com/n-config/graphicsrepair.ca" in source
-        assert "sha384-GiIsHAJaGiskGKXhsyXkx3GTzdrk1Y6rTl2rbQobHlSCZ/KptHaXC4/UGy88UNB4" in source
+        assert "sha384-NBbFxiYXSJk326gDu3z2Ak3usWitZIBpVRhbqjBxVynTBnvrnFnHlG+AcLKZf8te" in source
         assert "google-analytics" not in source.lower()
         assert "googletagmanager" not in source.lower()
         assert "plausible" not in source.lower()
@@ -100,9 +100,12 @@ def validate_site() -> None:
             "name", "email", "phone", "model",
             "request_type", "message", "service_type", "mailing_address",
             "unit_number", "return_country", "province", "ownership_confirmed",
-            "international_shipping_ack", "accept_terms",
+            "international_shipping_ack", "rush_service", "accept_terms",
         ):
             assert re.search(rf'name="{field_name}"', source), f"{path} is missing form field {field_name}"
+        rush = [attrs for name, attrs in parser.tags if name == "input" and attrs.get("name") == "rush_service"]
+        assert len(rush) == 1 and rush[0].get("type") == "checkbox"
+        assert not {"checked", "required", "disabled"} & rush[0].keys()
         assert "serial_number" not in source
         assert "device_serial" not in source
         assert "battery_status" not in source
@@ -162,10 +165,11 @@ def validate_site() -> None:
                     assert parsed.netloc in {"graphicsrepair.ca", "motherboardrepair.ca", "notomo.colinknapp.com"}
 
     english = (SITE / "index.html").read_text(encoding="utf-8").lower()
-    assert "mrc repairs desktop graphics cards at board level and checks used gpus" in english
-    assert "graphics card diagnosis and quote before repair work begins" in english
-    assert "the intake assessment determines acceptance; it is not the repair diagnostic" in english
-    assert "after the accepted card arrives, we perform a proper diagnostic and provide a quote" in english
+    assert "mrc provides graphics card repair and used gpu checks. canada is our main market" in english
+    assert "we review overseas mail-in requests one by one" in english
+    assert "graphics card repair starts with a diagnosis and quote" in english
+    assert "we review your request for free. diagnosis is a separate step" in english
+    assert "once your card arrives, we diagnose it and give you a quote" in english
     assert "no repair work begins without your approval" in english
     assert "displayed phone format" in english
     assert "detected country" not in english
@@ -173,15 +177,15 @@ def validate_site() -> None:
     assert "not a repair diagnostic" in english
     assert "missing, substituted or changed chips" in english
     assert "deceptive online sales" in english
-    assert "does not state that the card meets oem standards" in english
-    assert "required chip population" in english
-    assert "shop testing rig" in english
-    assert "written shop-rig test report" in english
-    assert "intel graphics cards are normally not accepted" in english
+    assert "does not certify that the card meets the manufacturer’s standards" in english
+    assert "chips and other required parts are present" in english
+    assert "shop’s test system" in english
+    assert "written test report" in english
+    assert "we don’t normally accept intel graphics cards" in english
     assert "nvidia · amd · intel" not in english
     assert "nvidia · amd</small>" in english
     assert "country where the card is located and will be returned" in english
-    assert "i&#x27;ve been provided the time to review, and i accept, the" in english
+    assert "i’ve had time to review, and i accept the" in english
     assert "send protected request" not in english
     assert "protected by a time delay" not in english
     assert "international mail-in details" in english
@@ -197,11 +201,11 @@ def validate_site() -> None:
         assert stale_claim not in public_copy
 
     locale_workflow_markers = {
-        "fr": ("évaluation du dossier sert à décider de l’acceptation", "diagnostic complet et fournissons un devis"),
-        "es": ("evaluación de admisión decide la aceptación", "diagnóstico completo y damos un presupuesto"),
-        "vi": ("đánh giá tiếp nhận chỉ quyết định có nhận việc", "chẩn đoán đầy đủ và báo giá"),
-        "ar": ("تقييم القبول يحدد قبول العمل فقط", "تشخيصاً كاملاً ونقدم عرض سعر"),
-        "ja": ("受付評価は受入れ可否を決める", "正式な診断を行い、修理作業を始める前に見積り"),
+        "fr": ("l’étude de votre demande est gratuite", "aucune réparation ne commence sans votre accord"),
+        "es": ("revisamos su solicitud sin costo", "no comenzaremos ninguna reparación sin su aprobación"),
+        "vi": ("chúng tôi xem xét yêu cầu của bạn miễn phí", "chúng tôi không bắt đầu sửa chữa nếu chưa có sự chấp thuận của bạn"),
+        "ar": ("نراجع طلبك مجاناً", "لا يبدأ الإصلاح من دون موافقتك"),
+        "ja": ("依頼内容の確認は無料です", "お客様の承認なしに修理を始めることはありません"),
     }
     for locale, markers in locale_workflow_markers.items():
         localized = (SITE / locale / "index.html").read_text(encoding="utf-8").lower()
@@ -236,6 +240,7 @@ def validate_site() -> None:
     for intake_contract in (
         "setupMailingFields", "setupPhone", "address.required = mailIn",
         "request_type", "mailing_address", "unit_number", "buildLeadPayload", "submitLeadPayload",
+        "rush_service", "rush_fee: rushService ? 130 : undefined",
         "normalizeSiteLanguage", "digits.startsWith('1') ? 'CA'", "phoneSetup.profile()",
         "english_support_preference", "replyPreference ? replyPreference.value : undefined",
         "returnCountry.required = mailIn", "returnCountry.disabled = !mailIn",
@@ -288,24 +293,34 @@ def validate_site() -> None:
         legal_parser, legal_source = parse(SITE / legal_kind / "index.html")
         legal_canonical = [attrs.get("href") for name, attrs in legal_parser.tags if name == "link" and attrs.get("rel") == "canonical"]
         assert legal_canonical == [f"https://graphicsrepair.ca/{legal_kind}/"]
-        assert "MRC · Updated 2026-08-22" in legal_source
+        assert "MRC · Updated 2026-09-09" in legal_source
         assert f'href="/{legal_kind}/"' in legal_source
         assert 'href="../assets/style.css"' in legal_source
         assert 'src="../assets/mrc-logo-white.svg"' in legal_source
+        assert 'href="https://motherboardrepair.ca/"' in legal_source
+        assert 'https://motherboardrepair.ca/graphics-card-repair.html' not in legal_source
+        assert 'property="og:title"' in legal_source
+        assert 'property="og:description"' in legal_source
+        assert 'property="og:image" content="https://graphicsrepair.ca/assets/gpu-repair.webp"' in legal_source
+        assert 'name="twitter:card" content="summary_large_image"' in legal_source
+        assert 'name="twitter:title"' in legal_source
+        assert 'name="twitter:description"' in legal_source
+        assert 'name="twitter:image" content="https://graphicsrepair.ca/assets/gpu-repair.webp"' in legal_source
+        assert '"@type":"WebPage"' in legal_source
         for fragment in ("faults", "process", "gpu-certification", "contact"):
             assert f'href="/#{fragment}"' in legal_source
 
     terms = (SITE / "terms" / "index.html").read_text(encoding="utf-8").lower()
     assert "is not a repair diagnostic" in terms
     assert "missing, substituted or changed chips" in terms
-    assert "does not state that the card meets oem standards" in terms
+    assert "does not certify that the card meets the manufacturer’s standards" in terms
     assert "written test report" in terms
-    assert "shop testing rig" in terms
+    assert "shop’s test system" in terms
     assert "canada is our main market" in terms
     assert "international mail-in service is available only for jobs mrc accepts" in terms
     assert "shipping, customs, duties, taxes, brokerage, insurance and return costs" in terms
-    assert "the free intake assessment is only used to decide whether mrc will accept the job" in terms
-    assert "after an accepted card arrives, mrc performs a proper diagnostic and provides a quote before any repair work begins" in terms
+    assert "we review your request for free to decide whether we can take the job" in terms
+    assert "once a card we have agreed to work on arrives, we diagnose it and give you a quote" in terms
 
     not_found = (SITE / "404.html").read_text(encoding="utf-8")
     assert "Page not found" in not_found
@@ -323,10 +338,13 @@ def validate_site() -> None:
     assert "https://notomo.colinknapp.com/n-rrweb.js" in not_found
 
     privacy = (SITE / "privacy" / "index.html").read_text(encoding="utf-8").lower()
+    assert "our privacy policy explains how we use your contact details. it also covers what this site records while you visit." in privacy
+    terms_source = (SITE / "terms" / "index.html").read_text(encoding="utf-8").lower()
+    assert "these service terms explain how repair requests work. read about quotes, rush service and shipping before you send your device." in terms_source
     for disclosure in (
         "self-hosted notomo", "random visitor and session identifiers", "session replay",
         "literal text entered into website fields as you type", "before you submit the form",
-        "cloudflare", "github", "selected intake method",
+        "cloudflare", "github", "drop-off or mail-in choice",
         "phone validation profile", "page language", "local storage",
         "selected text-message reply language",
         "return country", "province, state or region", "ownership or owner-authorization confirmation",

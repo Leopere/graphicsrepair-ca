@@ -9,6 +9,8 @@
 !/PRODUCTION_RUNBOOK.md
 !/STATIC_SITE_AUDIT.md
 !/build_graphics_site.py
+!/deploy_pages.py
+!/.deploy-it.json
 !/ship.sh
 !/sst.yml
 !/site/
@@ -34,8 +36,11 @@
 !/tests/test_wasm_browser.py
 !/tests/test_graphics_site.py
 !/tests/test_lead_payload.js
+!/tests/test_pages_delivery.py
 
 # Local noise
 **/__pycache__/
 *.py[cod]
 .DS_Store
+
+!/verify_publication.py

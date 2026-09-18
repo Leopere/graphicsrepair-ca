@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "after_ship": true,
+  "environment": "github-pages",
+  "command": ["python3", "deploy_pages.py"],
+  "env": ["HOME"],
+  "optional_env": ["GH_CONFIG_DIR", "GH_TOKEN", "GITHUB_TOKEN"],
+  "timeout_seconds": 300
+}

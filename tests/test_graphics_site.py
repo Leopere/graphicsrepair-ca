@@ -7,10 +7,14 @@ import hashlib
 import json
 import re
 import subprocess
+import sys
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlparse
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from notomo_checks import HOME_CONNECT_SRC, LEGAL_CONNECT_SRC, assert_notomo_embed
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -84,14 +88,7 @@ def validate_site() -> None:
         for required in ("mrc", "gpu", "50"):
             assert required in text, f"{path} is missing {required}"
         assert "session replay" not in source.lower()
-        assert source.count('src="https://notomo.colinknapp.com/n.js"') == 1
-        assert source.count('data-site-id="graphicsrepair.ca"') == 1
-        assert 'data-site-id="2"' not in source
-        assert "script-src 'self' 'wasm-unsafe-eval'" in source
-        assert "https://notomo.colinknapp.com/n.js" in source
-        assert "https://notomo.colinknapp.com/n-rrweb.js" in source
-        assert "connect-src 'self' https://forms.motherboardrepair.ca https://notomo.colinknapp.com/collect https://notomo.colinknapp.com/replay https://notomo.colinknapp.com/n-config/graphicsrepair.ca" in source
-        assert "sha384-NBbFxiYXSJk326gDu3z2Ak3usWitZIBpVRhbqjBxVynTBnvrnFnHlG+AcLKZf8te" in source
+        assert_notomo_embed(source, HOME_CONNECT_SRC)
         assert "google-analytics" not in source.lower()
         assert "googletagmanager" not in source.lower()
         assert "plausible" not in source.lower()
@@ -223,6 +220,9 @@ def validate_site() -> None:
     assert (SITE / "assets" / "gpu-repair-480.webp").stat().st_size < 60_000
     assert (SITE / "assets" / "gpu-repair-720.webp").stat().st_size < 100_000
 
+    loader = (SITE / "assets/notomo-loader.js").read_text(encoding="utf-8")
+    assert "/n-config/" in loader
+    assert "tracker_integrity" in loader
     js = (SITE / "assets/site.js").read_text(encoding="utf-8")
     for country in COUNTRIES:
         assert re.search(rf"\b{country}: \{{ code:", js), f"Missing phone rule for {country}"
@@ -332,10 +332,7 @@ def validate_site() -> None:
     for fragment in ("faults", "process", "gpu-certification", "contact"):
         assert f'href="/#{fragment}"' in not_found
     assert "Information we collect" not in not_found
-    assert not_found.count('src="https://notomo.colinknapp.com/n.js"') == 1
-    assert 'data-site-id="graphicsrepair.ca"' in not_found
-    assert "script-src 'self' 'wasm-unsafe-eval'" in not_found
-    assert "https://notomo.colinknapp.com/n-rrweb.js" in not_found
+    assert_notomo_embed(not_found, LEGAL_CONNECT_SRC)
 
     privacy = (SITE / "privacy" / "index.html").read_text(encoding="utf-8").lower()
     assert "our privacy policy explains how we use your contact details. it also covers what this site records while you visit." in privacy
@@ -353,10 +350,7 @@ def validate_site() -> None:
         assert disclosure in privacy
     for legal_kind in ("privacy", "terms"):
         legal_source = (SITE / legal_kind / "index.html").read_text(encoding="utf-8")
-        assert legal_source.count('src="https://notomo.colinknapp.com/n.js"') == 1
-        assert 'data-site-id="graphicsrepair.ca"' in legal_source
-        assert "script-src 'self' 'wasm-unsafe-eval'" in legal_source
-        assert "https://notomo.colinknapp.com/n-rrweb.js" in legal_source
+        assert_notomo_embed(legal_source, LEGAL_CONNECT_SRC)
     for exposed_implementation in ("honeypot", "minimum completion time", "rate limiting", "proof-of-work", "protected form processing"):
         assert exposed_implementation not in privacy
 
@@ -370,8 +364,9 @@ def validate_site() -> None:
     assert deploy.count("pages: write") == 1
     assert deploy.count("id-token: write") == 1
     assert "node --check site/assets/site.js" in deploy
-    assert "node --test tests/test_lead_payload.js" in deploy
-    assert "node --test tests/test_lead_payload.js" in build_workflow
+    assert "node --check site/assets/notomo-loader.js" in deploy
+    assert "node --test tests/test_lead_payload.js tests/test_notomo_loader.js" in deploy
+    assert "node --test tests/test_lead_payload.js tests/test_notomo_loader.js" in build_workflow
     assert "ubuntu-latest" not in deploy + build_workflow
     assert (deploy + build_workflow).count("runs-on: [self-hosted, Linux, ARM64, leopere, local]") == 3
 

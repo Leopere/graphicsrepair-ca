@@ -24,8 +24,10 @@ jobs:
         run: python3 build_graphics_site.py --check
       - name: JavaScript syntax check
         run: node --check site/assets/site.js
+      - name: Notomo loader syntax check
+        run: node --check site/assets/notomo-loader.js
       - name: Lead payload contract tests
-        run: node --test tests/test_lead_payload.js
+        run: node --test tests/test_lead_payload.js tests/test_notomo_loader.js
       - name: Install browser contract runtime
         run: python3 -m pip install --disable-pip-version-check playwright==1.55.0
       - name: Install Chromium for browser contract

@@ -16,7 +16,11 @@ OUTPUT = ROOT / "_site"
 DOMAIN = "https://graphicsrepair.ca"
 NOTOMO_ORIGIN = "https://notomo.colinknapp.com"
 NOTOMO_SITE_ID = "graphicsrepair.ca"
+NOTOMO_COM_SITE_ID = "graphicsrepair.com"
 NOTOMO_INTEGRITY = "sha384-NBbFxiYXSJk326gDu3z2Ak3usWitZIBpVRhbqjBxVynTBnvrnFnHlG+AcLKZf8te"
+NOTOMO_CONFIG_SRC = (
+    f"{NOTOMO_ORIGIN}/n-config/{NOTOMO_SITE_ID} {NOTOMO_ORIGIN}/n-config/{NOTOMO_COM_SITE_ID}"
+)
 CONTACT_EMBED_SOURCE = SOURCE / "contact-embed"
 CONTACT_FALLBACK_SOURCE = SOURCE / "js/contact-form.min.js"
 LOCALE_ORDER = ("en", "fr", "es", "vi", "ar", "ja")
@@ -39,8 +43,9 @@ def esc(value: object) -> str:
 
 def notomo_script() -> str:
     return (
-        f'<script async src="{NOTOMO_ORIGIN}/n.js" data-site-id="{NOTOMO_SITE_ID}" '
-        f'integrity="{NOTOMO_INTEGRITY}" crossorigin="anonymous"></script>'
+        f'<script async src="/assets/notomo-loader.js" '
+        f'data-tracker-src="{NOTOMO_ORIGIN}/n.js" '
+        f'data-tracker-integrity="{NOTOMO_INTEGRITY}"></script>'
     )
 
 
@@ -166,7 +171,7 @@ def render_index(locale: str) -> str:
   <meta name="description" content="{esc(c['description'])}">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self' 'wasm-unsafe-eval' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src 'self' https://forms.motherboardrepair.ca {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_ORIGIN}/n-config/{NOTOMO_SITE_ID}; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self' 'wasm-unsafe-eval' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src 'self' https://forms.motherboardrepair.ca {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_CONFIG_SRC}; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
   <title>{esc(c['title'])}</title>
   <link rel="canonical" href="{canonical}">
   {alternates()}
@@ -259,13 +264,13 @@ def render_legal(kind: str) -> str:
     schema = {"@context": "https://schema.org", "@type": "WebPage", "name": page_title,
               "description": description, "url": canonical,
               "primaryImageOfPage": f"{DOMAIN}/assets/gpu-repair.webp"}
-    return f"""<!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="index,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self' 'wasm-unsafe-eval' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_ORIGIN}/n-config/{NOTOMO_SITE_ID}; object-src 'none'; base-uri 'self'"><title>{page_title}</title><link rel="canonical" href="{canonical}"><meta property="og:type" content="website"><meta property="og:site_name" content="Graphics Repair Canada"><meta property="og:title" content="{page_title}"><meta property="og:description" content="{description}"><meta property="og:url" content="{canonical}"><meta property="og:image" content="{DOMAIN}/assets/gpu-repair.webp"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{page_title}"><meta name="twitter:description" content="{description}"><meta name="twitter:image" content="{DOMAIN}/assets/gpu-repair.webp"><link rel="stylesheet" href="{prefix}assets/style.css"><link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml"><script type="application/ld+json">{json.dumps(schema, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')}</script>{notomo_script()}{contact_scripts()}</head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en', asset_prefix=prefix, anchor_prefix='/')}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC · Updated {LEGAL_REVIEWED_DATE}</p><h1>{title}</h1><p class="lede">{description}</p>{body}<p><a class="button" href="/#contact">Start a repair</a></p></div></section></main>{footer(LOCALES['en'], 'en', asset_prefix=prefix)}</body></html>"""
+    return f"""<!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="index,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self' 'wasm-unsafe-eval' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_CONFIG_SRC}; object-src 'none'; base-uri 'self'"><title>{page_title}</title><link rel="canonical" href="{canonical}"><meta property="og:type" content="website"><meta property="og:site_name" content="Graphics Repair Canada"><meta property="og:title" content="{page_title}"><meta property="og:description" content="{description}"><meta property="og:url" content="{canonical}"><meta property="og:image" content="{DOMAIN}/assets/gpu-repair.webp"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{page_title}"><meta name="twitter:description" content="{description}"><meta name="twitter:image" content="{DOMAIN}/assets/gpu-repair.webp"><link rel="stylesheet" href="{prefix}assets/style.css"><link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml"><script type="application/ld+json">{json.dumps(schema, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')}</script>{notomo_script()}{contact_scripts()}</head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en', asset_prefix=prefix, anchor_prefix='/')}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC · Updated {LEGAL_REVIEWED_DATE}</p><h1>{title}</h1><p class="lede">{description}</p>{body}<p><a class="button" href="/#contact">Start a repair</a></p></div></section></main>{footer(LOCALES['en'], 'en', asset_prefix=prefix)}</body></html>"""
 
 
 def render_not_found() -> str:
     title = "Page not found"
     description = "The requested page does not exist. Return to the Graphics Repair Canada home page."
-    return f"""<!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="noindex,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self' 'wasm-unsafe-eval' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_ORIGIN}/n-config/{NOTOMO_SITE_ID}; object-src 'none'; base-uri 'self'"><title>{title} | Graphics Repair Canada</title><link rel="stylesheet" href="/assets/style.css"><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">{notomo_script()}{contact_scripts()}</head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en', asset_prefix='/', anchor_prefix='/')}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC</p><h1>{title}</h1><p class="lede">{description}</p><p><a class="button" href="/">Return home</a></p></div></section></main>{footer(LOCALES['en'], 'en', asset_prefix='/')}</body></html>"""
+    return f"""<!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><meta name="robots" content="noindex,follow"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self' 'wasm-unsafe-eval' {NOTOMO_ORIGIN}/n.js {NOTOMO_ORIGIN}/n-rrweb.js; connect-src {NOTOMO_ORIGIN}/collect {NOTOMO_ORIGIN}/replay {NOTOMO_CONFIG_SRC}; object-src 'none'; base-uri 'self'"><title>{title} | Graphics Repair Canada</title><link rel="stylesheet" href="/assets/style.css"><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">{notomo_script()}{contact_scripts()}</head><body data-locale="en" data-default-country="CA">{header(LOCALES['en'], 'en', asset_prefix='/', anchor_prefix='/')}<main id="main"><section class="legal"><div class="shell legal-copy"><p class="eyebrow">MRC</p><h1>{title}</h1><p class="lede">{description}</p><p><a class="button" href="/">Return home</a></p></div></section></main>{footer(LOCALES['en'], 'en', asset_prefix='/')}</body></html>"""
 
 
 def build() -> None:

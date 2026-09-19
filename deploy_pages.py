@@ -25,7 +25,7 @@ SITES = (
 PUBLIC_PATHS = (
     "index.html", "fr/index.html", "es/index.html", "vi/index.html",
     "ar/index.html", "ja/index.html", "privacy/index.html", "terms/index.html",
-    "assets/site.js",
+    "assets/site.js", "assets/notomo-loader.js",
 )
 
 

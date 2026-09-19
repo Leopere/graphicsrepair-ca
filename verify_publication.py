@@ -18,6 +18,9 @@ class Scripts(HTMLParser):
         values = dict(attrs)
         if tag == "script" and values.get("src", "").startswith("https://"):
             self.external.add((values["src"], values.get("integrity", "")))
+        tracker = values.get("data-tracker-src", "")
+        if tag == "script" and tracker.startswith("https://"):
+            self.external.add((tracker, values.get("data-tracker-integrity", "")))
 
 
 def check_integrity(site):
@@ -54,6 +57,7 @@ def main():
         return
     expected = {str(p.relative_to(args.site)): p.read_bytes() for p in args.site.rglob("*.html") if p.name != "404.html"}
     expected["assets/site.js"] = (args.site / "assets/site.js").read_bytes()
+    expected["assets/notomo-loader.js"] = (args.site / "assets/notomo-loader.js").read_bytes()
     deadline = time.monotonic() + args.timeout
     pending = dict(expected)
     while pending and time.monotonic() < deadline:

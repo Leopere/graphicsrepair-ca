@@ -367,8 +367,8 @@ def validate_site() -> None:
     assert "node --check site/assets/notomo-loader.js" in deploy
     assert "node --test tests/test_lead_payload.js tests/test_notomo_loader.js" in deploy
     assert "node --test tests/test_lead_payload.js tests/test_notomo_loader.js" in build_workflow
-    assert "ubuntu-latest" not in deploy + build_workflow
-    assert (deploy + build_workflow).count("runs-on: [self-hosted, Linux, ARM64, leopere, local]") == 3
+    assert deploy.count("runs-on: ubuntu-latest") == 2
+    assert build_workflow.count("runs-on: ubuntu-latest") == 1
 
     sitemap = ET.parse(SITE / "sitemap.xml").getroot()
     namespace = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}

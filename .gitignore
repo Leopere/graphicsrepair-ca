@@ -36,7 +36,9 @@
 !/tests/test_wasm_browser.py
 !/tests/test_graphics_site.py
 !/tests/test_lead_payload.js
+!/tests/test_notomo_loader.js
 !/tests/test_pages_delivery.py
+!/tests/notomo_checks.py
 
 # Local noise
 **/__pycache__/

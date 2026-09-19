@@ -5,5 +5,5 @@
   "command": ["./deploy_pages.py"],
   "env": ["HOME"],
   "optional_env": ["GH_CONFIG_DIR", "GH_TOKEN", "GITHUB_TOKEN"],
-  "timeout_seconds": 300
+  "timeout_seconds": 900
 }

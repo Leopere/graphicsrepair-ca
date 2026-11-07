@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://graphicsrepair.ca/sitemap.xml

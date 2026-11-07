@@ -80,7 +80,7 @@ def main() -> None:
     deadline = time.monotonic() + 265
     revision = os.environ.get("DEPLOY_IT_COMMIT", "")
     if not args.check and (not revision or os.environ.get("DEPLOY_IT_BRANCH") != "main"):
-        raise RuntimeError("Deploy through native ship-it/deploy-it after pushing main.")
+        raise RuntimeError("Production publication requires the exact pushed main revision and a verified Jenkins delivery path.")
 
     with tempfile.TemporaryDirectory(prefix="graphicsrepair-pages-", ignore_cleanup_errors=True) as temporary:
         builder.OUTPUT = Path(temporary) / "_site"

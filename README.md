@@ -38,14 +38,13 @@ every sitemap URL. English Flesch checks do not apply to translated copy. Canoni
 
 ## Deployment
 
-Native `ship-it` hooks commit and push completed work. The tracked `deploy-it` contract then runs `python3 deploy_pages.py` to refresh the existing GitHub Pages workflows for `graphicsrepair.ca`, `graphicsrepair.com`, `fixgpu.ca` and `gpufix.ca`.
+Commit and normal-push completed work during the active turn. The automatic deployment manifest is retired. The existing `deploy_pages.py` helper configures legacy GitHub Pages workflows for `graphicsrepair.ca`, `graphicsrepair.com`, `fixgpu.ca` and `gpufix.ca`; publication still needs a verified Jenkins replacement.
 
 The handoff uses the existing authenticated GitHub CLI configuration. It checks that the shared source still matches the pushed revision and verifies the published forms in all six languages, terms, privacy copy and submission JavaScript against that revision. It does not change DNS or publish the legacy `docs/` snapshot.
 
-Check the shipped contract and existing Pages access without deploying. The contract check requires the new manifest to have been shipped first:
+Inspect existing Pages access without deploying:
 
 ```bash
-deploy-it check
 python3 deploy_pages.py --check
 ```
 

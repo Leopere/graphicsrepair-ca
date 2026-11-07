@@ -38,9 +38,9 @@ class PagesDeliveryTests(unittest.TestCase):
             self.assertTrue(deploy_pages.check_live("fixgpu.ca", {"index.html": b"form"}, "revision", time.monotonic() - 1))
             fetch.assert_not_called()
 
-    def test_deployment_requires_the_native_pushed_revision(self):
+    def test_deployment_requires_the_pushed_main_revision_and_jenkins(self):
         with patch.dict(os.environ, {}, clear=True), patch.object(sys, "argv", ["deploy_pages.py"]), patch.object(deploy_pages, "api") as api:
-            with self.assertRaisesRegex(RuntimeError, "native ship-it/deploy-it"):
+            with self.assertRaisesRegex(RuntimeError, "exact pushed main revision and a verified Jenkins delivery path"):
                 deploy_pages.main()
             api.assert_not_called()
 

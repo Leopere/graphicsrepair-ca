@@ -30,7 +30,7 @@ The browser uses the MRC Cloudflare Worker endpoint with a short-lived proof-of-
 
 ## Infrastructure direction
 
-Treat `leadform` and Woodpecker references as legacy context. New runtime services should use Cloudflare Workers, and automation or deployment should use GitHub Actions on local runners unless current production evidence requires a different path.
+Treat `leadform` and Woodpecker references as legacy context. New runtime services should use Cloudflare Workers. Jenkins owns automation and deployment; preserve the existing Pages publication path until its Jenkins replacement has been verified. No Jenkins job or submission command is tracked in this repository as of the 2026-11-07 audit. `deploy_pages.py` is a legacy GitHub Actions dispatcher, not a Jenkins-native publisher; the primary must verify the Jenkins job and exact target before publishing.
 
 ## Metrics boundary
 

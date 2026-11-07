@@ -1,17 +1,21 @@
 """Shared Notomo embed assertions for the Graphics Repair production artifact."""
 
-NOTOMO_INTEGRITY = "sha384-NBbFxiYXSJk326gDu3z2Ak3usWitZIBpVRhbqjBxVynTBnvrnFnHlG+AcLKZf8te"
+NOTOMO_INTEGRITY = "sha384-2pTtsurqO/Z0ssY0NXuxa4nndtscVtnZenYFchX4OvKlCMS+qy6YRRLFtiC2+ISo"
 HOME_CONNECT_SRC = (
     "connect-src 'self' https://forms.motherboardrepair.ca "
     "https://notomo.colinknapp.com/collect https://notomo.colinknapp.com/replay "
     "https://notomo.colinknapp.com/n-config/graphicsrepair.ca "
-    "https://notomo.colinknapp.com/n-config/graphicsrepair.com"
+    "https://notomo.colinknapp.com/n-config/graphicsrepair.com "
+    "https://notomo.colinknapp.com/n-link/graphicsrepair.ca "
+    "https://notomo.colinknapp.com/n-link/graphicsrepair.com"
 )
 LEGAL_CONNECT_SRC = (
     "connect-src https://notomo.colinknapp.com/collect "
     "https://notomo.colinknapp.com/replay "
     "https://notomo.colinknapp.com/n-config/graphicsrepair.ca "
-    "https://notomo.colinknapp.com/n-config/graphicsrepair.com"
+    "https://notomo.colinknapp.com/n-config/graphicsrepair.com "
+    "https://notomo.colinknapp.com/n-link/graphicsrepair.ca "
+    "https://notomo.colinknapp.com/n-link/graphicsrepair.com"
 )
 
 

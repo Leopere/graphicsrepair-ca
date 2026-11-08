@@ -242,7 +242,7 @@
         status.className = 'form-status success';
         status.textContent = form.dataset.success;
       } catch (error) {
-        console.error('Form submission failed:', error);
+        // The contact runtime reports one finite diagnostic for this failure.
         status.className = 'form-status error';
         status.textContent = form.dataset.error;
       } finally {

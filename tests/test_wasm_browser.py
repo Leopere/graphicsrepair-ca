@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import functools
+import hashlib
 import http.server
 import json
 import os
@@ -79,6 +80,9 @@ def test_wasm_submission_contract(expire_first_proof: bool = False) -> None:
     thread.start()
     payload: dict[str, object] = {}
     wasm_requested = False
+    wasm_request_suffix = "/contact-embed/contact-form.wasm?v=" + hashlib.sha256(
+        (SITE / "contact-embed" / "contact-form.wasm").read_bytes()
+    ).hexdigest()
     proof_requests = 0
     submit_requests = 0
 
@@ -94,7 +98,7 @@ def test_wasm_submission_contract(expire_first_proof: bool = False) -> None:
 
             def observe_request(request) -> None:
                 nonlocal wasm_requested
-                if request.url.endswith("/contact-embed/contact-form.wasm?v=90090136e89e41e4e72d31db55944ea2f86b93b41c19a8a102ce113dc8398492"):
+                if request.url.endswith(wasm_request_suffix):
                     wasm_requested = True
 
             def proof(route) -> None:

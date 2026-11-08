@@ -14,6 +14,9 @@ node --test tests/test_lead_payload.js tests/test_notomo_loader.js
 python3 tests/test_pages_delivery.py
 python3 tests/test_graphics_site.py
 python3 tests/test_wasm_browser.py
+# Offline diagnostics matrix: see docs/motherboard-contact-patch/README.md and
+# docs/contact-embed-integration-ready.json for pinned fixture repositories.
+NODE_PATH=/tmp/contact-browser/node_modules CONTACT_CONSUMER=/path/to/staging-motherboardrepair-ca CONTACT_RELAY=/path/to/hearth-home-contact-relay CONTACT_GRAPHICS="$PWD" node tests/contact-diagnostics-browser.cjs
 ```
 
 The committed `site/favicon.ico` serves legacy browser requests to `/favicon.ico`.

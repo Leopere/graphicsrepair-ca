@@ -276,7 +276,7 @@ def validate_site() -> None:
     assert "document.cookie" not in js
     assert "sendBeacon" not in js
     assert "forms.motherboardrepair.ca/api/submit" not in js
-    assert "console.error('Form submission failed:', error)" in js
+    assert "console.error('Form submission failed:', error)" not in js
     for intake_contract in (
         "setupMailingFields", "setupPhone", "address.required = mailIn",
         "request_type", "mailing_address", "unit_number", "buildLeadPayload", "submitLeadPayload",
@@ -310,6 +310,9 @@ def validate_site() -> None:
         ("wasm_exec.js", "wasm_exec_sha256"),
     ):
         assert hashlib.sha256((SITE / "contact-embed" / filename).read_bytes()).hexdigest() == manifest[key]
+    loader_source = (SITE / "contact-embed/loader.js").read_text(encoding="utf-8")
+    assert f"contact-form.wasm?v={manifest['sha256']}" in loader_source
+    assert f"wasm_exec.js?v={manifest['wasm_exec_sha256']}" in loader_source
     assert manifest["source_repository"] == "Leopere/motherboardrepair-contact"
     assert (SITE / "js/contact-form.min.js").is_file()
     assert "ContactForm" in (SITE / "js/contact-form.min.js").read_text(encoding="utf-8")
@@ -320,7 +323,7 @@ def validate_site() -> None:
     for locale in LOCALES:
         page = SITE / ("index.html" if locale == "en" else f"{locale}/index.html")
         source = page.read_text(encoding="utf-8")
-        assert source.index('src="/contact-embed/loader.js"') < source.index('src="/assets/site.js"')
+        assert source.index(f'src="/contact-embed/loader.js?v={manifest["loader_sha256"][:12]}"') < source.index('src="/assets/site.js"')
         assert "'wasm-unsafe-eval'" in source
 
     css = (SITE / "assets/style.css").read_text(encoding="utf-8")

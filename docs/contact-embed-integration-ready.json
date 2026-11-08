@@ -1,0 +1,145 @@
+{
+  "repository": "Leopere/graphicsrepair-ca",
+  "branch": "main",
+  "starting_sha": "f52728fc539c7c70e06d24e4668de212e427aae4",
+  "current_sha": "f52728fc539c7c70e06d24e4668de212e427aae4",
+  "current_sha_scope": "Remote main confirmed before normal integration commit; final pushed tip recorded in /home/runner/READY-GRAPHICS.json. Resolve durable integration commit with git log -1 --format=%H -- docs/contact-embed-integration-ready.json.",
+  "source_origin": "https://github.com/Leopere/motherboardrepair-contact",
+  "source_repository": "Leopere/motherboardrepair-contact",
+  "source_sha": "acfbb65c1b5a18790ad85d4356e863ae23cd754e",
+  "tested_sha": "8a2ae6a40a16f662d2369eadda136b57ff450631",
+  "source_contract": "READY-CONTACT.json at source_sha",
+  "manifest_content_revision": "sha256:2d1d83e083943a7540335e22282e7606a0b7121540c41a9b886317d690ecb0d9",
+  "manifest_revision_is_git_sha": false,
+  "artifact_sha256": {
+    "contact-form.wasm": "90090136e89e41e4e72d31db55944ea2f86b93b41c19a8a102ce113dc8398492",
+    "wasm_exec.js": "0c949f4996f9a89698e4b5c586de32249c3b69b7baadb64d220073cc04acba14",
+    "loader.js": "0a58738b67e4ce6ec64bbd89563d427b31225d167f5b79fbf4e3cce47f5329f0",
+    "manifest.json": "fd1b6e64a32fa2e678a9d827648fd607a7ac53e942dfcf463282f47f9c56dc22"
+  },
+  "artifact_directory": "site/contact-embed",
+  "build": {
+    "toolchain": "go1.26.7",
+    "vcs_stamp_base": "dc432755caa6d6ed95644344fed6a6add45fc67b",
+    "vcs_modified": true,
+    "explanation": "Exact reviewed bytes require pre-commit VCS metadata with tested source changes. Clean later commits produce different hashes. Runtime inputs compared equal to tested implementation; four exact hashes verified.",
+    "reproduction": "docs/motherboard-contact-patch/README.md#rebuilding-the-exact-reviewed-artifacts"
+  },
+  "cache_contract": {
+    "loader": "/contact-embed/loader.js?v=0a58738b67e4",
+    "loader_key_source": "manifest.loader_sha256 first 12; builder derives dynamically for all six locales",
+    "wasm": "manifest.sha256 full digest in loader; force-cache",
+    "runtime": "manifest.wasm_exec_sha256 full digest in loader",
+    "unrelated_asset_keys_changed": false
+  },
+  "diagnostics": {
+    "event": "contact_form_submission_failed",
+    "allowlist": [
+      "component",
+      "form_id",
+      "stage",
+      "status",
+      "code"
+    ],
+    "metadata": "Finite status/code, form_id graphics_card_repair_quote or unknown; fixed component/stage. No raw errors, response body, token, form values or arbitrary metadata. Bounded filtered queue until Notomo tracker loads.",
+    "duplicate_reporting": "Removed existing console.error on terminal Graphics form failure to avoid a second analytics error beside the source-owned custom report. Runtime remains sole submission reporter; no extra POST or manual UI retry added.",
+    "without_reporter": "Finite Error.message and Error.details retained; no custom report.",
+    "ui": "Existing localized catch/finally and input retention/reset unchanged."
+  },
+  "checks": [
+    {
+      "command": "make verify",
+      "where": "reviewed exact source and reconstructed tested-input build copy",
+      "result": "PASS: Go tests, JS/WASM vet, build and magic check"
+    },
+    {
+      "command": "sha256sum site/contact-embed/*",
+      "result": "PASS: all four exact requested hashes"
+    },
+    {
+      "command": "python3 build_graphics_site.py --check; python3 tests/test_graphics_site.py",
+      "result": "PASS: six locales, manifest keys, dedicated properties, strict CSP, fallback assets and site contracts"
+    },
+    {
+      "command": "node --check site/assets/site.js; node --check site/assets/notomo-loader.js; node --check tests/contact-diagnostics-browser.cjs",
+      "result": "PASS"
+    },
+    {
+      "command": "node --test tests/test_lead_payload.js tests/test_notomo_loader.js",
+      "result": "PASS: 9 tests, including finite allowlist, queue flush once, host mapping and payload preservation"
+    },
+    {
+      "command": "python3 tests/test_pages_delivery.py",
+      "result": "PASS: 3 offline tests"
+    },
+    {
+      "command": "PLAYWRIGHT_CHROMIUM_EXECUTABLE=<Chromium 158 executable> LD_LIBRARY_PATH=<temporary libraries> python3 tests/test_wasm_browser.py",
+      "result": "PASS: root favicon, actual WASM submission, one invalid-proof retry, desktop/mobile strict CSP"
+    },
+    {
+      "command": "NODE_PATH=/tmp/contact-browser/node_modules LD_LIBRARY_PATH=/tmp/contact-tools/usr/lib/x86_64-linux-gnu CONTACT_CONSUMER=/home/runner/motherboard-patch-work CONTACT_RELAY=/home/runner/contact-relay CONTACT_GRAPHICS=/home/runner/repo node tests/contact-diagnostics-browser.cjs",
+      "result": "PASS: 20/20 (18 actual Graphics UI and 2 exported API), actual committed embeds, finite Error.message/details, exact Notomo allowlist capture, one report per terminal failure, exact proof/POST counts, reporter absent cases; all networking intercepted or aborted, DNS disabled and service workers blocked",
+      "log": "/home/runner/evidence/graphics-contact-browser.log"
+    },
+    {
+      "command": "runpy: all five tests/test_contact_wasm_embed.py checks in prepared Motherboard copy; git apply --cached --check against exact-base temporary index",
+      "result": "PASS; 62 loader reference files updated, text patch applies against exact base"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "reused_source_evidence": {
+    "source_sha": "acfbb65c1b5a18790ad85d4356e863ae23cd754e",
+    "cases": 35,
+    "native": 15,
+    "graphics_ui": 18,
+    "exported_api": 2,
+    "reuse_scope": "Native matrix reused; unchanged Motherboard base 7d5de862274ce72e3bf237aabea2a56902933342 and relay source 2ff5a1ad076787d287835512d40655b22b95dded match reviewed inputs. Graphics 20-case subset rerun with new wrapper/committed embeds. No repeated relay suite or Docker/Mac build."
+  },
+  "notomo_properties": {
+    "graphicsrepair.ca": [
+      "graphicsrepair.ca",
+      "www.graphicsrepair.ca",
+      "fixgpu.ca",
+      "gpufix.ca"
+    ],
+    "graphicsrepair.com": [
+      "graphicsrepair.com",
+      "www.graphicsrepair.com"
+    ],
+    "motherboardrepair.ca": "2 (comparison/prepared patch only; never used for Graphics)"
+  },
+  "notomo_capture_policy": "Preserved full replay including literal repair-form values for Graphics; replay_enabled=true and replay_sample_rate=1 expected by existing policy. No remote policy calls or mutations made. Technical custom diagnostics exclude those values.",
+  "motherboard_patch": {
+    "repository": "Leopere/staging-motherboardrepair-ca",
+    "branch": "staging",
+    "base_sha": "7d5de862274ce72e3bf237aabea2a56902933342",
+    "patch_sha256": "f12b7c0fd68d100dfdddcf63661fc7eeba8ff1a4266786ceb79df9ddc211e4ea",
+    "ready": "docs/motherboard-contact-patch/READY.json",
+    "runbook": "docs/motherboard-contact-patch/README.md",
+    "status": "prepared_only; no commit/push; canonical comparison only"
+  },
+  "delivery": {
+    "status": "pending_primary_Jenkins_delivery",
+    "live": false,
+    "jenkins_called": false,
+    "publication_paths": "Unchanged; primary uses established Jenkins delivery for exact pushed Graphics source. No workflow migration, deployment manager changes or legacy dispatcher invoked.",
+    "primary_owns": [
+      "review",
+      "delivery",
+      "acceptance",
+      "Notomo closure"
+    ],
+    "notomo_closure": "PENDING; do not close historical incident from offline diagnostic integration",
+    "historical_relay_failure_cause": "UNPROVEN"
+  },
+  "scope": "Graphics normal main commit/push only. Motherboard patch only. No production, Jenkins, paid service calls, real contact POSTs, customer data, source pushes or lifecycle changes.",
+  "production_state": {
+    "user_report": "Graphics current main f52728fc; favicon live via Jenkins 5",
+    "remote_main_confirmed": "f52728fc539c7c70e06d24e4668de212e427aae4",
+    "live_verified_by_runner": false,
+    "reason": "User forbids production/Jenkins calls; no live claim inferred from repository state."
+  }
+}

@@ -87,12 +87,14 @@ def test_wasm_submission_contract(expire_first_proof: bool = False) -> None:
             executable = browser_executable()
             browser = playwright.chromium.launch(executable_path=executable) if executable else playwright.chromium.launch()
             page = browser.new_page()
+            origin = f"http://127.0.0.1:{server.server_address[1]}"
+            page.route("**/*", lambda route: route.continue_() if route.request.url.startswith(origin + "/") else route.abort())
             # Contact fixtures must not send analytics to the live property.
             page.route("https://notomo.colinknapp.com/**", lambda route: route.abort())
 
             def observe_request(request) -> None:
                 nonlocal wasm_requested
-                if request.url.endswith("/contact-embed/contact-form.wasm?v=1d608f6bad6e2fa5cb6431be16880846bd072f79b9213e8f37e7dc83ce5805ff"):
+                if request.url.endswith("/contact-embed/contact-form.wasm?v=90090136e89e41e4e72d31db55944ea2f86b93b41c19a8a102ce113dc8398492"):
                     wasm_requested = True
 
             def proof(route) -> None:

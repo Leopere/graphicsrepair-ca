@@ -79,7 +79,9 @@ def notomo_script() -> str:
 
 
 def contact_scripts() -> str:
-    return '<script src="/contact-embed/loader.js" defer></script>\n  <script src="/assets/site.js" defer></script>'
+    manifest = json.loads((CONTACT_EMBED_SOURCE / "manifest.json").read_text(encoding="utf-8"))
+    key = manifest["loader_sha256"][:12]
+    return f'<script src="/contact-embed/loader.js?v={key}" defer></script>\n  <script src="/assets/site.js" defer></script>'
 
 
 def locale_path(locale: str) -> str:

@@ -46,3 +46,7 @@
 .DS_Store
 
 !/verify_publication.py
+
+!/tests/contact-diagnostics-browser.cjs
+!/docs/contact-embed-integration-ready.json
+!/docs/motherboard-contact-patch/

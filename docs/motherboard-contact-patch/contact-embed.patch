@@ -1,0 +1,586 @@
+diff --git a/docs/ads-landing.html b/docs/ads-landing.html
+index 9c937df..d037e0a 100644
+--- a/docs/ads-landing.html
++++ b/docs/ads-landing.html
+@@ -868,3 +868,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/ar/ads-landing.html b/docs/ar/ads-landing.html
+index 2274c6c..67c8283 100644
+--- a/docs/ar/ads-landing.html
++++ b/docs/ar/ads-landing.html
+@@ -868,3 +868,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/ar/builders-club-contact.html b/docs/ar/builders-club-contact.html
+index 9f5df61..cb5208e 100644
+--- a/docs/ar/builders-club-contact.html
++++ b/docs/ar/builders-club-contact.html
+@@ -925,3 +925,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/ar/business.html b/docs/ar/business.html
+index 049060c..530cbb1 100644
+--- a/docs/ar/business.html
++++ b/docs/ar/business.html
+@@ -933,3 +933,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/ar/careers.html b/docs/ar/careers.html
+index efe7392..2987f78 100644
+--- a/docs/ar/careers.html
++++ b/docs/ar/careers.html
+@@ -787,3 +787,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/ar/contact.html b/docs/ar/contact.html
+index 5c4c5c6..ec746fc 100644
+--- a/docs/ar/contact.html
++++ b/docs/ar/contact.html
+@@ -827,3 +827,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/ar/feedback.html b/docs/ar/feedback.html
+index 311425b..b0a316e 100644
+--- a/docs/ar/feedback.html
++++ b/docs/ar/feedback.html
+@@ -568,3 +568,3 @@
+     <script src="js/repair-intake-modal.min.js"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="js/feedback.min.js?v=20261019-google-review"></script>
+diff --git a/docs/ar/js/repair-intake-modal.js b/docs/ar/js/repair-intake-modal.js
+index 2156d9c..c0df772 100644
+--- a/docs/ar/js/repair-intake-modal.js
++++ b/docs/ar/js/repair-intake-modal.js
+@@ -123,3 +123,3 @@
+             loadStylesheet(),
+-            loadScript('/contact-embed/loader.js?v=0adfa014090a', () => Boolean(window.MRCContactReady)),
++            loadScript('/contact-embed/loader.js?v=0a58738b67e4', () => Boolean(window.MRCContactReady)),
+             loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation))
+diff --git a/docs/ar/js/repair-intake-modal.min.js b/docs/ar/js/repair-intake-modal.min.js
+index 5cb55e5..4c26913 100644
+--- a/docs/ar/js/repair-intake-modal.min.js
++++ b/docs/ar/js/repair-intake-modal.min.js
+@@ -1 +1 @@
+-(function() { 'use strict'; const controllerScript = document.currentScript; const scriptBase = controllerScript && controllerScript.src ? new URL('.', controllerScript.src) : new URL('js/', window.location.href); const prompt = document.querySelector('[data-repair-intake-prompt]'); const dialog = document.querySelector('[data-repair-intake-dialog]'); const formHost = document.querySelector('[data-repair-intake-form]'); const openButton = document.querySelector('[data-repair-intake-open]'); const dismissButton = document.querySelector('[data-repair-intake-dismiss]'); const closeButton = document.querySelector('[data-repair-intake-close]'); const fallback = document.querySelector('[data-repair-intake-fallback]'); const fallbackLink = fallback ? fallback.querySelector('a') : null; const DISMISS_KEY = 'mrc-repair-intake-prompt-dismissed'; const DWELL_DELAY_MS = 35000; const SCROLL_REVEAL_RATIO = 1 / 3; const excludedPages = new Set(['contact.html', 'feedback.html', 'thank-you.html']); let formLoadPromise = null; let returnFocus = null; let dwellTimer = null; if (!prompt || !dialog || !formHost || !openButton) return; if (fallbackLink) fallbackLink.href = new URL('../contact.html#request-form', scriptBase).href; const pageName = window.location.pathname.split('/').filter(Boolean).pop() || 'index.html'; const hasInlineContactForm = Array.from(document.querySelectorAll('[data-contact-form]')) .some(container => !container.hasAttribute('data-repair-intake-form')); if (excludedPages.has(pageName) || hasInlineContactForm) { prompt.remove(); dialog.remove(); return; } function sessionDismissed() { try { return window.sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (error) { return false; } } function markDismissed() { try { window.sessionStorage.setItem(DISMISS_KEY, '1'); } catch (error) {} } function removeRevealTriggers() { if (dwellTimer !== null) { window.clearTimeout(dwellTimer); dwellTimer = null; } window.removeEventListener('scroll', checkScrollProgress); } function checkScrollProgress() { const documentElement = document.documentElement; const scrollableDistance = Math.max(documentElement.scrollHeight - window.innerHeight, 0); if (!scrollableDistance) return; const scrollPosition = Math.max(window.scrollY, documentElement.scrollTop, 0); if (scrollPosition / scrollableDistance >= SCROLL_REVEAL_RATIO) { removeRevealTriggers(); revealPrompt(); } } function revealPrompt() { if (sessionDismissed()) return; if (document.visibilityState === 'hidden') { document.addEventListener('visibilitychange', revealPrompt, { once: true }); return; } removeRevealTriggers(); prompt.hidden = false; window.requestAnimationFrame(() => prompt.classList.add('is-visible')); } function dismissPrompt() { markDismissed(); prompt.classList.remove('is-visible'); window.setTimeout(() => { prompt.hidden = true; }, 250); } function loadStylesheet() { const existing = document.querySelector('link[data-repair-intake-form-styles]'); if (existing && existing.sheet) return Promise.resolve(); return new Promise((resolve, reject) => { const link = existing || document.createElement('link'); link.addEventListener('load', resolve, { once: true }); link.addEventListener('error', error => { link.remove(); reject(error); }, { once: true }); if (existing) return; link.rel = 'stylesheet'; link.href = new URL('../css/pages/contact.min.css', scriptBase).href; link.dataset.repairIntakeFormStyles = ''; document.head.appendChild(link); }); } function loadScript(path, ready) { if (ready()) return Promise.resolve(); return new Promise((resolve, reject) => { const absolute = new URL(path, scriptBase).href; const existing = Array.from(document.scripts).find(script => script.src === absolute); const script = existing || document.createElement('script'); script.addEventListener('load', resolve, { once: true }); script.addEventListener('error', error => { script.remove(); reject(error); }, { once: true }); if (existing) return; script.src = absolute; document.head.appendChild(script); }); } async function loadForm() { await Promise.all([ loadStylesheet(), loadScript('/contact-embed/loader.js?v=0adfa014090a', () => Boolean(window.MRCContactReady)), loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation)) ]); let form = formHost.querySelector('form'); const embeddedTemplate = document.querySelector('[data-repair-intake-template]'); if (!form && embeddedTemplate) { formHost.replaceChildren(embeddedTemplate.content.cloneNode(true)); form = formHost.querySelector('form'); } if (!form) { const partialUrl = new URL('../contact-partial.html', scriptBase); const response = await fetch(partialUrl, { credentials: 'same-origin' }); if (!response.ok) throw new Error(`غير قادر على تحميل نموذج الإصلاح: ${response.status}`); const wrapper = document.createElement('div'); wrapper.innerHTML = await response.text(); wrapper.querySelectorAll('[data-fragment-only]').forEach(element => element.remove()); formHost.replaceChildren(...wrapper.childNodes); form = formHost.querySelector('form'); } if (!form) throw new Error('نموذج الإصلاح مفقود من الجزء المشترك.'); const formId = form.querySelector('input[name="form_id"]'); if (formId) formId.value = 'motherboard_repair_quote'; window.AddressValidation.init(form); window.ContactForm.init(form); const firstField = form.querySelector('select:not([disabled]), input:not([type="hidden"]):not([disabled]), textarea:not([disabled])'); if (firstField) firstField.focus(); } function showFallback() { formHost.hidden = true; if (fallback) fallback.hidden = false; } function openDialog() { returnFocus = document.activeElement; prompt.classList.remove('is-visible'); document.body.classList.add('repair-intake-modal-open'); if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); } else { dialog.setAttribute('open', ''); dialog.classList.add('is-open'); } if (!formLoadPromise) { formHost.hidden = false; if (fallback) fallback.hidden = true; formLoadPromise = loadForm().catch(error => { formLoadPromise = null; showFallback(); throw error; }); formLoadPromise.catch(() => {}); } } function closeDialog() { if (typeof dialog.close === 'function' && dialog.open) dialog.close(); else { dialog.removeAttribute('open'); dialog.classList.remove('is-open'); handleClosed(); } } function handleClosed() { document.body.classList.remove('repair-intake-modal-open'); if (!sessionDismissed()) prompt.classList.add('is-visible'); if (returnFocus && typeof returnFocus.focus === 'function') returnFocus.focus(); } openButton.addEventListener('click', openDialog); if (dismissButton) dismissButton.addEventListener('click', dismissPrompt); if (closeButton) closeButton.addEventListener('click', closeDialog); dialog.addEventListener('close', handleClosed); dialog.addEventListener('click', event => { if (event.target === dialog) closeDialog(); }); if (!sessionDismissed()) { dwellTimer = window.setTimeout(revealPrompt, DWELL_DELAY_MS); window.addEventListener('scroll', checkScrollProgress, { passive: true }); checkScrollProgress(); } })();
+\ No newline at end of file
++(function() { 'use strict'; const controllerScript = document.currentScript; const scriptBase = controllerScript && controllerScript.src ? new URL('.', controllerScript.src) : new URL('js/', window.location.href); const prompt = document.querySelector('[data-repair-intake-prompt]'); const dialog = document.querySelector('[data-repair-intake-dialog]'); const formHost = document.querySelector('[data-repair-intake-form]'); const openButton = document.querySelector('[data-repair-intake-open]'); const dismissButton = document.querySelector('[data-repair-intake-dismiss]'); const closeButton = document.querySelector('[data-repair-intake-close]'); const fallback = document.querySelector('[data-repair-intake-fallback]'); const fallbackLink = fallback ? fallback.querySelector('a') : null; const DISMISS_KEY = 'mrc-repair-intake-prompt-dismissed'; const DWELL_DELAY_MS = 35000; const SCROLL_REVEAL_RATIO = 1 / 3; const excludedPages = new Set(['contact.html', 'feedback.html', 'thank-you.html']); let formLoadPromise = null; let returnFocus = null; let dwellTimer = null; if (!prompt || !dialog || !formHost || !openButton) return; if (fallbackLink) fallbackLink.href = new URL('../contact.html#request-form', scriptBase).href; const pageName = window.location.pathname.split('/').filter(Boolean).pop() || 'index.html'; const hasInlineContactForm = Array.from(document.querySelectorAll('[data-contact-form]')) .some(container => !container.hasAttribute('data-repair-intake-form')); if (excludedPages.has(pageName) || hasInlineContactForm) { prompt.remove(); dialog.remove(); return; } function sessionDismissed() { try { return window.sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (error) { return false; } } function markDismissed() { try { window.sessionStorage.setItem(DISMISS_KEY, '1'); } catch (error) {} } function removeRevealTriggers() { if (dwellTimer !== null) { window.clearTimeout(dwellTimer); dwellTimer = null; } window.removeEventListener('scroll', checkScrollProgress); } function checkScrollProgress() { const documentElement = document.documentElement; const scrollableDistance = Math.max(documentElement.scrollHeight - window.innerHeight, 0); if (!scrollableDistance) return; const scrollPosition = Math.max(window.scrollY, documentElement.scrollTop, 0); if (scrollPosition / scrollableDistance >= SCROLL_REVEAL_RATIO) { removeRevealTriggers(); revealPrompt(); } } function revealPrompt() { if (sessionDismissed()) return; if (document.visibilityState === 'hidden') { document.addEventListener('visibilitychange', revealPrompt, { once: true }); return; } removeRevealTriggers(); prompt.hidden = false; window.requestAnimationFrame(() => prompt.classList.add('is-visible')); } function dismissPrompt() { markDismissed(); prompt.classList.remove('is-visible'); window.setTimeout(() => { prompt.hidden = true; }, 250); } function loadStylesheet() { const existing = document.querySelector('link[data-repair-intake-form-styles]'); if (existing && existing.sheet) return Promise.resolve(); return new Promise((resolve, reject) => { const link = existing || document.createElement('link'); link.addEventListener('load', resolve, { once: true }); link.addEventListener('error', error => { link.remove(); reject(error); }, { once: true }); if (existing) return; link.rel = 'stylesheet'; link.href = new URL('../css/pages/contact.min.css', scriptBase).href; link.dataset.repairIntakeFormStyles = ''; document.head.appendChild(link); }); } function loadScript(path, ready) { if (ready()) return Promise.resolve(); return new Promise((resolve, reject) => { const absolute = new URL(path, scriptBase).href; const existing = Array.from(document.scripts).find(script => script.src === absolute); const script = existing || document.createElement('script'); script.addEventListener('load', resolve, { once: true }); script.addEventListener('error', error => { script.remove(); reject(error); }, { once: true }); if (existing) return; script.src = absolute; document.head.appendChild(script); }); } async function loadForm() { await Promise.all([ loadStylesheet(), loadScript('/contact-embed/loader.js?v=0a58738b67e4', () => Boolean(window.MRCContactReady)), loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation)) ]); let form = formHost.querySelector('form'); const embeddedTemplate = document.querySelector('[data-repair-intake-template]'); if (!form && embeddedTemplate) { formHost.replaceChildren(embeddedTemplate.content.cloneNode(true)); form = formHost.querySelector('form'); } if (!form) { const partialUrl = new URL('../contact-partial.html', scriptBase); const response = await fetch(partialUrl, { credentials: 'same-origin' }); if (!response.ok) throw new Error(`غير قادر على تحميل نموذج الإصلاح: ${response.status}`); const wrapper = document.createElement('div'); wrapper.innerHTML = await response.text(); wrapper.querySelectorAll('[data-fragment-only]').forEach(element => element.remove()); formHost.replaceChildren(...wrapper.childNodes); form = formHost.querySelector('form'); } if (!form) throw new Error('نموذج الإصلاح مفقود من الجزء المشترك.'); const formId = form.querySelector('input[name="form_id"]'); if (formId) formId.value = 'motherboard_repair_quote'; window.AddressValidation.init(form); window.ContactForm.init(form); const firstField = form.querySelector('select:not([disabled]), input:not([type="hidden"]):not([disabled]), textarea:not([disabled])'); if (firstField) firstField.focus(); } function showFallback() { formHost.hidden = true; if (fallback) fallback.hidden = false; } function openDialog() { returnFocus = document.activeElement; prompt.classList.remove('is-visible'); document.body.classList.add('repair-intake-modal-open'); if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); } else { dialog.setAttribute('open', ''); dialog.classList.add('is-open'); } if (!formLoadPromise) { formHost.hidden = false; if (fallback) fallback.hidden = true; formLoadPromise = loadForm().catch(error => { formLoadPromise = null; showFallback(); throw error; }); formLoadPromise.catch(() => {}); } } function closeDialog() { if (typeof dialog.close === 'function' && dialog.open) dialog.close(); else { dialog.removeAttribute('open'); dialog.classList.remove('is-open'); handleClosed(); } } function handleClosed() { document.body.classList.remove('repair-intake-modal-open'); if (!sessionDismissed()) prompt.classList.add('is-visible'); if (returnFocus && typeof returnFocus.focus === 'function') returnFocus.focus(); } openButton.addEventListener('click', openDialog); if (dismissButton) dismissButton.addEventListener('click', dismissPrompt); if (closeButton) closeButton.addEventListener('click', closeDialog); dialog.addEventListener('close', handleClosed); dialog.addEventListener('click', event => { if (event.target === dialog) closeDialog(); }); if (!sessionDismissed()) { dwellTimer = window.setTimeout(revealPrompt, DWELL_DELAY_MS); window.addEventListener('scroll', checkScrollProgress, { passive: true }); checkScrollProgress(); } })();
+\ No newline at end of file
+diff --git a/docs/ar/trios-college-contact.html b/docs/ar/trios-college-contact.html
+index 09ff94b..903cec9 100644
+--- a/docs/ar/trios-college-contact.html
++++ b/docs/ar/trios-college-contact.html
+@@ -802,3 +802,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/builders-club-contact.html b/docs/builders-club-contact.html
+index a606d77..738c464 100644
+--- a/docs/builders-club-contact.html
++++ b/docs/builders-club-contact.html
+@@ -926,3 +926,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/business.html b/docs/business.html
+index 0de2d9a..937f253 100644
+--- a/docs/business.html
++++ b/docs/business.html
+@@ -939,3 +939,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/careers.html b/docs/careers.html
+index 8c6cd9b..7a4a793 100644
+--- a/docs/careers.html
++++ b/docs/careers.html
+@@ -787,3 +787,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/contact-embed/loader.js b/docs/contact-embed/loader.js
+index 6716e71..3d85d85 100644
+--- a/docs/contact-embed/loader.js
++++ b/docs/contact-embed/loader.js
+@@ -36,3 +36,3 @@
+                 if (message) {
+-                    message.textContent = 'The form could not start. Please refresh or leave a voicemail at +1-226-505-3525.';
++                    message.textContent = 'The form could not start. Please refresh or leave a voicemail at 226-702-0555.';
+                     message.className = 'form-message error';
+@@ -91,3 +91,3 @@
+     async function instantiate(go) {
+-        const response = await fetch(ASSET_ROOT + 'contact-form.wasm?v=2b25e2335b2a380563ac253e83b6ef98e67dbdd87060f06fc16b00d6efcb0529', { cache: 'force-cache' });
++        const response = await fetch(ASSET_ROOT + 'contact-form.wasm?v=90090136e89e41e4e72d31db55944ea2f86b93b41c19a8a102ce113dc8398492', { cache: 'force-cache' });
+         if (!response.ok) throw new Error(`WASM HTTP ${response.status}`);
+diff --git a/docs/contact-embed/manifest.json b/docs/contact-embed/manifest.json
+index 055346f..423342c 100644
+--- a/docs/contact-embed/manifest.json
++++ b/docs/contact-embed/manifest.json
+@@ -2,6 +2,6 @@
+   "source_repository": "Leopere/motherboardrepair-contact",
+-  "source_revision": "sha256:30b079e3c09babf64aa281eb6e0409622b494c90bb8814cb01246a4e4f29190b",
+-  "sha256": "2b25e2335b2a380563ac253e83b6ef98e67dbdd87060f06fc16b00d6efcb0529",
++  "source_revision": "sha256:2d1d83e083943a7540335e22282e7606a0b7121540c41a9b886317d690ecb0d9",
++  "sha256": "90090136e89e41e4e72d31db55944ea2f86b93b41c19a8a102ce113dc8398492",
+   "wasm_exec_sha256": "0c949f4996f9a89698e4b5c586de32249c3b69b7baadb64d220073cc04acba14",
+-  "loader_sha256": "0adfa014090a2ddb80e4580df48b3a1593662014b890c6903769212082f5074c",
++  "loader_sha256": "0a58738b67e4ce6ec64bbd89563d427b31225d167f5b79fbf4e3cce47f5329f0",
+   "go_version": "go1.26.7"
+diff --git a/docs/contact.html b/docs/contact.html
+index e2858eb..c0ada68 100644
+--- a/docs/contact.html
++++ b/docs/contact.html
+@@ -827,3 +827,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/es/ads-landing.html b/docs/es/ads-landing.html
+index c638783..936a6d1 100644
+--- a/docs/es/ads-landing.html
++++ b/docs/es/ads-landing.html
+@@ -868,3 +868,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/es/builders-club-contact.html b/docs/es/builders-club-contact.html
+index b644502..b3fc540 100644
+--- a/docs/es/builders-club-contact.html
++++ b/docs/es/builders-club-contact.html
+@@ -925,3 +925,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/es/business.html b/docs/es/business.html
+index 980b026..b32e1b3 100644
+--- a/docs/es/business.html
++++ b/docs/es/business.html
+@@ -933,3 +933,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/es/careers.html b/docs/es/careers.html
+index 528efd4..f3dde15 100644
+--- a/docs/es/careers.html
++++ b/docs/es/careers.html
+@@ -787,3 +787,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/es/contact.html b/docs/es/contact.html
+index fb055c1..a51c061 100644
+--- a/docs/es/contact.html
++++ b/docs/es/contact.html
+@@ -827,3 +827,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/es/feedback.html b/docs/es/feedback.html
+index 0d19317..860dae3 100644
+--- a/docs/es/feedback.html
++++ b/docs/es/feedback.html
+@@ -568,3 +568,3 @@
+     <script src="js/repair-intake-modal.min.js"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="js/feedback.min.js?v=20261019-google-review"></script>
+diff --git a/docs/es/js/repair-intake-modal.js b/docs/es/js/repair-intake-modal.js
+index 8cc1e39..e929744 100644
+--- a/docs/es/js/repair-intake-modal.js
++++ b/docs/es/js/repair-intake-modal.js
+@@ -123,3 +123,3 @@
+             loadStylesheet(),
+-            loadScript('/contact-embed/loader.js?v=0adfa014090a', () => Boolean(window.MRCContactReady)),
++            loadScript('/contact-embed/loader.js?v=0a58738b67e4', () => Boolean(window.MRCContactReady)),
+             loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation))
+diff --git a/docs/es/js/repair-intake-modal.min.js b/docs/es/js/repair-intake-modal.min.js
+index 3ef77d6..519acd9 100644
+--- a/docs/es/js/repair-intake-modal.min.js
++++ b/docs/es/js/repair-intake-modal.min.js
+@@ -1 +1 @@
+-(function() { 'use strict'; const controllerScript = document.currentScript; const scriptBase = controllerScript && controllerScript.src ? new URL('.', controllerScript.src) : new URL('js/', window.location.href); const prompt = document.querySelector('[data-repair-intake-prompt]'); const dialog = document.querySelector('[data-repair-intake-dialog]'); const formHost = document.querySelector('[data-repair-intake-form]'); const openButton = document.querySelector('[data-repair-intake-open]'); const dismissButton = document.querySelector('[data-repair-intake-dismiss]'); const closeButton = document.querySelector('[data-repair-intake-close]'); const fallback = document.querySelector('[data-repair-intake-fallback]'); const fallbackLink = fallback ? fallback.querySelector('a') : null; const DISMISS_KEY = 'mrc-repair-intake-prompt-dismissed'; const DWELL_DELAY_MS = 35000; const SCROLL_REVEAL_RATIO = 1 / 3; const excludedPages = new Set(['contact.html', 'feedback.html', 'thank-you.html']); let formLoadPromise = null; let returnFocus = null; let dwellTimer = null; if (!prompt || !dialog || !formHost || !openButton) return; if (fallbackLink) fallbackLink.href = new URL('../contact.html#request-form', scriptBase).href; const pageName = window.location.pathname.split('/').filter(Boolean).pop() || 'index.html'; const hasInlineContactForm = Array.from(document.querySelectorAll('[data-contact-form]')) .some(container => !container.hasAttribute('data-repair-intake-form')); if (excludedPages.has(pageName) || hasInlineContactForm) { prompt.remove(); dialog.remove(); return; } function sessionDismissed() { try { return window.sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (error) { return false; } } function markDismissed() { try { window.sessionStorage.setItem(DISMISS_KEY, '1'); } catch (error) {} } function removeRevealTriggers() { if (dwellTimer !== null) { window.clearTimeout(dwellTimer); dwellTimer = null; } window.removeEventListener('scroll', checkScrollProgress); } function checkScrollProgress() { const documentElement = document.documentElement; const scrollableDistance = Math.max(documentElement.scrollHeight - window.innerHeight, 0); if (!scrollableDistance) return; const scrollPosition = Math.max(window.scrollY, documentElement.scrollTop, 0); if (scrollPosition / scrollableDistance >= SCROLL_REVEAL_RATIO) { removeRevealTriggers(); revealPrompt(); } } function revealPrompt() { if (sessionDismissed()) return; if (document.visibilityState === 'hidden') { document.addEventListener('visibilitychange', revealPrompt, { once: true }); return; } removeRevealTriggers(); prompt.hidden = false; window.requestAnimationFrame(() => prompt.classList.add('is-visible')); } function dismissPrompt() { markDismissed(); prompt.classList.remove('is-visible'); window.setTimeout(() => { prompt.hidden = true; }, 250); } function loadStylesheet() { const existing = document.querySelector('link[data-repair-intake-form-styles]'); if (existing && existing.sheet) return Promise.resolve(); return new Promise((resolve, reject) => { const link = existing || document.createElement('link'); link.addEventListener('load', resolve, { once: true }); link.addEventListener('error', error => { link.remove(); reject(error); }, { once: true }); if (existing) return; link.rel = 'stylesheet'; link.href = new URL('../css/pages/contact.min.css', scriptBase).href; link.dataset.repairIntakeFormStyles = ''; document.head.appendChild(link); }); } function loadScript(path, ready) { if (ready()) return Promise.resolve(); return new Promise((resolve, reject) => { const absolute = new URL(path, scriptBase).href; const existing = Array.from(document.scripts).find(script => script.src === absolute); const script = existing || document.createElement('script'); script.addEventListener('load', resolve, { once: true }); script.addEventListener('error', error => { script.remove(); reject(error); }, { once: true }); if (existing) return; script.src = absolute; document.head.appendChild(script); }); } async function loadForm() { await Promise.all([ loadStylesheet(), loadScript('/contact-embed/loader.js?v=0adfa014090a', () => Boolean(window.MRCContactReady)), loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation)) ]); let form = formHost.querySelector('form'); const embeddedTemplate = document.querySelector('[data-repair-intake-template]'); if (!form && embeddedTemplate) { formHost.replaceChildren(embeddedTemplate.content.cloneNode(true)); form = formHost.querySelector('form'); } if (!form) { const partialUrl = new URL('../contact-partial.html', scriptBase); const response = await fetch(partialUrl, { credentials: 'same-origin' }); if (!response.ok) throw new Error(`No se puede cargar el formulario de reparación: ${response.status}`); const wrapper = document.createElement('div'); wrapper.innerHTML = await response.text(); wrapper.querySelectorAll('[data-fragment-only]').forEach(element => element.remove()); formHost.replaceChildren(...wrapper.childNodes); form = formHost.querySelector('form'); } if (!form) throw new Error('Falta formulario de reparación en el parcial compartido.'); const formId = form.querySelector('input[name="form_id"]'); if (formId) formId.value = 'motherboard_repair_quote'; window.AddressValidation.init(form); window.ContactForm.init(form); const firstField = form.querySelector('select:not([disabled]), input:not([type="hidden"]):not([disabled]), textarea:not([disabled])'); if (firstField) firstField.focus(); } function showFallback() { formHost.hidden = true; if (fallback) fallback.hidden = false; } function openDialog() { returnFocus = document.activeElement; prompt.classList.remove('is-visible'); document.body.classList.add('repair-intake-modal-open'); if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); } else { dialog.setAttribute('open', ''); dialog.classList.add('is-open'); } if (!formLoadPromise) { formHost.hidden = false; if (fallback) fallback.hidden = true; formLoadPromise = loadForm().catch(error => { formLoadPromise = null; showFallback(); throw error; }); formLoadPromise.catch(() => {}); } } function closeDialog() { if (typeof dialog.close === 'function' && dialog.open) dialog.close(); else { dialog.removeAttribute('open'); dialog.classList.remove('is-open'); handleClosed(); } } function handleClosed() { document.body.classList.remove('repair-intake-modal-open'); if (!sessionDismissed()) prompt.classList.add('is-visible'); if (returnFocus && typeof returnFocus.focus === 'function') returnFocus.focus(); } openButton.addEventListener('click', openDialog); if (dismissButton) dismissButton.addEventListener('click', dismissPrompt); if (closeButton) closeButton.addEventListener('click', closeDialog); dialog.addEventListener('close', handleClosed); dialog.addEventListener('click', event => { if (event.target === dialog) closeDialog(); }); if (!sessionDismissed()) { dwellTimer = window.setTimeout(revealPrompt, DWELL_DELAY_MS); window.addEventListener('scroll', checkScrollProgress, { passive: true }); checkScrollProgress(); } })();
+\ No newline at end of file
++(function() { 'use strict'; const controllerScript = document.currentScript; const scriptBase = controllerScript && controllerScript.src ? new URL('.', controllerScript.src) : new URL('js/', window.location.href); const prompt = document.querySelector('[data-repair-intake-prompt]'); const dialog = document.querySelector('[data-repair-intake-dialog]'); const formHost = document.querySelector('[data-repair-intake-form]'); const openButton = document.querySelector('[data-repair-intake-open]'); const dismissButton = document.querySelector('[data-repair-intake-dismiss]'); const closeButton = document.querySelector('[data-repair-intake-close]'); const fallback = document.querySelector('[data-repair-intake-fallback]'); const fallbackLink = fallback ? fallback.querySelector('a') : null; const DISMISS_KEY = 'mrc-repair-intake-prompt-dismissed'; const DWELL_DELAY_MS = 35000; const SCROLL_REVEAL_RATIO = 1 / 3; const excludedPages = new Set(['contact.html', 'feedback.html', 'thank-you.html']); let formLoadPromise = null; let returnFocus = null; let dwellTimer = null; if (!prompt || !dialog || !formHost || !openButton) return; if (fallbackLink) fallbackLink.href = new URL('../contact.html#request-form', scriptBase).href; const pageName = window.location.pathname.split('/').filter(Boolean).pop() || 'index.html'; const hasInlineContactForm = Array.from(document.querySelectorAll('[data-contact-form]')) .some(container => !container.hasAttribute('data-repair-intake-form')); if (excludedPages.has(pageName) || hasInlineContactForm) { prompt.remove(); dialog.remove(); return; } function sessionDismissed() { try { return window.sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (error) { return false; } } function markDismissed() { try { window.sessionStorage.setItem(DISMISS_KEY, '1'); } catch (error) {} } function removeRevealTriggers() { if (dwellTimer !== null) { window.clearTimeout(dwellTimer); dwellTimer = null; } window.removeEventListener('scroll', checkScrollProgress); } function checkScrollProgress() { const documentElement = document.documentElement; const scrollableDistance = Math.max(documentElement.scrollHeight - window.innerHeight, 0); if (!scrollableDistance) return; const scrollPosition = Math.max(window.scrollY, documentElement.scrollTop, 0); if (scrollPosition / scrollableDistance >= SCROLL_REVEAL_RATIO) { removeRevealTriggers(); revealPrompt(); } } function revealPrompt() { if (sessionDismissed()) return; if (document.visibilityState === 'hidden') { document.addEventListener('visibilitychange', revealPrompt, { once: true }); return; } removeRevealTriggers(); prompt.hidden = false; window.requestAnimationFrame(() => prompt.classList.add('is-visible')); } function dismissPrompt() { markDismissed(); prompt.classList.remove('is-visible'); window.setTimeout(() => { prompt.hidden = true; }, 250); } function loadStylesheet() { const existing = document.querySelector('link[data-repair-intake-form-styles]'); if (existing && existing.sheet) return Promise.resolve(); return new Promise((resolve, reject) => { const link = existing || document.createElement('link'); link.addEventListener('load', resolve, { once: true }); link.addEventListener('error', error => { link.remove(); reject(error); }, { once: true }); if (existing) return; link.rel = 'stylesheet'; link.href = new URL('../css/pages/contact.min.css', scriptBase).href; link.dataset.repairIntakeFormStyles = ''; document.head.appendChild(link); }); } function loadScript(path, ready) { if (ready()) return Promise.resolve(); return new Promise((resolve, reject) => { const absolute = new URL(path, scriptBase).href; const existing = Array.from(document.scripts).find(script => script.src === absolute); const script = existing || document.createElement('script'); script.addEventListener('load', resolve, { once: true }); script.addEventListener('error', error => { script.remove(); reject(error); }, { once: true }); if (existing) return; script.src = absolute; document.head.appendChild(script); }); } async function loadForm() { await Promise.all([ loadStylesheet(), loadScript('/contact-embed/loader.js?v=0a58738b67e4', () => Boolean(window.MRCContactReady)), loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation)) ]); let form = formHost.querySelector('form'); const embeddedTemplate = document.querySelector('[data-repair-intake-template]'); if (!form && embeddedTemplate) { formHost.replaceChildren(embeddedTemplate.content.cloneNode(true)); form = formHost.querySelector('form'); } if (!form) { const partialUrl = new URL('../contact-partial.html', scriptBase); const response = await fetch(partialUrl, { credentials: 'same-origin' }); if (!response.ok) throw new Error(`No se puede cargar el formulario de reparación: ${response.status}`); const wrapper = document.createElement('div'); wrapper.innerHTML = await response.text(); wrapper.querySelectorAll('[data-fragment-only]').forEach(element => element.remove()); formHost.replaceChildren(...wrapper.childNodes); form = formHost.querySelector('form'); } if (!form) throw new Error('Falta formulario de reparación en el parcial compartido.'); const formId = form.querySelector('input[name="form_id"]'); if (formId) formId.value = 'motherboard_repair_quote'; window.AddressValidation.init(form); window.ContactForm.init(form); const firstField = form.querySelector('select:not([disabled]), input:not([type="hidden"]):not([disabled]), textarea:not([disabled])'); if (firstField) firstField.focus(); } function showFallback() { formHost.hidden = true; if (fallback) fallback.hidden = false; } function openDialog() { returnFocus = document.activeElement; prompt.classList.remove('is-visible'); document.body.classList.add('repair-intake-modal-open'); if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); } else { dialog.setAttribute('open', ''); dialog.classList.add('is-open'); } if (!formLoadPromise) { formHost.hidden = false; if (fallback) fallback.hidden = true; formLoadPromise = loadForm().catch(error => { formLoadPromise = null; showFallback(); throw error; }); formLoadPromise.catch(() => {}); } } function closeDialog() { if (typeof dialog.close === 'function' && dialog.open) dialog.close(); else { dialog.removeAttribute('open'); dialog.classList.remove('is-open'); handleClosed(); } } function handleClosed() { document.body.classList.remove('repair-intake-modal-open'); if (!sessionDismissed()) prompt.classList.add('is-visible'); if (returnFocus && typeof returnFocus.focus === 'function') returnFocus.focus(); } openButton.addEventListener('click', openDialog); if (dismissButton) dismissButton.addEventListener('click', dismissPrompt); if (closeButton) closeButton.addEventListener('click', closeDialog); dialog.addEventListener('close', handleClosed); dialog.addEventListener('click', event => { if (event.target === dialog) closeDialog(); }); if (!sessionDismissed()) { dwellTimer = window.setTimeout(revealPrompt, DWELL_DELAY_MS); window.addEventListener('scroll', checkScrollProgress, { passive: true }); checkScrollProgress(); } })();
+\ No newline at end of file
+diff --git a/docs/es/trios-college-contact.html b/docs/es/trios-college-contact.html
+index 81f0946..77717e4 100644
+--- a/docs/es/trios-college-contact.html
++++ b/docs/es/trios-college-contact.html
+@@ -802,3 +802,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/feedback.html b/docs/feedback.html
+index fff64a4..ee73b82 100644
+--- a/docs/feedback.html
++++ b/docs/feedback.html
+@@ -568,3 +568,3 @@
+     <script src="js/repair-intake-modal.min.js"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="js/feedback.min.js?v=20261019-google-review"></script>
+diff --git a/docs/fr/ads-landing.html b/docs/fr/ads-landing.html
+index 61a4e6c..2d00de0 100644
+--- a/docs/fr/ads-landing.html
++++ b/docs/fr/ads-landing.html
+@@ -868,3 +868,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/fr/builders-club-contact.html b/docs/fr/builders-club-contact.html
+index a3d627f..a542b74 100644
+--- a/docs/fr/builders-club-contact.html
++++ b/docs/fr/builders-club-contact.html
+@@ -925,3 +925,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/fr/business.html b/docs/fr/business.html
+index 73bf9e1..48a5a25 100644
+--- a/docs/fr/business.html
++++ b/docs/fr/business.html
+@@ -933,3 +933,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/fr/careers.html b/docs/fr/careers.html
+index ef8b5bc..1eaba95 100644
+--- a/docs/fr/careers.html
++++ b/docs/fr/careers.html
+@@ -787,3 +787,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/fr/contact.html b/docs/fr/contact.html
+index 1ba1993..5c76ce0 100644
+--- a/docs/fr/contact.html
++++ b/docs/fr/contact.html
+@@ -827,3 +827,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/fr/feedback.html b/docs/fr/feedback.html
+index 90ba852..ccb202e 100644
+--- a/docs/fr/feedback.html
++++ b/docs/fr/feedback.html
+@@ -568,3 +568,3 @@
+     <script src="js/repair-intake-modal.min.js"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="js/feedback.min.js?v=20261019-google-review"></script>
+diff --git a/docs/fr/js/repair-intake-modal.js b/docs/fr/js/repair-intake-modal.js
+index 45baedc..f3d298c 100644
+--- a/docs/fr/js/repair-intake-modal.js
++++ b/docs/fr/js/repair-intake-modal.js
+@@ -123,3 +123,3 @@
+             loadStylesheet(),
+-            loadScript('/contact-embed/loader.js?v=0adfa014090a', () => Boolean(window.MRCContactReady)),
++            loadScript('/contact-embed/loader.js?v=0a58738b67e4', () => Boolean(window.MRCContactReady)),
+             loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation))
+diff --git a/docs/fr/js/repair-intake-modal.min.js b/docs/fr/js/repair-intake-modal.min.js
+index d33fa70..8421da5 100644
+--- a/docs/fr/js/repair-intake-modal.min.js
++++ b/docs/fr/js/repair-intake-modal.min.js
+@@ -1 +1 @@
+-(function() { 'use strict'; const controllerScript = document.currentScript; const scriptBase = controllerScript && controllerScript.src ? new URL('.', controllerScript.src) : new URL('js/', window.location.href); const prompt = document.querySelector('[data-repair-intake-prompt]'); const dialog = document.querySelector('[data-repair-intake-dialog]'); const formHost = document.querySelector('[data-repair-intake-form]'); const openButton = document.querySelector('[data-repair-intake-open]'); const dismissButton = document.querySelector('[data-repair-intake-dismiss]'); const closeButton = document.querySelector('[data-repair-intake-close]'); const fallback = document.querySelector('[data-repair-intake-fallback]'); const fallbackLink = fallback ? fallback.querySelector('a') : null; const DISMISS_KEY = 'mrc-repair-intake-prompt-dismissed'; const DWELL_DELAY_MS = 35000; const SCROLL_REVEAL_RATIO = 1 / 3; const excludedPages = new Set(['contact.html', 'feedback.html', 'thank-you.html']); let formLoadPromise = null; let returnFocus = null; let dwellTimer = null; if (!prompt || !dialog || !formHost || !openButton) return; if (fallbackLink) fallbackLink.href = new URL('../contact.html#request-form', scriptBase).href; const pageName = window.location.pathname.split('/').filter(Boolean).pop() || 'index.html'; const hasInlineContactForm = Array.from(document.querySelectorAll('[data-contact-form]')) .some(container => !container.hasAttribute('data-repair-intake-form')); if (excludedPages.has(pageName) || hasInlineContactForm) { prompt.remove(); dialog.remove(); return; } function sessionDismissed() { try { return window.sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (error) { return false; } } function markDismissed() { try { window.sessionStorage.setItem(DISMISS_KEY, '1'); } catch (error) {} } function removeRevealTriggers() { if (dwellTimer !== null) { window.clearTimeout(dwellTimer); dwellTimer = null; } window.removeEventListener('scroll', checkScrollProgress); } function checkScrollProgress() { const documentElement = document.documentElement; const scrollableDistance = Math.max(documentElement.scrollHeight - window.innerHeight, 0); if (!scrollableDistance) return; const scrollPosition = Math.max(window.scrollY, documentElement.scrollTop, 0); if (scrollPosition / scrollableDistance >= SCROLL_REVEAL_RATIO) { removeRevealTriggers(); revealPrompt(); } } function revealPrompt() { if (sessionDismissed()) return; if (document.visibilityState === 'hidden') { document.addEventListener('visibilitychange', revealPrompt, { once: true }); return; } removeRevealTriggers(); prompt.hidden = false; window.requestAnimationFrame(() => prompt.classList.add('is-visible')); } function dismissPrompt() { markDismissed(); prompt.classList.remove('is-visible'); window.setTimeout(() => { prompt.hidden = true; }, 250); } function loadStylesheet() { const existing = document.querySelector('link[data-repair-intake-form-styles]'); if (existing && existing.sheet) return Promise.resolve(); return new Promise((resolve, reject) => { const link = existing || document.createElement('link'); link.addEventListener('load', resolve, { once: true }); link.addEventListener('error', error => { link.remove(); reject(error); }, { once: true }); if (existing) return; link.rel = 'stylesheet'; link.href = new URL('../css/pages/contact.min.css', scriptBase).href; link.dataset.repairIntakeFormStyles = ''; document.head.appendChild(link); }); } function loadScript(path, ready) { if (ready()) return Promise.resolve(); return new Promise((resolve, reject) => { const absolute = new URL(path, scriptBase).href; const existing = Array.from(document.scripts).find(script => script.src === absolute); const script = existing || document.createElement('script'); script.addEventListener('load', resolve, { once: true }); script.addEventListener('error', error => { script.remove(); reject(error); }, { once: true }); if (existing) return; script.src = absolute; document.head.appendChild(script); }); } async function loadForm() { await Promise.all([ loadStylesheet(), loadScript('/contact-embed/loader.js?v=0adfa014090a', () => Boolean(window.MRCContactReady)), loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation)) ]); let form = formHost.querySelector('form'); const embeddedTemplate = document.querySelector('[data-repair-intake-template]'); if (!form && embeddedTemplate) { formHost.replaceChildren(embeddedTemplate.content.cloneNode(true)); form = formHost.querySelector('form'); } if (!form) { const partialUrl = new URL('../contact-partial.html', scriptBase); const response = await fetch(partialUrl, { credentials: 'same-origin' }); if (!response.ok) throw new Error(`Impossible de charger le formulaire de réparation : ${response.status}`); const wrapper = document.createElement('div'); wrapper.innerHTML = await response.text(); wrapper.querySelectorAll('[data-fragment-only]').forEach(element => element.remove()); formHost.replaceChildren(...wrapper.childNodes); form = formHost.querySelector('form'); } if (!form) throw new Error('Le formulaire de réparation est absent du partiel partagé.'); const formId = form.querySelector('input[name="form_id"]'); if (formId) formId.value = 'motherboard_repair_quote'; window.AddressValidation.init(form); window.ContactForm.init(form); const firstField = form.querySelector('select:not([disabled]), input:not([type="hidden"]):not([disabled]), textarea:not([disabled])'); if (firstField) firstField.focus(); } function showFallback() { formHost.hidden = true; if (fallback) fallback.hidden = false; } function openDialog() { returnFocus = document.activeElement; prompt.classList.remove('is-visible'); document.body.classList.add('repair-intake-modal-open'); if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); } else { dialog.setAttribute('open', ''); dialog.classList.add('is-open'); } if (!formLoadPromise) { formHost.hidden = false; if (fallback) fallback.hidden = true; formLoadPromise = loadForm().catch(error => { formLoadPromise = null; showFallback(); throw error; }); formLoadPromise.catch(() => {}); } } function closeDialog() { if (typeof dialog.close === 'function' && dialog.open) dialog.close(); else { dialog.removeAttribute('open'); dialog.classList.remove('is-open'); handleClosed(); } } function handleClosed() { document.body.classList.remove('repair-intake-modal-open'); if (!sessionDismissed()) prompt.classList.add('is-visible'); if (returnFocus && typeof returnFocus.focus === 'function') returnFocus.focus(); } openButton.addEventListener('click', openDialog); if (dismissButton) dismissButton.addEventListener('click', dismissPrompt); if (closeButton) closeButton.addEventListener('click', closeDialog); dialog.addEventListener('close', handleClosed); dialog.addEventListener('click', event => { if (event.target === dialog) closeDialog(); }); if (!sessionDismissed()) { dwellTimer = window.setTimeout(revealPrompt, DWELL_DELAY_MS); window.addEventListener('scroll', checkScrollProgress, { passive: true }); checkScrollProgress(); } })();
+\ No newline at end of file
++(function() { 'use strict'; const controllerScript = document.currentScript; const scriptBase = controllerScript && controllerScript.src ? new URL('.', controllerScript.src) : new URL('js/', window.location.href); const prompt = document.querySelector('[data-repair-intake-prompt]'); const dialog = document.querySelector('[data-repair-intake-dialog]'); const formHost = document.querySelector('[data-repair-intake-form]'); const openButton = document.querySelector('[data-repair-intake-open]'); const dismissButton = document.querySelector('[data-repair-intake-dismiss]'); const closeButton = document.querySelector('[data-repair-intake-close]'); const fallback = document.querySelector('[data-repair-intake-fallback]'); const fallbackLink = fallback ? fallback.querySelector('a') : null; const DISMISS_KEY = 'mrc-repair-intake-prompt-dismissed'; const DWELL_DELAY_MS = 35000; const SCROLL_REVEAL_RATIO = 1 / 3; const excludedPages = new Set(['contact.html', 'feedback.html', 'thank-you.html']); let formLoadPromise = null; let returnFocus = null; let dwellTimer = null; if (!prompt || !dialog || !formHost || !openButton) return; if (fallbackLink) fallbackLink.href = new URL('../contact.html#request-form', scriptBase).href; const pageName = window.location.pathname.split('/').filter(Boolean).pop() || 'index.html'; const hasInlineContactForm = Array.from(document.querySelectorAll('[data-contact-form]')) .some(container => !container.hasAttribute('data-repair-intake-form')); if (excludedPages.has(pageName) || hasInlineContactForm) { prompt.remove(); dialog.remove(); return; } function sessionDismissed() { try { return window.sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (error) { return false; } } function markDismissed() { try { window.sessionStorage.setItem(DISMISS_KEY, '1'); } catch (error) {} } function removeRevealTriggers() { if (dwellTimer !== null) { window.clearTimeout(dwellTimer); dwellTimer = null; } window.removeEventListener('scroll', checkScrollProgress); } function checkScrollProgress() { const documentElement = document.documentElement; const scrollableDistance = Math.max(documentElement.scrollHeight - window.innerHeight, 0); if (!scrollableDistance) return; const scrollPosition = Math.max(window.scrollY, documentElement.scrollTop, 0); if (scrollPosition / scrollableDistance >= SCROLL_REVEAL_RATIO) { removeRevealTriggers(); revealPrompt(); } } function revealPrompt() { if (sessionDismissed()) return; if (document.visibilityState === 'hidden') { document.addEventListener('visibilitychange', revealPrompt, { once: true }); return; } removeRevealTriggers(); prompt.hidden = false; window.requestAnimationFrame(() => prompt.classList.add('is-visible')); } function dismissPrompt() { markDismissed(); prompt.classList.remove('is-visible'); window.setTimeout(() => { prompt.hidden = true; }, 250); } function loadStylesheet() { const existing = document.querySelector('link[data-repair-intake-form-styles]'); if (existing && existing.sheet) return Promise.resolve(); return new Promise((resolve, reject) => { const link = existing || document.createElement('link'); link.addEventListener('load', resolve, { once: true }); link.addEventListener('error', error => { link.remove(); reject(error); }, { once: true }); if (existing) return; link.rel = 'stylesheet'; link.href = new URL('../css/pages/contact.min.css', scriptBase).href; link.dataset.repairIntakeFormStyles = ''; document.head.appendChild(link); }); } function loadScript(path, ready) { if (ready()) return Promise.resolve(); return new Promise((resolve, reject) => { const absolute = new URL(path, scriptBase).href; const existing = Array.from(document.scripts).find(script => script.src === absolute); const script = existing || document.createElement('script'); script.addEventListener('load', resolve, { once: true }); script.addEventListener('error', error => { script.remove(); reject(error); }, { once: true }); if (existing) return; script.src = absolute; document.head.appendChild(script); }); } async function loadForm() { await Promise.all([ loadStylesheet(), loadScript('/contact-embed/loader.js?v=0a58738b67e4', () => Boolean(window.MRCContactReady)), loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation)) ]); let form = formHost.querySelector('form'); const embeddedTemplate = document.querySelector('[data-repair-intake-template]'); if (!form && embeddedTemplate) { formHost.replaceChildren(embeddedTemplate.content.cloneNode(true)); form = formHost.querySelector('form'); } if (!form) { const partialUrl = new URL('../contact-partial.html', scriptBase); const response = await fetch(partialUrl, { credentials: 'same-origin' }); if (!response.ok) throw new Error(`Impossible de charger le formulaire de réparation : ${response.status}`); const wrapper = document.createElement('div'); wrapper.innerHTML = await response.text(); wrapper.querySelectorAll('[data-fragment-only]').forEach(element => element.remove()); formHost.replaceChildren(...wrapper.childNodes); form = formHost.querySelector('form'); } if (!form) throw new Error('Le formulaire de réparation est absent du partiel partagé.'); const formId = form.querySelector('input[name="form_id"]'); if (formId) formId.value = 'motherboard_repair_quote'; window.AddressValidation.init(form); window.ContactForm.init(form); const firstField = form.querySelector('select:not([disabled]), input:not([type="hidden"]):not([disabled]), textarea:not([disabled])'); if (firstField) firstField.focus(); } function showFallback() { formHost.hidden = true; if (fallback) fallback.hidden = false; } function openDialog() { returnFocus = document.activeElement; prompt.classList.remove('is-visible'); document.body.classList.add('repair-intake-modal-open'); if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); } else { dialog.setAttribute('open', ''); dialog.classList.add('is-open'); } if (!formLoadPromise) { formHost.hidden = false; if (fallback) fallback.hidden = true; formLoadPromise = loadForm().catch(error => { formLoadPromise = null; showFallback(); throw error; }); formLoadPromise.catch(() => {}); } } function closeDialog() { if (typeof dialog.close === 'function' && dialog.open) dialog.close(); else { dialog.removeAttribute('open'); dialog.classList.remove('is-open'); handleClosed(); } } function handleClosed() { document.body.classList.remove('repair-intake-modal-open'); if (!sessionDismissed()) prompt.classList.add('is-visible'); if (returnFocus && typeof returnFocus.focus === 'function') returnFocus.focus(); } openButton.addEventListener('click', openDialog); if (dismissButton) dismissButton.addEventListener('click', dismissPrompt); if (closeButton) closeButton.addEventListener('click', closeDialog); dialog.addEventListener('close', handleClosed); dialog.addEventListener('click', event => { if (event.target === dialog) closeDialog(); }); if (!sessionDismissed()) { dwellTimer = window.setTimeout(revealPrompt, DWELL_DELAY_MS); window.addEventListener('scroll', checkScrollProgress, { passive: true }); checkScrollProgress(); } })();
+\ No newline at end of file
+diff --git a/docs/fr/trios-college-contact.html b/docs/fr/trios-college-contact.html
+index 0de8c88..89149a8 100644
+--- a/docs/fr/trios-college-contact.html
++++ b/docs/fr/trios-college-contact.html
+@@ -802,3 +802,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/ja/ads-landing.html b/docs/ja/ads-landing.html
+index 6d4171f..0bec8dc 100644
+--- a/docs/ja/ads-landing.html
++++ b/docs/ja/ads-landing.html
+@@ -868,3 +868,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/ja/builders-club-contact.html b/docs/ja/builders-club-contact.html
+index e8e5a45..42091ca 100644
+--- a/docs/ja/builders-club-contact.html
++++ b/docs/ja/builders-club-contact.html
+@@ -925,3 +925,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/ja/business.html b/docs/ja/business.html
+index 85770c0..7fd28d2 100644
+--- a/docs/ja/business.html
++++ b/docs/ja/business.html
+@@ -933,3 +933,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/ja/careers.html b/docs/ja/careers.html
+index 48f9458..6a7b004 100644
+--- a/docs/ja/careers.html
++++ b/docs/ja/careers.html
+@@ -787,3 +787,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/ja/contact.html b/docs/ja/contact.html
+index ea9fe8c..1699e6a 100644
+--- a/docs/ja/contact.html
++++ b/docs/ja/contact.html
+@@ -827,3 +827,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/ja/feedback.html b/docs/ja/feedback.html
+index e27cbd3..509ac0a 100644
+--- a/docs/ja/feedback.html
++++ b/docs/ja/feedback.html
+@@ -568,3 +568,3 @@
+     <script src="js/repair-intake-modal.min.js"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="js/feedback.min.js?v=20261019-google-review"></script>
+diff --git a/docs/ja/js/repair-intake-modal.js b/docs/ja/js/repair-intake-modal.js
+index 009a1c7..016e8ac 100644
+--- a/docs/ja/js/repair-intake-modal.js
++++ b/docs/ja/js/repair-intake-modal.js
+@@ -123,3 +123,3 @@
+             loadStylesheet(),
+-            loadScript('/contact-embed/loader.js?v=0adfa014090a', () => Boolean(window.MRCContactReady)),
++            loadScript('/contact-embed/loader.js?v=0a58738b67e4', () => Boolean(window.MRCContactReady)),
+             loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation))
+diff --git a/docs/ja/js/repair-intake-modal.min.js b/docs/ja/js/repair-intake-modal.min.js
+index dad477c..b0124ee 100644
+--- a/docs/ja/js/repair-intake-modal.min.js
++++ b/docs/ja/js/repair-intake-modal.min.js
+@@ -1 +1 @@
+-(function() { 'use strict'; const controllerScript = document.currentScript; const scriptBase = controllerScript && controllerScript.src ? new URL('.', controllerScript.src) : new URL('js/', window.location.href); const prompt = document.querySelector('[data-repair-intake-prompt]'); const dialog = document.querySelector('[data-repair-intake-dialog]'); const formHost = document.querySelector('[data-repair-intake-form]'); const openButton = document.querySelector('[data-repair-intake-open]'); const dismissButton = document.querySelector('[data-repair-intake-dismiss]'); const closeButton = document.querySelector('[data-repair-intake-close]'); const fallback = document.querySelector('[data-repair-intake-fallback]'); const fallbackLink = fallback ? fallback.querySelector('a') : null; const DISMISS_KEY = 'mrc-repair-intake-prompt-dismissed'; const DWELL_DELAY_MS = 35000; const SCROLL_REVEAL_RATIO = 1 / 3; const excludedPages = new Set(['contact.html', 'feedback.html', 'thank-you.html']); let formLoadPromise = null; let returnFocus = null; let dwellTimer = null; if (!prompt || !dialog || !formHost || !openButton) return; if (fallbackLink) fallbackLink.href = new URL('../contact.html#request-form', scriptBase).href; const pageName = window.location.pathname.split('/').filter(Boolean).pop() || 'index.html'; const hasInlineContactForm = Array.from(document.querySelectorAll('[data-contact-form]')) .some(container => !container.hasAttribute('data-repair-intake-form')); if (excludedPages.has(pageName) || hasInlineContactForm) { prompt.remove(); dialog.remove(); return; } function sessionDismissed() { try { return window.sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (error) { return false; } } function markDismissed() { try { window.sessionStorage.setItem(DISMISS_KEY, '1'); } catch (error) {} } function removeRevealTriggers() { if (dwellTimer !== null) { window.clearTimeout(dwellTimer); dwellTimer = null; } window.removeEventListener('scroll', checkScrollProgress); } function checkScrollProgress() { const documentElement = document.documentElement; const scrollableDistance = Math.max(documentElement.scrollHeight - window.innerHeight, 0); if (!scrollableDistance) return; const scrollPosition = Math.max(window.scrollY, documentElement.scrollTop, 0); if (scrollPosition / scrollableDistance >= SCROLL_REVEAL_RATIO) { removeRevealTriggers(); revealPrompt(); } } function revealPrompt() { if (sessionDismissed()) return; if (document.visibilityState === 'hidden') { document.addEventListener('visibilitychange', revealPrompt, { once: true }); return; } removeRevealTriggers(); prompt.hidden = false; window.requestAnimationFrame(() => prompt.classList.add('is-visible')); } function dismissPrompt() { markDismissed(); prompt.classList.remove('is-visible'); window.setTimeout(() => { prompt.hidden = true; }, 250); } function loadStylesheet() { const existing = document.querySelector('link[data-repair-intake-form-styles]'); if (existing && existing.sheet) return Promise.resolve(); return new Promise((resolve, reject) => { const link = existing || document.createElement('link'); link.addEventListener('load', resolve, { once: true }); link.addEventListener('error', error => { link.remove(); reject(error); }, { once: true }); if (existing) return; link.rel = 'stylesheet'; link.href = new URL('../css/pages/contact.min.css', scriptBase).href; link.dataset.repairIntakeFormStyles = ''; document.head.appendChild(link); }); } function loadScript(path, ready) { if (ready()) return Promise.resolve(); return new Promise((resolve, reject) => { const absolute = new URL(path, scriptBase).href; const existing = Array.from(document.scripts).find(script => script.src === absolute); const script = existing || document.createElement('script'); script.addEventListener('load', resolve, { once: true }); script.addEventListener('error', error => { script.remove(); reject(error); }, { once: true }); if (existing) return; script.src = absolute; document.head.appendChild(script); }); } async function loadForm() { await Promise.all([ loadStylesheet(), loadScript('/contact-embed/loader.js?v=0adfa014090a', () => Boolean(window.MRCContactReady)), loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation)) ]); let form = formHost.querySelector('form'); const embeddedTemplate = document.querySelector('[data-repair-intake-template]'); if (!form && embeddedTemplate) { formHost.replaceChildren(embeddedTemplate.content.cloneNode(true)); form = formHost.querySelector('form'); } if (!form) { const partialUrl = new URL('../contact-partial.html', scriptBase); const response = await fetch(partialUrl, { credentials: 'same-origin' }); if (!response.ok) throw new Error(`修復フォームを読み込めません: ${response.status}`); const wrapper = document.createElement('div'); wrapper.innerHTML = await response.text(); wrapper.querySelectorAll('[data-fragment-only]').forEach(element => element.remove()); formHost.replaceChildren(...wrapper.childNodes); form = formHost.querySelector('form'); } if (!form) throw new Error('共有部分に修復フォームがありません。'); const formId = form.querySelector('input[name="form_id"]'); if (formId) formId.value = 'motherboard_repair_quote'; window.AddressValidation.init(form); window.ContactForm.init(form); const firstField = form.querySelector('select:not([disabled]), input:not([type="hidden"]):not([disabled]), textarea:not([disabled])'); if (firstField) firstField.focus(); } function showFallback() { formHost.hidden = true; if (fallback) fallback.hidden = false; } function openDialog() { returnFocus = document.activeElement; prompt.classList.remove('is-visible'); document.body.classList.add('repair-intake-modal-open'); if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); } else { dialog.setAttribute('open', ''); dialog.classList.add('is-open'); } if (!formLoadPromise) { formHost.hidden = false; if (fallback) fallback.hidden = true; formLoadPromise = loadForm().catch(error => { formLoadPromise = null; showFallback(); throw error; }); formLoadPromise.catch(() => {}); } } function closeDialog() { if (typeof dialog.close === 'function' && dialog.open) dialog.close(); else { dialog.removeAttribute('open'); dialog.classList.remove('is-open'); handleClosed(); } } function handleClosed() { document.body.classList.remove('repair-intake-modal-open'); if (!sessionDismissed()) prompt.classList.add('is-visible'); if (returnFocus && typeof returnFocus.focus === 'function') returnFocus.focus(); } openButton.addEventListener('click', openDialog); if (dismissButton) dismissButton.addEventListener('click', dismissPrompt); if (closeButton) closeButton.addEventListener('click', closeDialog); dialog.addEventListener('close', handleClosed); dialog.addEventListener('click', event => { if (event.target === dialog) closeDialog(); }); if (!sessionDismissed()) { dwellTimer = window.setTimeout(revealPrompt, DWELL_DELAY_MS); window.addEventListener('scroll', checkScrollProgress, { passive: true }); checkScrollProgress(); } })();
+\ No newline at end of file
++(function() { 'use strict'; const controllerScript = document.currentScript; const scriptBase = controllerScript && controllerScript.src ? new URL('.', controllerScript.src) : new URL('js/', window.location.href); const prompt = document.querySelector('[data-repair-intake-prompt]'); const dialog = document.querySelector('[data-repair-intake-dialog]'); const formHost = document.querySelector('[data-repair-intake-form]'); const openButton = document.querySelector('[data-repair-intake-open]'); const dismissButton = document.querySelector('[data-repair-intake-dismiss]'); const closeButton = document.querySelector('[data-repair-intake-close]'); const fallback = document.querySelector('[data-repair-intake-fallback]'); const fallbackLink = fallback ? fallback.querySelector('a') : null; const DISMISS_KEY = 'mrc-repair-intake-prompt-dismissed'; const DWELL_DELAY_MS = 35000; const SCROLL_REVEAL_RATIO = 1 / 3; const excludedPages = new Set(['contact.html', 'feedback.html', 'thank-you.html']); let formLoadPromise = null; let returnFocus = null; let dwellTimer = null; if (!prompt || !dialog || !formHost || !openButton) return; if (fallbackLink) fallbackLink.href = new URL('../contact.html#request-form', scriptBase).href; const pageName = window.location.pathname.split('/').filter(Boolean).pop() || 'index.html'; const hasInlineContactForm = Array.from(document.querySelectorAll('[data-contact-form]')) .some(container => !container.hasAttribute('data-repair-intake-form')); if (excludedPages.has(pageName) || hasInlineContactForm) { prompt.remove(); dialog.remove(); return; } function sessionDismissed() { try { return window.sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (error) { return false; } } function markDismissed() { try { window.sessionStorage.setItem(DISMISS_KEY, '1'); } catch (error) {} } function removeRevealTriggers() { if (dwellTimer !== null) { window.clearTimeout(dwellTimer); dwellTimer = null; } window.removeEventListener('scroll', checkScrollProgress); } function checkScrollProgress() { const documentElement = document.documentElement; const scrollableDistance = Math.max(documentElement.scrollHeight - window.innerHeight, 0); if (!scrollableDistance) return; const scrollPosition = Math.max(window.scrollY, documentElement.scrollTop, 0); if (scrollPosition / scrollableDistance >= SCROLL_REVEAL_RATIO) { removeRevealTriggers(); revealPrompt(); } } function revealPrompt() { if (sessionDismissed()) return; if (document.visibilityState === 'hidden') { document.addEventListener('visibilitychange', revealPrompt, { once: true }); return; } removeRevealTriggers(); prompt.hidden = false; window.requestAnimationFrame(() => prompt.classList.add('is-visible')); } function dismissPrompt() { markDismissed(); prompt.classList.remove('is-visible'); window.setTimeout(() => { prompt.hidden = true; }, 250); } function loadStylesheet() { const existing = document.querySelector('link[data-repair-intake-form-styles]'); if (existing && existing.sheet) return Promise.resolve(); return new Promise((resolve, reject) => { const link = existing || document.createElement('link'); link.addEventListener('load', resolve, { once: true }); link.addEventListener('error', error => { link.remove(); reject(error); }, { once: true }); if (existing) return; link.rel = 'stylesheet'; link.href = new URL('../css/pages/contact.min.css', scriptBase).href; link.dataset.repairIntakeFormStyles = ''; document.head.appendChild(link); }); } function loadScript(path, ready) { if (ready()) return Promise.resolve(); return new Promise((resolve, reject) => { const absolute = new URL(path, scriptBase).href; const existing = Array.from(document.scripts).find(script => script.src === absolute); const script = existing || document.createElement('script'); script.addEventListener('load', resolve, { once: true }); script.addEventListener('error', error => { script.remove(); reject(error); }, { once: true }); if (existing) return; script.src = absolute; document.head.appendChild(script); }); } async function loadForm() { await Promise.all([ loadStylesheet(), loadScript('/contact-embed/loader.js?v=0a58738b67e4', () => Boolean(window.MRCContactReady)), loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation)) ]); let form = formHost.querySelector('form'); const embeddedTemplate = document.querySelector('[data-repair-intake-template]'); if (!form && embeddedTemplate) { formHost.replaceChildren(embeddedTemplate.content.cloneNode(true)); form = formHost.querySelector('form'); } if (!form) { const partialUrl = new URL('../contact-partial.html', scriptBase); const response = await fetch(partialUrl, { credentials: 'same-origin' }); if (!response.ok) throw new Error(`修復フォームを読み込めません: ${response.status}`); const wrapper = document.createElement('div'); wrapper.innerHTML = await response.text(); wrapper.querySelectorAll('[data-fragment-only]').forEach(element => element.remove()); formHost.replaceChildren(...wrapper.childNodes); form = formHost.querySelector('form'); } if (!form) throw new Error('共有部分に修復フォームがありません。'); const formId = form.querySelector('input[name="form_id"]'); if (formId) formId.value = 'motherboard_repair_quote'; window.AddressValidation.init(form); window.ContactForm.init(form); const firstField = form.querySelector('select:not([disabled]), input:not([type="hidden"]):not([disabled]), textarea:not([disabled])'); if (firstField) firstField.focus(); } function showFallback() { formHost.hidden = true; if (fallback) fallback.hidden = false; } function openDialog() { returnFocus = document.activeElement; prompt.classList.remove('is-visible'); document.body.classList.add('repair-intake-modal-open'); if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); } else { dialog.setAttribute('open', ''); dialog.classList.add('is-open'); } if (!formLoadPromise) { formHost.hidden = false; if (fallback) fallback.hidden = true; formLoadPromise = loadForm().catch(error => { formLoadPromise = null; showFallback(); throw error; }); formLoadPromise.catch(() => {}); } } function closeDialog() { if (typeof dialog.close === 'function' && dialog.open) dialog.close(); else { dialog.removeAttribute('open'); dialog.classList.remove('is-open'); handleClosed(); } } function handleClosed() { document.body.classList.remove('repair-intake-modal-open'); if (!sessionDismissed()) prompt.classList.add('is-visible'); if (returnFocus && typeof returnFocus.focus === 'function') returnFocus.focus(); } openButton.addEventListener('click', openDialog); if (dismissButton) dismissButton.addEventListener('click', dismissPrompt); if (closeButton) closeButton.addEventListener('click', closeDialog); dialog.addEventListener('close', handleClosed); dialog.addEventListener('click', event => { if (event.target === dialog) closeDialog(); }); if (!sessionDismissed()) { dwellTimer = window.setTimeout(revealPrompt, DWELL_DELAY_MS); window.addEventListener('scroll', checkScrollProgress, { passive: true }); checkScrollProgress(); } })();
+\ No newline at end of file
+diff --git a/docs/ja/trios-college-contact.html b/docs/ja/trios-college-contact.html
+index 98f3d37..cbbaaef 100644
+--- a/docs/ja/trios-college-contact.html
++++ b/docs/ja/trios-college-contact.html
+@@ -802,3 +802,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/js/repair-intake-modal.js b/docs/js/repair-intake-modal.js
+index 9f86e00..a7b9cb7 100644
+--- a/docs/js/repair-intake-modal.js
++++ b/docs/js/repair-intake-modal.js
+@@ -123,3 +123,3 @@
+             loadStylesheet(),
+-            loadScript('/contact-embed/loader.js?v=0adfa014090a', () => Boolean(window.MRCContactReady)),
++            loadScript('/contact-embed/loader.js?v=0a58738b67e4', () => Boolean(window.MRCContactReady)),
+             loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation))
+diff --git a/docs/js/repair-intake-modal.min.js b/docs/js/repair-intake-modal.min.js
+index 8017130..5475166 100644
+--- a/docs/js/repair-intake-modal.min.js
++++ b/docs/js/repair-intake-modal.min.js
+@@ -1 +1 @@
+-(function() { 'use strict'; const controllerScript = document.currentScript; const scriptBase = controllerScript && controllerScript.src ? new URL('.', controllerScript.src) : new URL('js/', window.location.href); const prompt = document.querySelector('[data-repair-intake-prompt]'); const dialog = document.querySelector('[data-repair-intake-dialog]'); const formHost = document.querySelector('[data-repair-intake-form]'); const openButton = document.querySelector('[data-repair-intake-open]'); const dismissButton = document.querySelector('[data-repair-intake-dismiss]'); const closeButton = document.querySelector('[data-repair-intake-close]'); const fallback = document.querySelector('[data-repair-intake-fallback]'); const fallbackLink = fallback ? fallback.querySelector('a') : null; const DISMISS_KEY = 'mrc-repair-intake-prompt-dismissed'; const DWELL_DELAY_MS = 35000; const SCROLL_REVEAL_RATIO = 1 / 3; const excludedPages = new Set(['contact.html', 'feedback.html', 'thank-you.html']); let formLoadPromise = null; let returnFocus = null; let dwellTimer = null; if (!prompt || !dialog || !formHost || !openButton) return; if (fallbackLink) fallbackLink.href = new URL('../contact.html#request-form', scriptBase).href; const pageName = window.location.pathname.split('/').filter(Boolean).pop() || 'index.html'; const hasInlineContactForm = Array.from(document.querySelectorAll('[data-contact-form]')) .some(container => !container.hasAttribute('data-repair-intake-form')); if (excludedPages.has(pageName) || hasInlineContactForm) { prompt.remove(); dialog.remove(); return; } function sessionDismissed() { try { return window.sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (error) { return false; } } function markDismissed() { try { window.sessionStorage.setItem(DISMISS_KEY, '1'); } catch (error) {} } function removeRevealTriggers() { if (dwellTimer !== null) { window.clearTimeout(dwellTimer); dwellTimer = null; } window.removeEventListener('scroll', checkScrollProgress); } function checkScrollProgress() { const documentElement = document.documentElement; const scrollableDistance = Math.max(documentElement.scrollHeight - window.innerHeight, 0); if (!scrollableDistance) return; const scrollPosition = Math.max(window.scrollY, documentElement.scrollTop, 0); if (scrollPosition / scrollableDistance >= SCROLL_REVEAL_RATIO) { removeRevealTriggers(); revealPrompt(); } } function revealPrompt() { if (sessionDismissed()) return; if (document.visibilityState === 'hidden') { document.addEventListener('visibilitychange', revealPrompt, { once: true }); return; } removeRevealTriggers(); prompt.hidden = false; window.requestAnimationFrame(() => prompt.classList.add('is-visible')); } function dismissPrompt() { markDismissed(); prompt.classList.remove('is-visible'); window.setTimeout(() => { prompt.hidden = true; }, 250); } function loadStylesheet() { const existing = document.querySelector('link[data-repair-intake-form-styles]'); if (existing && existing.sheet) return Promise.resolve(); return new Promise((resolve, reject) => { const link = existing || document.createElement('link'); link.addEventListener('load', resolve, { once: true }); link.addEventListener('error', error => { link.remove(); reject(error); }, { once: true }); if (existing) return; link.rel = 'stylesheet'; link.href = new URL('../css/pages/contact.min.css', scriptBase).href; link.dataset.repairIntakeFormStyles = ''; document.head.appendChild(link); }); } function loadScript(path, ready) { if (ready()) return Promise.resolve(); return new Promise((resolve, reject) => { const absolute = new URL(path, scriptBase).href; const existing = Array.from(document.scripts).find(script => script.src === absolute); const script = existing || document.createElement('script'); script.addEventListener('load', resolve, { once: true }); script.addEventListener('error', error => { script.remove(); reject(error); }, { once: true }); if (existing) return; script.src = absolute; document.head.appendChild(script); }); } async function loadForm() { await Promise.all([ loadStylesheet(), loadScript('/contact-embed/loader.js?v=0adfa014090a', () => Boolean(window.MRCContactReady)), loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation)) ]); let form = formHost.querySelector('form'); const embeddedTemplate = document.querySelector('[data-repair-intake-template]'); if (!form && embeddedTemplate) { formHost.replaceChildren(embeddedTemplate.content.cloneNode(true)); form = formHost.querySelector('form'); } if (!form) { const partialUrl = new URL('../contact-partial.html', scriptBase); const response = await fetch(partialUrl, { credentials: 'same-origin' }); if (!response.ok) throw new Error(`Unable to load repair form: ${response.status}`); const wrapper = document.createElement('div'); wrapper.innerHTML = await response.text(); wrapper.querySelectorAll('[data-fragment-only]').forEach(element => element.remove()); formHost.replaceChildren(...wrapper.childNodes); form = formHost.querySelector('form'); } if (!form) throw new Error('Repair form is missing from the shared partial.'); const formId = form.querySelector('input[name="form_id"]'); if (formId) formId.value = 'motherboard_repair_quote'; window.AddressValidation.init(form); window.ContactForm.init(form); const firstField = form.querySelector('select:not([disabled]), input:not([type="hidden"]):not([disabled]), textarea:not([disabled])'); if (firstField) firstField.focus(); } function showFallback() { formHost.hidden = true; if (fallback) fallback.hidden = false; } function openDialog() { returnFocus = document.activeElement; prompt.classList.remove('is-visible'); document.body.classList.add('repair-intake-modal-open'); if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); } else { dialog.setAttribute('open', ''); dialog.classList.add('is-open'); } if (!formLoadPromise) { formHost.hidden = false; if (fallback) fallback.hidden = true; formLoadPromise = loadForm().catch(error => { formLoadPromise = null; showFallback(); throw error; }); formLoadPromise.catch(() => {}); } } function closeDialog() { if (typeof dialog.close === 'function' && dialog.open) dialog.close(); else { dialog.removeAttribute('open'); dialog.classList.remove('is-open'); handleClosed(); } } function handleClosed() { document.body.classList.remove('repair-intake-modal-open'); if (!sessionDismissed()) prompt.classList.add('is-visible'); if (returnFocus && typeof returnFocus.focus === 'function') returnFocus.focus(); } openButton.addEventListener('click', openDialog); if (dismissButton) dismissButton.addEventListener('click', dismissPrompt); if (closeButton) closeButton.addEventListener('click', closeDialog); dialog.addEventListener('close', handleClosed); dialog.addEventListener('click', event => { if (event.target === dialog) closeDialog(); }); if (!sessionDismissed()) { dwellTimer = window.setTimeout(revealPrompt, DWELL_DELAY_MS); window.addEventListener('scroll', checkScrollProgress, { passive: true }); checkScrollProgress(); } })();
+\ No newline at end of file
++(function() { 'use strict'; const controllerScript = document.currentScript; const scriptBase = controllerScript && controllerScript.src ? new URL('.', controllerScript.src) : new URL('js/', window.location.href); const prompt = document.querySelector('[data-repair-intake-prompt]'); const dialog = document.querySelector('[data-repair-intake-dialog]'); const formHost = document.querySelector('[data-repair-intake-form]'); const openButton = document.querySelector('[data-repair-intake-open]'); const dismissButton = document.querySelector('[data-repair-intake-dismiss]'); const closeButton = document.querySelector('[data-repair-intake-close]'); const fallback = document.querySelector('[data-repair-intake-fallback]'); const fallbackLink = fallback ? fallback.querySelector('a') : null; const DISMISS_KEY = 'mrc-repair-intake-prompt-dismissed'; const DWELL_DELAY_MS = 35000; const SCROLL_REVEAL_RATIO = 1 / 3; const excludedPages = new Set(['contact.html', 'feedback.html', 'thank-you.html']); let formLoadPromise = null; let returnFocus = null; let dwellTimer = null; if (!prompt || !dialog || !formHost || !openButton) return; if (fallbackLink) fallbackLink.href = new URL('../contact.html#request-form', scriptBase).href; const pageName = window.location.pathname.split('/').filter(Boolean).pop() || 'index.html'; const hasInlineContactForm = Array.from(document.querySelectorAll('[data-contact-form]')) .some(container => !container.hasAttribute('data-repair-intake-form')); if (excludedPages.has(pageName) || hasInlineContactForm) { prompt.remove(); dialog.remove(); return; } function sessionDismissed() { try { return window.sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (error) { return false; } } function markDismissed() { try { window.sessionStorage.setItem(DISMISS_KEY, '1'); } catch (error) {} } function removeRevealTriggers() { if (dwellTimer !== null) { window.clearTimeout(dwellTimer); dwellTimer = null; } window.removeEventListener('scroll', checkScrollProgress); } function checkScrollProgress() { const documentElement = document.documentElement; const scrollableDistance = Math.max(documentElement.scrollHeight - window.innerHeight, 0); if (!scrollableDistance) return; const scrollPosition = Math.max(window.scrollY, documentElement.scrollTop, 0); if (scrollPosition / scrollableDistance >= SCROLL_REVEAL_RATIO) { removeRevealTriggers(); revealPrompt(); } } function revealPrompt() { if (sessionDismissed()) return; if (document.visibilityState === 'hidden') { document.addEventListener('visibilitychange', revealPrompt, { once: true }); return; } removeRevealTriggers(); prompt.hidden = false; window.requestAnimationFrame(() => prompt.classList.add('is-visible')); } function dismissPrompt() { markDismissed(); prompt.classList.remove('is-visible'); window.setTimeout(() => { prompt.hidden = true; }, 250); } function loadStylesheet() { const existing = document.querySelector('link[data-repair-intake-form-styles]'); if (existing && existing.sheet) return Promise.resolve(); return new Promise((resolve, reject) => { const link = existing || document.createElement('link'); link.addEventListener('load', resolve, { once: true }); link.addEventListener('error', error => { link.remove(); reject(error); }, { once: true }); if (existing) return; link.rel = 'stylesheet'; link.href = new URL('../css/pages/contact.min.css', scriptBase).href; link.dataset.repairIntakeFormStyles = ''; document.head.appendChild(link); }); } function loadScript(path, ready) { if (ready()) return Promise.resolve(); return new Promise((resolve, reject) => { const absolute = new URL(path, scriptBase).href; const existing = Array.from(document.scripts).find(script => script.src === absolute); const script = existing || document.createElement('script'); script.addEventListener('load', resolve, { once: true }); script.addEventListener('error', error => { script.remove(); reject(error); }, { once: true }); if (existing) return; script.src = absolute; document.head.appendChild(script); }); } async function loadForm() { await Promise.all([ loadStylesheet(), loadScript('/contact-embed/loader.js?v=0a58738b67e4', () => Boolean(window.MRCContactReady)), loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation)) ]); let form = formHost.querySelector('form'); const embeddedTemplate = document.querySelector('[data-repair-intake-template]'); if (!form && embeddedTemplate) { formHost.replaceChildren(embeddedTemplate.content.cloneNode(true)); form = formHost.querySelector('form'); } if (!form) { const partialUrl = new URL('../contact-partial.html', scriptBase); const response = await fetch(partialUrl, { credentials: 'same-origin' }); if (!response.ok) throw new Error(`Unable to load repair form: ${response.status}`); const wrapper = document.createElement('div'); wrapper.innerHTML = await response.text(); wrapper.querySelectorAll('[data-fragment-only]').forEach(element => element.remove()); formHost.replaceChildren(...wrapper.childNodes); form = formHost.querySelector('form'); } if (!form) throw new Error('Repair form is missing from the shared partial.'); const formId = form.querySelector('input[name="form_id"]'); if (formId) formId.value = 'motherboard_repair_quote'; window.AddressValidation.init(form); window.ContactForm.init(form); const firstField = form.querySelector('select:not([disabled]), input:not([type="hidden"]):not([disabled]), textarea:not([disabled])'); if (firstField) firstField.focus(); } function showFallback() { formHost.hidden = true; if (fallback) fallback.hidden = false; } function openDialog() { returnFocus = document.activeElement; prompt.classList.remove('is-visible'); document.body.classList.add('repair-intake-modal-open'); if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); } else { dialog.setAttribute('open', ''); dialog.classList.add('is-open'); } if (!formLoadPromise) { formHost.hidden = false; if (fallback) fallback.hidden = true; formLoadPromise = loadForm().catch(error => { formLoadPromise = null; showFallback(); throw error; }); formLoadPromise.catch(() => {}); } } function closeDialog() { if (typeof dialog.close === 'function' && dialog.open) dialog.close(); else { dialog.removeAttribute('open'); dialog.classList.remove('is-open'); handleClosed(); } } function handleClosed() { document.body.classList.remove('repair-intake-modal-open'); if (!sessionDismissed()) prompt.classList.add('is-visible'); if (returnFocus && typeof returnFocus.focus === 'function') returnFocus.focus(); } openButton.addEventListener('click', openDialog); if (dismissButton) dismissButton.addEventListener('click', dismissPrompt); if (closeButton) closeButton.addEventListener('click', closeDialog); dialog.addEventListener('close', handleClosed); dialog.addEventListener('click', event => { if (event.target === dialog) closeDialog(); }); if (!sessionDismissed()) { dwellTimer = window.setTimeout(revealPrompt, DWELL_DELAY_MS); window.addEventListener('scroll', checkScrollProgress, { passive: true }); checkScrollProgress(); } })();
+\ No newline at end of file
+diff --git a/docs/trios-college-contact.html b/docs/trios-college-contact.html
+index 60770c4..c62b04a 100644
+--- a/docs/trios-college-contact.html
++++ b/docs/trios-college-contact.html
+@@ -805,3 +805,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/vi/ads-landing.html b/docs/vi/ads-landing.html
+index 0c58fad..16e112a 100644
+--- a/docs/vi/ads-landing.html
++++ b/docs/vi/ads-landing.html
+@@ -868,3 +868,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/vi/builders-club-contact.html b/docs/vi/builders-club-contact.html
+index 375c98f..dd45965 100644
+--- a/docs/vi/builders-club-contact.html
++++ b/docs/vi/builders-club-contact.html
+@@ -925,3 +925,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/vi/business.html b/docs/vi/business.html
+index 6715bc8..008a3bd 100644
+--- a/docs/vi/business.html
++++ b/docs/vi/business.html
+@@ -933,3 +933,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/vi/careers.html b/docs/vi/careers.html
+index 3535ff7..bef6d29 100644
+--- a/docs/vi/careers.html
++++ b/docs/vi/careers.html
+@@ -787,3 +787,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/vi/contact.html b/docs/vi/contact.html
+index 1ff9c26..f86ca5f 100644
+--- a/docs/vi/contact.html
++++ b/docs/vi/contact.html
+@@ -827,3 +827,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/docs/vi/feedback.html b/docs/vi/feedback.html
+index 07802d9..984cfe2 100644
+--- a/docs/vi/feedback.html
++++ b/docs/vi/feedback.html
+@@ -568,3 +568,3 @@
+     <script src="js/repair-intake-modal.min.js"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="js/feedback.min.js?v=20261019-google-review"></script>
+diff --git a/docs/vi/js/repair-intake-modal.js b/docs/vi/js/repair-intake-modal.js
+index 2043c72..d3fb621 100644
+--- a/docs/vi/js/repair-intake-modal.js
++++ b/docs/vi/js/repair-intake-modal.js
+@@ -123,3 +123,3 @@
+             loadStylesheet(),
+-            loadScript('/contact-embed/loader.js?v=0adfa014090a', () => Boolean(window.MRCContactReady)),
++            loadScript('/contact-embed/loader.js?v=0a58738b67e4', () => Boolean(window.MRCContactReady)),
+             loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation))
+diff --git a/docs/vi/js/repair-intake-modal.min.js b/docs/vi/js/repair-intake-modal.min.js
+index 9a3ba55..a5789fe 100644
+--- a/docs/vi/js/repair-intake-modal.min.js
++++ b/docs/vi/js/repair-intake-modal.min.js
+@@ -1 +1 @@
+-(function() { 'use strict'; const controllerScript = document.currentScript; const scriptBase = controllerScript && controllerScript.src ? new URL('.', controllerScript.src) : new URL('js/', window.location.href); const prompt = document.querySelector('[data-repair-intake-prompt]'); const dialog = document.querySelector('[data-repair-intake-dialog]'); const formHost = document.querySelector('[data-repair-intake-form]'); const openButton = document.querySelector('[data-repair-intake-open]'); const dismissButton = document.querySelector('[data-repair-intake-dismiss]'); const closeButton = document.querySelector('[data-repair-intake-close]'); const fallback = document.querySelector('[data-repair-intake-fallback]'); const fallbackLink = fallback ? fallback.querySelector('a') : null; const DISMISS_KEY = 'mrc-repair-intake-prompt-dismissed'; const DWELL_DELAY_MS = 35000; const SCROLL_REVEAL_RATIO = 1 / 3; const excludedPages = new Set(['contact.html', 'feedback.html', 'thank-you.html']); let formLoadPromise = null; let returnFocus = null; let dwellTimer = null; if (!prompt || !dialog || !formHost || !openButton) return; if (fallbackLink) fallbackLink.href = new URL('../contact.html#request-form', scriptBase).href; const pageName = window.location.pathname.split('/').filter(Boolean).pop() || 'index.html'; const hasInlineContactForm = Array.from(document.querySelectorAll('[data-contact-form]')) .some(container => !container.hasAttribute('data-repair-intake-form')); if (excludedPages.has(pageName) || hasInlineContactForm) { prompt.remove(); dialog.remove(); return; } function sessionDismissed() { try { return window.sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (error) { return false; } } function markDismissed() { try { window.sessionStorage.setItem(DISMISS_KEY, '1'); } catch (error) {} } function removeRevealTriggers() { if (dwellTimer !== null) { window.clearTimeout(dwellTimer); dwellTimer = null; } window.removeEventListener('scroll', checkScrollProgress); } function checkScrollProgress() { const documentElement = document.documentElement; const scrollableDistance = Math.max(documentElement.scrollHeight - window.innerHeight, 0); if (!scrollableDistance) return; const scrollPosition = Math.max(window.scrollY, documentElement.scrollTop, 0); if (scrollPosition / scrollableDistance >= SCROLL_REVEAL_RATIO) { removeRevealTriggers(); revealPrompt(); } } function revealPrompt() { if (sessionDismissed()) return; if (document.visibilityState === 'hidden') { document.addEventListener('visibilitychange', revealPrompt, { once: true }); return; } removeRevealTriggers(); prompt.hidden = false; window.requestAnimationFrame(() => prompt.classList.add('is-visible')); } function dismissPrompt() { markDismissed(); prompt.classList.remove('is-visible'); window.setTimeout(() => { prompt.hidden = true; }, 250); } function loadStylesheet() { const existing = document.querySelector('link[data-repair-intake-form-styles]'); if (existing && existing.sheet) return Promise.resolve(); return new Promise((resolve, reject) => { const link = existing || document.createElement('link'); link.addEventListener('load', resolve, { once: true }); link.addEventListener('error', error => { link.remove(); reject(error); }, { once: true }); if (existing) return; link.rel = 'stylesheet'; link.href = new URL('../css/pages/contact.min.css', scriptBase).href; link.dataset.repairIntakeFormStyles = ''; document.head.appendChild(link); }); } function loadScript(path, ready) { if (ready()) return Promise.resolve(); return new Promise((resolve, reject) => { const absolute = new URL(path, scriptBase).href; const existing = Array.from(document.scripts).find(script => script.src === absolute); const script = existing || document.createElement('script'); script.addEventListener('load', resolve, { once: true }); script.addEventListener('error', error => { script.remove(); reject(error); }, { once: true }); if (existing) return; script.src = absolute; document.head.appendChild(script); }); } async function loadForm() { await Promise.all([ loadStylesheet(), loadScript('/contact-embed/loader.js?v=0adfa014090a', () => Boolean(window.MRCContactReady)), loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation)) ]); let form = formHost.querySelector('form'); const embeddedTemplate = document.querySelector('[data-repair-intake-template]'); if (!form && embeddedTemplate) { formHost.replaceChildren(embeddedTemplate.content.cloneNode(true)); form = formHost.querySelector('form'); } if (!form) { const partialUrl = new URL('../contact-partial.html', scriptBase); const response = await fetch(partialUrl, { credentials: 'same-origin' }); if (!response.ok) throw new Error(`Không thể tải biểu mẫu sửa chữa: ${response.status}`); const wrapper = document.createElement('div'); wrapper.innerHTML = await response.text(); wrapper.querySelectorAll('[data-fragment-only]').forEach(element => element.remove()); formHost.replaceChildren(...wrapper.childNodes); form = formHost.querySelector('form'); } if (!form) throw new Error('Biểu mẫu sửa chữa bị thiếu trong phần được chia sẻ.'); const formId = form.querySelector('input[name="form_id"]'); if (formId) formId.value = 'motherboard_repair_quote'; window.AddressValidation.init(form); window.ContactForm.init(form); const firstField = form.querySelector('select:not([disabled]), input:not([type="hidden"]):not([disabled]), textarea:not([disabled])'); if (firstField) firstField.focus(); } function showFallback() { formHost.hidden = true; if (fallback) fallback.hidden = false; } function openDialog() { returnFocus = document.activeElement; prompt.classList.remove('is-visible'); document.body.classList.add('repair-intake-modal-open'); if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); } else { dialog.setAttribute('open', ''); dialog.classList.add('is-open'); } if (!formLoadPromise) { formHost.hidden = false; if (fallback) fallback.hidden = true; formLoadPromise = loadForm().catch(error => { formLoadPromise = null; showFallback(); throw error; }); formLoadPromise.catch(() => {}); } } function closeDialog() { if (typeof dialog.close === 'function' && dialog.open) dialog.close(); else { dialog.removeAttribute('open'); dialog.classList.remove('is-open'); handleClosed(); } } function handleClosed() { document.body.classList.remove('repair-intake-modal-open'); if (!sessionDismissed()) prompt.classList.add('is-visible'); if (returnFocus && typeof returnFocus.focus === 'function') returnFocus.focus(); } openButton.addEventListener('click', openDialog); if (dismissButton) dismissButton.addEventListener('click', dismissPrompt); if (closeButton) closeButton.addEventListener('click', closeDialog); dialog.addEventListener('close', handleClosed); dialog.addEventListener('click', event => { if (event.target === dialog) closeDialog(); }); if (!sessionDismissed()) { dwellTimer = window.setTimeout(revealPrompt, DWELL_DELAY_MS); window.addEventListener('scroll', checkScrollProgress, { passive: true }); checkScrollProgress(); } })();
+\ No newline at end of file
++(function() { 'use strict'; const controllerScript = document.currentScript; const scriptBase = controllerScript && controllerScript.src ? new URL('.', controllerScript.src) : new URL('js/', window.location.href); const prompt = document.querySelector('[data-repair-intake-prompt]'); const dialog = document.querySelector('[data-repair-intake-dialog]'); const formHost = document.querySelector('[data-repair-intake-form]'); const openButton = document.querySelector('[data-repair-intake-open]'); const dismissButton = document.querySelector('[data-repair-intake-dismiss]'); const closeButton = document.querySelector('[data-repair-intake-close]'); const fallback = document.querySelector('[data-repair-intake-fallback]'); const fallbackLink = fallback ? fallback.querySelector('a') : null; const DISMISS_KEY = 'mrc-repair-intake-prompt-dismissed'; const DWELL_DELAY_MS = 35000; const SCROLL_REVEAL_RATIO = 1 / 3; const excludedPages = new Set(['contact.html', 'feedback.html', 'thank-you.html']); let formLoadPromise = null; let returnFocus = null; let dwellTimer = null; if (!prompt || !dialog || !formHost || !openButton) return; if (fallbackLink) fallbackLink.href = new URL('../contact.html#request-form', scriptBase).href; const pageName = window.location.pathname.split('/').filter(Boolean).pop() || 'index.html'; const hasInlineContactForm = Array.from(document.querySelectorAll('[data-contact-form]')) .some(container => !container.hasAttribute('data-repair-intake-form')); if (excludedPages.has(pageName) || hasInlineContactForm) { prompt.remove(); dialog.remove(); return; } function sessionDismissed() { try { return window.sessionStorage.getItem(DISMISS_KEY) === '1'; } catch (error) { return false; } } function markDismissed() { try { window.sessionStorage.setItem(DISMISS_KEY, '1'); } catch (error) {} } function removeRevealTriggers() { if (dwellTimer !== null) { window.clearTimeout(dwellTimer); dwellTimer = null; } window.removeEventListener('scroll', checkScrollProgress); } function checkScrollProgress() { const documentElement = document.documentElement; const scrollableDistance = Math.max(documentElement.scrollHeight - window.innerHeight, 0); if (!scrollableDistance) return; const scrollPosition = Math.max(window.scrollY, documentElement.scrollTop, 0); if (scrollPosition / scrollableDistance >= SCROLL_REVEAL_RATIO) { removeRevealTriggers(); revealPrompt(); } } function revealPrompt() { if (sessionDismissed()) return; if (document.visibilityState === 'hidden') { document.addEventListener('visibilitychange', revealPrompt, { once: true }); return; } removeRevealTriggers(); prompt.hidden = false; window.requestAnimationFrame(() => prompt.classList.add('is-visible')); } function dismissPrompt() { markDismissed(); prompt.classList.remove('is-visible'); window.setTimeout(() => { prompt.hidden = true; }, 250); } function loadStylesheet() { const existing = document.querySelector('link[data-repair-intake-form-styles]'); if (existing && existing.sheet) return Promise.resolve(); return new Promise((resolve, reject) => { const link = existing || document.createElement('link'); link.addEventListener('load', resolve, { once: true }); link.addEventListener('error', error => { link.remove(); reject(error); }, { once: true }); if (existing) return; link.rel = 'stylesheet'; link.href = new URL('../css/pages/contact.min.css', scriptBase).href; link.dataset.repairIntakeFormStyles = ''; document.head.appendChild(link); }); } function loadScript(path, ready) { if (ready()) return Promise.resolve(); return new Promise((resolve, reject) => { const absolute = new URL(path, scriptBase).href; const existing = Array.from(document.scripts).find(script => script.src === absolute); const script = existing || document.createElement('script'); script.addEventListener('load', resolve, { once: true }); script.addEventListener('error', error => { script.remove(); reject(error); }, { once: true }); if (existing) return; script.src = absolute; document.head.appendChild(script); }); } async function loadForm() { await Promise.all([ loadStylesheet(), loadScript('/contact-embed/loader.js?v=0a58738b67e4', () => Boolean(window.MRCContactReady)), loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation)) ]); let form = formHost.querySelector('form'); const embeddedTemplate = document.querySelector('[data-repair-intake-template]'); if (!form && embeddedTemplate) { formHost.replaceChildren(embeddedTemplate.content.cloneNode(true)); form = formHost.querySelector('form'); } if (!form) { const partialUrl = new URL('../contact-partial.html', scriptBase); const response = await fetch(partialUrl, { credentials: 'same-origin' }); if (!response.ok) throw new Error(`Không thể tải biểu mẫu sửa chữa: ${response.status}`); const wrapper = document.createElement('div'); wrapper.innerHTML = await response.text(); wrapper.querySelectorAll('[data-fragment-only]').forEach(element => element.remove()); formHost.replaceChildren(...wrapper.childNodes); form = formHost.querySelector('form'); } if (!form) throw new Error('Biểu mẫu sửa chữa bị thiếu trong phần được chia sẻ.'); const formId = form.querySelector('input[name="form_id"]'); if (formId) formId.value = 'motherboard_repair_quote'; window.AddressValidation.init(form); window.ContactForm.init(form); const firstField = form.querySelector('select:not([disabled]), input:not([type="hidden"]):not([disabled]), textarea:not([disabled])'); if (firstField) firstField.focus(); } function showFallback() { formHost.hidden = true; if (fallback) fallback.hidden = false; } function openDialog() { returnFocus = document.activeElement; prompt.classList.remove('is-visible'); document.body.classList.add('repair-intake-modal-open'); if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); } else { dialog.setAttribute('open', ''); dialog.classList.add('is-open'); } if (!formLoadPromise) { formHost.hidden = false; if (fallback) fallback.hidden = true; formLoadPromise = loadForm().catch(error => { formLoadPromise = null; showFallback(); throw error; }); formLoadPromise.catch(() => {}); } } function closeDialog() { if (typeof dialog.close === 'function' && dialog.open) dialog.close(); else { dialog.removeAttribute('open'); dialog.classList.remove('is-open'); handleClosed(); } } function handleClosed() { document.body.classList.remove('repair-intake-modal-open'); if (!sessionDismissed()) prompt.classList.add('is-visible'); if (returnFocus && typeof returnFocus.focus === 'function') returnFocus.focus(); } openButton.addEventListener('click', openDialog); if (dismissButton) dismissButton.addEventListener('click', dismissPrompt); if (closeButton) closeButton.addEventListener('click', closeDialog); dialog.addEventListener('close', handleClosed); dialog.addEventListener('click', event => { if (event.target === dialog) closeDialog(); }); if (!sessionDismissed()) { dwellTimer = window.setTimeout(revealPrompt, DWELL_DELAY_MS); window.addEventListener('scroll', checkScrollProgress, { passive: true }); checkScrollProgress(); } })();
+\ No newline at end of file
+diff --git a/docs/vi/trios-college-contact.html b/docs/vi/trios-college-contact.html
+index 0b7f314..ecdb17b 100644
+--- a/docs/vi/trios-college-contact.html
++++ b/docs/vi/trios-college-contact.html
+@@ -802,3 +802,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/locales/templates/ads-landing.html b/locales/templates/ads-landing.html
+index 0617dc9..59f7f0d 100644
+--- a/locales/templates/ads-landing.html
++++ b/locales/templates/ads-landing.html
+@@ -423,3 +423,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/locales/templates/builders-club-contact.html b/locales/templates/builders-club-contact.html
+index 39170c3..cdd5325 100644
+--- a/locales/templates/builders-club-contact.html
++++ b/locales/templates/builders-club-contact.html
+@@ -473,3 +473,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/locales/templates/business.html b/locales/templates/business.html
+index 5dc3f8d..e275d3a 100644
+--- a/locales/templates/business.html
++++ b/locales/templates/business.html
+@@ -483,3 +483,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/locales/templates/careers.html b/locales/templates/careers.html
+index 5f948ff..ad8602d 100644
+--- a/locales/templates/careers.html
++++ b/locales/templates/careers.html
+@@ -344,3 +344,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/locales/templates/contact.html b/locales/templates/contact.html
+index caa71cd..2dde979 100644
+--- a/locales/templates/contact.html
++++ b/locales/templates/contact.html
+@@ -382,3 +382,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>
+diff --git a/locales/templates/feedback.html b/locales/templates/feedback.html
+index c9415f3..76553ce 100644
+--- a/locales/templates/feedback.html
++++ b/locales/templates/feedback.html
+@@ -339,3 +339,3 @@
+     <script src="js/repair-intake-modal.min.js"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="js/feedback.min.js?v=20261019-google-review"></script>
+diff --git a/locales/templates/js/repair-intake-modal.js b/locales/templates/js/repair-intake-modal.js
+index 49d98b6..d2268c6 100644
+--- a/locales/templates/js/repair-intake-modal.js
++++ b/locales/templates/js/repair-intake-modal.js
+@@ -123,3 +123,3 @@
+             loadStylesheet(),
+-            loadScript('/contact-embed/loader.js?v=0adfa014090a', () => Boolean(window.MRCContactReady)),
++            loadScript('/contact-embed/loader.js?v=0a58738b67e4', () => Boolean(window.MRCContactReady)),
+             loadScript('../contact/scripts.min.js', () => Boolean(window.AddressValidation))
+diff --git a/locales/templates/trios-college-contact.html b/locales/templates/trios-college-contact.html
+index d81a087..4f3a180 100644
+--- a/locales/templates/trios-college-contact.html
++++ b/locales/templates/trios-college-contact.html
+@@ -347,3 +347,3 @@
+     <script src="js/contact-partial-loader.min.js?v=20260812-143448"></script>
+-    <script src="/contact-embed/loader.js?v=0adfa014090a"></script>
++    <script src="/contact-embed/loader.js?v=0a58738b67e4"></script>
+     <script src="contact/scripts.min.js?v=20260812-143448"></script>

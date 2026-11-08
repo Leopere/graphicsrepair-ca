@@ -7,7 +7,7 @@ import re
 import subprocess
 import sys
 
-DEFAULT_SUBMIT = str(Path.home() / ".local/share/jenkins-local/graphicsrepair-client/submit-graphicsrepair-pages.py")
+DEFAULT_SUBMIT = str(Path.home() / ".local/share/jenkins-local/graphicsrepair-client/submit-graphicsrepair-normal.py")
 
 
 def main():
@@ -18,6 +18,10 @@ def main():
     submit = Path(os.environ.get("JENKINS_GRAPHICSREPAIR_SUBMIT", DEFAULT_SUBMIT)).expanduser()
     if not submit.is_absolute() or not submit.is_file():
         raise RuntimeError("Trusted Jenkins submitter must be an existing absolute path")
+    protocol = subprocess.run([sys.executable, str(submit), "--protocol"],
+                              check=True, capture_output=True, text=True)
+    if protocol.stdout.strip() != "graphicsrepair-normal/v1":
+        raise RuntimeError("Trusted submitter must support the normal producer/publisher protocol")
     # Inherit stdout/stderr so operation handles survive failed or uncertain observations.
     # The trusted client owns timing, deduplication, stale-main checks and acceptance.
     subprocess.run([sys.executable, str(submit), revision], check=True)

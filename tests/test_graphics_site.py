@@ -354,21 +354,15 @@ def validate_site() -> None:
     for exposed_implementation in ("honeypot", "minimum completion time", "rate limiting", "proof-of-work", "protected form processing"):
         assert exposed_implementation not in privacy
 
-    deploy = (ROOT / ".github/workflows/deploy.yml").read_text(encoding="utf-8")
-    build_workflow = (ROOT / ".github/workflows/build-and-test.yml").read_text(encoding="utf-8")
-    assert "actions/checkout@v" not in deploy + build_workflow
-    assert "actions/setup-python@v" not in deploy + build_workflow
-    assert "actions/configure-pages@v" not in deploy
-    assert "actions/upload-pages-artifact@v" not in deploy
-    assert "actions/deploy-pages@v" not in deploy
-    assert deploy.count("pages: write") == 1
-    assert deploy.count("id-token: write") == 1
-    assert "node --check site/assets/site.js" in deploy
-    assert "node --check site/assets/notomo-loader.js" in deploy
-    assert "node --test tests/test_lead_payload.js tests/test_notomo_loader.js" in deploy
-    assert "node --test tests/test_lead_payload.js tests/test_notomo_loader.js" in build_workflow
-    assert deploy.count("runs-on: ubuntu-latest") == 2
-    assert build_workflow.count("runs-on: ubuntu-latest") == 1
+    # Delivery now belongs to the external trusted Jenkins controller. Site and
+    # browser contracts remain here; the source wrapper can only submit exact main.
+    assert not (ROOT / ".github/workflows/deploy.yml").exists()
+    assert not (ROOT / ".github/workflows/build-and-test.yml").exists()
+    wrapper = (ROOT / "deploy_pages.py").read_text(encoding="utf-8")
+    assert "submit-graphicsrepair-pages.py" in wrapper
+    assert "DEPLOY_IT_COMMIT" in wrapper and "DEPLOY_IT_BRANCH" in wrapper
+    assert "JENKINS_GRAPHICSREPAIR_SUBMIT" in wrapper
+    assert "workflow_dispatch" not in wrapper and "gh api" not in wrapper
 
     sitemap = ET.parse(SITE / "sitemap.xml").getroot()
     namespace = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}

@@ -6,6 +6,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import struct
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -47,7 +48,46 @@ def parse(path: Path) -> tuple[PageParser, str]:
     return parser, source
 
 
+def validate_favicon() -> None:
+    data = (SITE / "favicon.ico").read_bytes()
+    assert data == (ROOT / "site/favicon.ico").read_bytes()
+    assert (SITE / "assets/favicon.svg").read_bytes() == (ROOT / "docs/boot-logo.svg").read_bytes()
+    assert struct.unpack_from("<HHH", data) == (0, 1, 3), "Expected a real three-frame ICO"
+    end = 54
+    for index, size in enumerate((16, 32, 48)):
+        width, height, colors, reserved, planes, bits, length, offset = struct.unpack_from("<BBBBHHII", data, 6 + index * 16)
+        assert (width, height, colors, reserved, planes, bits) == (size, size, 0, 0, 1, 32)
+        assert offset == end and length > 33 and offset + length <= len(data)
+        frame = data[offset:offset + length]
+        assert frame[:16] == b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR"
+        assert struct.unpack_from(">IIBBBBB", frame, 16) == (size, size, 8, 6, 0, 0, 0)
+        end = offset + length
+    assert end == len(data), "ICO contains unexpected trailing bytes"
+
+
+def test_favicon_provenance() -> None:
+    """Optional image-tool gate; ordinary builds need only the standard library."""
+    import io
+    from PIL import Image
+
+    validate_favicon()
+    with Image.open(SITE / "favicon.ico") as icon:
+        assert icon.format == "ICO"
+        assert icon.ico.sizes() == {(16, 16), (32, 32), (48, 48)}
+        for size in (16, 32, 48):
+            png = subprocess.check_output([
+                "rsvg-convert", "--width", str(size), "--height", str(size),
+                str(ROOT / "docs/boot-logo.svg"),
+            ])
+            with Image.open(io.BytesIO(png)) as source:
+                expected = source.convert("RGBA")
+                actual = icon.ico.getimage((size, size)).convert("RGBA")
+                assert actual.tobytes() == expected.tobytes(), f"{size}px brand pixels differ"
+                assert actual.getextrema()[3] == (0, 255), "Expected transparent and opaque pixels"
+
+
 def validate_site() -> None:
+    validate_favicon()
     assert (SITE / "CNAME").read_text(encoding="utf-8") == "graphicsrepair.ca\n"
     expected_pages = {"index.html", "privacy/index.html", "terms/index.html", "404.html"}
     expected_pages.update(f"{locale}/index.html" for locale in LOCALES if locale != "en")
@@ -381,6 +421,9 @@ def test_production_artifact() -> None:
 
 if __name__ == "__main__":
     test_production_artifact()
+    if "--check-favicon-provenance" in sys.argv:
+        test_favicon_provenance()
+        print("✓ 16/32/48px ICO pixels match the exact existing brand SVG")
     print("✓ distinct GPU production artifact")
     print("✓ six approved locales and hreflang graph")
     print("✓ country-aware repair form")

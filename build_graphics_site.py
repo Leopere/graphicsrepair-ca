@@ -8,6 +8,7 @@ import html
 import importlib.util
 import json
 import shutil
+import struct
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -29,6 +30,31 @@ CONTACT_FALLBACK_SOURCE = SOURCE / "js/contact-form.min.js"
 LOCALE_ORDER = ("en", "fr", "es", "vi", "ar", "ja")
 HREFLANG = {"en": "en-CA", "fr": "fr-CA", "es": "es-419", "vi": "vi-VN", "ar": "ar", "ja": "ja-JP"}
 LEGAL_REVIEWED_DATE = "2026-09-09"
+FAVICON_SIZES = (16, 32, 48)
+
+
+def generate_favicon() -> None:
+    """Regenerate the committed ICO with librsvg2-bin and python3-pil."""
+    import io
+    import subprocess
+    from PIL import Image
+
+    frames = []
+    for size in FAVICON_SIZES:
+        rendered = subprocess.check_output([
+            "rsvg-convert", "--width", str(size), "--height", str(size),
+            str(ROOT / "docs/boot-logo.svg"),
+        ])
+        png = io.BytesIO()
+        with Image.open(io.BytesIO(rendered)) as image:
+            image.convert("RGBA").save(png, format="PNG", optimize=False, compress_level=9)
+        frames.append(png.getvalue())
+    offset = 6 + 16 * len(frames)
+    directory = bytearray(struct.pack("<HHH", 0, 1, len(frames)))
+    for size, frame in zip(FAVICON_SIZES, frames):
+        directory.extend(struct.pack("<BBBBHHII", size, size, 0, 0, 1, 32, len(frame), offset))
+        offset += len(frame)
+    (SOURCE / "favicon.ico").write_bytes(directory + b"".join(frames))
 
 content_spec = importlib.util.spec_from_file_location("graphics_site_content", SOURCE / "content.py")
 if content_spec is None or content_spec.loader is None:
@@ -296,6 +322,7 @@ def build() -> None:
         ROOT / "docs/SVG/MRC_Logo_Secondary_White.svg": OUTPUT / "assets/mrc-logo-white.svg",
         ROOT / "docs/images/graphics_card_repair.webp": OUTPUT / "assets/gpu-repair.webp",
         ROOT / "docs/boot-logo.svg": OUTPUT / "assets/favicon.svg",
+        SOURCE / "favicon.ico": OUTPUT / "favicon.ico",
     }
     for source, destination in asset_map.items():
         if not source.is_file():
@@ -325,7 +352,10 @@ def build() -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true", help="Build and run structural validation")
+    parser.add_argument("--generate-favicon", action="store_true", help="Regenerate site/favicon.ico from the existing brand SVG (requires librsvg2-bin and python3-pil)")
     args = parser.parse_args()
+    if args.generate_favicon:
+        generate_favicon()
     build()
     if args.check:
         from tests.test_graphics_site import validate_site

@@ -13,7 +13,22 @@ node --check site/assets/notomo-loader.js
 node --test tests/test_lead_payload.js tests/test_notomo_loader.js
 python3 tests/test_pages_delivery.py
 python3 tests/test_graphics_site.py
+python3 tests/test_wasm_browser.py
 ```
+
+The committed `site/favicon.ico` serves legacy browser requests to `/favicon.ico`.
+Its 16, 32 and 48 pixel PNG frames come from the unchanged `docs/boot-logo.svg`;
+pages continue to prefer `/assets/favicon.svg`. Normal builds copy the ICO without
+image-tool dependencies. To regenerate and verify its pixels, install Ubuntu's
+`librsvg2-bin` and `python3-pil`, then run:
+
+```bash
+python3 build_graphics_site.py --generate-favicon --check
+python3 tests/test_graphics_site.py --check-favicon-provenance
+```
+
+The browser contracts require Playwright and Chromium. They use loopback artifacts
+and intercepted form/analytics fixtures without creating production leads.
 
 The checks prove:
 

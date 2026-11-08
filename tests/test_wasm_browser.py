@@ -37,6 +37,41 @@ def browser_executable() -> str | None:
     return next((candidate for candidate in candidates if candidate and Path(candidate).is_file()), None)
 
 
+def test_root_favicon() -> None:
+    handler = functools.partial(QuietHandler, directory=SITE)
+    server = socketserver.ThreadingTCPServer(("127.0.0.1", 0), handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        with sync_playwright() as playwright:
+            executable = browser_executable()
+            browser = playwright.chromium.launch(executable_path=executable) if executable else playwright.chromium.launch()
+            page = browser.new_page()
+            origin = f"http://127.0.0.1:{server.server_address[1]}"
+            # Only the loopback artifact is reachable; no analytics or forms leave this test.
+            page.route("**/*", lambda route: route.continue_() if route.request.url.startswith(origin + "/") else route.abort())
+            page.goto(origin + "/")
+            response = page.request.get(origin + "/favicon.ico")
+            assert response.status == 200
+            assert response.headers["content-type"] == "image/vnd.microsoft.icon"
+            assert response.body() == (ROOT / "site/favicon.ico").read_bytes()
+            # Playwright automatically aborts exact /favicon.ico requests while
+            # routing is enabled. A query bypasses that harness special case.
+            assert page.evaluate("""async () => {
+                const image = new Image();
+                image.src = '/favicon.ico?browser-contract';
+                await image.decode();
+                return [image.naturalWidth, image.naturalHeight];
+            }""") == [48, 48]
+            assert page.locator('link[rel="icon"]').get_attribute("href") == "assets/favicon.svg"
+            assert page.locator('link[rel="icon"]').evaluate("link => link.href") == origin + "/assets/favicon.svg"
+            browser.close()
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
+
+
 def test_wasm_submission_contract(expire_first_proof: bool = False) -> None:
     handler = functools.partial(QuietHandler, directory=SITE)
     server = socketserver.ThreadingTCPServer(("127.0.0.1", 0), handler)
@@ -190,6 +225,8 @@ def test_notomo_link_csp() -> None:
 
 
 if __name__ == "__main__":
+    test_root_favicon()
+    print("✓ Root ICO serves exact image bytes and decodes in Chromium; SVG link is unchanged")
     test_wasm_submission_contract()
     print("✓ Graphics Repair uses the committed Go/WASM contact runtime")
     test_wasm_submission_contract(expire_first_proof=True)

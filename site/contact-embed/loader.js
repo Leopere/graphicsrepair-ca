@@ -89,7 +89,7 @@
     }
 
     async function instantiate(go) {
-        const response = await fetch(ASSET_ROOT + 'contact-form.wasm?v=90090136e89e41e4e72d31db55944ea2f86b93b41c19a8a102ce113dc8398492', { cache: 'force-cache' });
+        const response = await fetch(ASSET_ROOT + 'contact-form.wasm?v=242b43ff9357a10cb973c2096611dc1d56ce20bc5be90ecab032f6234c68461e', { cache: 'force-cache' });
         if (!response.ok) throw new Error(`WASM HTTP ${response.status}`);
         if (WebAssembly.instantiateStreaming) {
             try {

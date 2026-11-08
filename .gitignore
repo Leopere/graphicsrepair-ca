@@ -50,3 +50,5 @@
 !/tests/contact-diagnostics-browser.cjs
 !/docs/contact-embed-integration-ready.json
 !/docs/motherboard-contact-patch/
+
+!/docs/contact-reporter-isolation-ready.json

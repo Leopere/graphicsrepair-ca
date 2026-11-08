@@ -1,0 +1,19 @@
+{
+  "source_repository": "Leopere/motherboardrepair-contact",
+  "source_tip": "fb44f6a21c86a53844c0a8854d08a09034c89387",
+  "tested_source": "28320636bbb021197649d8f7abdcbe0fa2e3a724",
+  "source_content_revision": "sha256:c53c29a7fa4a64c83f0aae8a6fa370b559aaced1382d30c3fab3b270549197c7",
+  "artifact_sha256": {
+    "contact-form.wasm": "242b43ff9357a10cb973c2096611dc1d56ce20bc5be90ecab032f6234c68461e",
+    "loader.js": "2f727ac6a13205e06ab481ab6098508c83ba450d0b4f665775e25ee7deeedb5c",
+    "manifest.json": "5974ddda4b29c7a1a75a5613211114bd6a22219c349cf674c204e6b25f939f4b",
+    "wasm_exec.js": "0c949f4996f9a89698e4b5c586de32249c3b69b7baadb64d220073cc04acba14"
+  },
+  "loader_cache_key": "2f727ac6a132",
+  "verification": "Source make verify and47 offlineWASM browser cases including12 throwing-reporter cases; independent source+packet review clear. Consumer Jenkins/live acceptance pending.",
+  "behavior": "JavaScript telemetry exceptions preserve finite contact failure rejection and UI recovery; submission/proof/POST behavior unchanged.",
+  "historical_relay_cause": "unproven; no issue closure from this integration",
+  "public_artifact_packet_sha256": "abc0305de020a99c55e9fa99c6f7ba2eaac7cbd7e0ee7de7a05fd18b71fb5407",
+  "source_review_tip": "bd598c48a2242f123d2ecac07f204f22ff6a6669",
+  "final_tip_difference": "Evidence-only collection acknowledgement; runtime/build inputs unchanged."
+}

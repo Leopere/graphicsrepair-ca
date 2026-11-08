@@ -402,7 +402,8 @@ def validate_site() -> None:
     assert not (ROOT / ".github/workflows/deploy.yml").exists()
     assert not (ROOT / ".github/workflows/build-and-test.yml").exists()
     wrapper = (ROOT / "deploy_pages.py").read_text(encoding="utf-8")
-    assert "submit-graphicsrepair-pages.py" in wrapper
+    assert "submit-graphicsrepair-normal.py" in wrapper
+    assert "graphicsrepair-normal/v1" in wrapper and "--protocol" in wrapper
     assert "DEPLOY_IT_COMMIT" in wrapper and "DEPLOY_IT_BRANCH" in wrapper
     assert "JENKINS_GRAPHICSREPAIR_SUBMIT" in wrapper
     assert "workflow_dispatch" not in wrapper and "gh api" not in wrapper

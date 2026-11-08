@@ -4,7 +4,7 @@ from pathlib import Path
 import subprocess
 import sys
 import unittest
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import deploy_pages
@@ -21,16 +21,20 @@ class PagesDeliveryTests(unittest.TestCase):
                 run.assert_not_called()
 
     def test_submits_exact_revision_to_primary_without_capturing_operation_handle(self):
-        with patch.dict(os.environ, {"DEPLOY_IT_BRANCH": "main", "DEPLOY_IT_COMMIT": REVISION}, clear=True), patch.object(sys, "argv", ["deploy_pages.py"]), patch.object(Path, "is_file", return_value=True), patch.object(deploy_pages.subprocess, "run") as run:
+        with patch.dict(os.environ, {"DEPLOY_IT_BRANCH": "main", "DEPLOY_IT_COMMIT": REVISION}, clear=True), patch.object(sys, "argv", ["deploy_pages.py"]), patch.object(Path, "is_file", return_value=True), patch.object(deploy_pages.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, stdout="graphicsrepair-normal/v1\n")) as run:
             deploy_pages.main()
-        run.assert_called_once_with([sys.executable, deploy_pages.DEFAULT_SUBMIT, REVISION], check=True)
+        self.assertEqual(run.call_args_list, [
+            call([sys.executable, deploy_pages.DEFAULT_SUBMIT, "--protocol"], check=True, capture_output=True, text=True),
+            call([sys.executable, deploy_pages.DEFAULT_SUBMIT, REVISION], check=True),
+        ])
 
     def test_override_and_failure_never_retry_or_fall_back_to_actions(self):
-        environment = {"DEPLOY_IT_BRANCH": "main", "DEPLOY_IT_COMMIT": REVISION, "JENKINS_GRAPHICSREPAIR_SUBMIT": "/trusted/submit-graphicsrepair-pages.py"}
-        with patch.dict(os.environ, environment, clear=True), patch.object(sys, "argv", ["deploy_pages.py"]), patch.object(Path, "is_file", return_value=True), patch.object(deploy_pages.subprocess, "run", side_effect=subprocess.CalledProcessError(1, "submit")) as run:
+        environment = {"DEPLOY_IT_BRANCH": "main", "DEPLOY_IT_COMMIT": REVISION, "JENKINS_GRAPHICSREPAIR_SUBMIT": "/trusted/submit-graphicsrepair-normal.py"}
+        with patch.dict(os.environ, environment, clear=True), patch.object(sys, "argv", ["deploy_pages.py"]), patch.object(Path, "is_file", return_value=True), patch.object(deploy_pages.subprocess, "run", side_effect=[subprocess.CompletedProcess([], 0, stdout="graphicsrepair-normal/v1\n"), subprocess.CalledProcessError(1, "submit")]) as run:
             with self.assertRaises(subprocess.CalledProcessError):
                 deploy_pages.main()
-            run.assert_called_once_with([sys.executable, environment["JENKINS_GRAPHICSREPAIR_SUBMIT"], REVISION], check=True)
+            self.assertEqual(run.call_count, 2)
+            run.assert_called_with([sys.executable, environment["JENKINS_GRAPHICSREPAIR_SUBMIT"], REVISION], check=True)
 
 
 if __name__ == "__main__":

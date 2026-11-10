@@ -89,7 +89,7 @@
     }
 
     async function instantiate(go) {
-        const response = await fetch(ASSET_ROOT + 'contact-form.wasm?v=242b43ff9357a10cb973c2096611dc1d56ce20bc5be90ecab032f6234c68461e', { cache: 'force-cache' });
+        const response = await fetch(ASSET_ROOT + 'contact-form.wasm?v=5e3a1eb43a091edbba7649d6caf28f2749876a8e71de51735de38a62a7a28322', { cache: 'force-cache' });
         if (!response.ok) throw new Error(`WASM HTTP ${response.status}`);
         if (WebAssembly.instantiateStreaming) {
             try {
@@ -124,7 +124,7 @@
     startWASM().catch(async error => {
         console.warn('Contact WASM unavailable; using JavaScript fallback:', error);
         try {
-            await loadScript(fallbackPath());
+            await loadScript(fallbackPath() + '?v=elapsed-proof-v1');
             const fallback = window.ContactForm;
             if (!fallback || fallback === bridge || typeof fallback.init !== 'function') {
                 throw new Error('JavaScript fallback did not initialize');

@@ -73,7 +73,7 @@ def test_root_favicon() -> None:
         thread.join(timeout=5)
 
 
-def test_wasm_submission_contract(expire_first_proof: bool = False) -> None:
+def test_wasm_submission_contract(expire_first_proof: bool = False, locale: str = "", clock_skew: int = 0, reject_all: bool = False, fallback: bool = False) -> None:
     handler = functools.partial(QuietHandler, directory=SITE)
     server = socketserver.ThreadingTCPServer(("127.0.0.1", 0), handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -85,6 +85,8 @@ def test_wasm_submission_contract(expire_first_proof: bool = False) -> None:
     ).hexdigest()
     proof_requests = 0
     submit_requests = 0
+    proof_received = 0.0
+    proof_ages: list[float] = []
 
     try:
         with sync_playwright() as playwright:
@@ -102,15 +104,17 @@ def test_wasm_submission_contract(expire_first_proof: bool = False) -> None:
                     wasm_requested = True
 
             def proof(route) -> None:
-                nonlocal proof_requests
+                nonlocal proof_requests, proof_received
                 proof_requests += 1
+                proof_received = time.monotonic()
                 route.fulfill(
                     status=200,
                     content_type="application/json",
                     body=json.dumps({
                         "challenge": f"graphics-wasm-browser-contract-{proof_requests}",
                         "difficulty": 0,
-                        "ready_at": 0,
+                        "ready_at": int(time.time() * 1000) + 2500,
+                        "ready_in_ms": 2500,
                         "expires_at": 9_999_999_999_999,
                     }),
                 )
@@ -118,7 +122,8 @@ def test_wasm_submission_contract(expire_first_proof: bool = False) -> None:
             def submit(route) -> None:
                 nonlocal submit_requests
                 submit_requests += 1
-                if expire_first_proof and submit_requests == 1:
+                proof_ages.append(time.monotonic() - proof_received)
+                if reject_all or (clock_skew and time.monotonic() - proof_received < 2.5) or (expire_first_proof and submit_requests == 1):
                     route.fulfill(status=403, content_type="application/json",
                                   body='{"code":"FORM_PROOF_INVALID","error":"Form verification expired or was invalid. Please try again."}')
                     return
@@ -129,16 +134,22 @@ def test_wasm_submission_contract(expire_first_proof: bool = False) -> None:
                     body='{"ok":true,"success":true,"status":"queued"}',
                 )
 
+            if fallback:
+                page.route("**/contact-form.wasm?*", lambda route: route.abort())
             page.on("request", observe_request)
             page.route("https://forms.motherboardrepair.ca/api/form-proof", proof)
             page.route("https://forms.motherboardrepair.ca/api/submit", submit)
-            page.goto(f"http://127.0.0.1:{server.server_address[1]}/", wait_until="domcontentloaded")
+            if clock_skew:
+                page.add_init_script(f"const RealDate = Date; window.Date = class extends RealDate {{ constructor(...args) {{ super(...(args.length ? args : [RealDate.now() + {clock_skew} * 1000])); }} static now() {{ return RealDate.now() + {clock_skew} * 1000; }} }};")
+            page.goto(f"http://127.0.0.1:{server.server_address[1]}/{locale}", wait_until="domcontentloaded")
+            if fallback:
+                assert page.evaluate("() => window.MRCContactReady.then(() => !window.MRCContactWASM)")
             deadline = time.monotonic() + 30
             while time.monotonic() < deadline:
                 active = page.locator("html").evaluate(
                     "() => Boolean(window.MRCContactWASM && window.ContactForm === window.MRCContactWASM)"
                 )
-                if active:
+                if active or fallback:
                     break
                 page.wait_for_timeout(50)
             else:
@@ -148,13 +159,27 @@ def test_wasm_submission_contract(expire_first_proof: bool = False) -> None:
             page.locator('[name="phone"]').fill("+1 226-555-0100")
             page.locator('[name="model"]').fill("Test RTX 3080")
             page.locator('[name="request_type"]').select_option("repair")
+            if page.locator('[name="english_support_preference"]').count():
+                page.locator('[name="english_support_preference"]').select_option("no")
             page.locator('[name="message"]').fill("Intercepted browser contract; no production lead is created.")
             page.locator('[name="service_type"]').select_option("In-Person")
             assert not page.locator('[name="rush_service"]').is_checked()
             page.locator('[name="rush_service"]').check()
             page.locator('[name="accept_terms"]').check()
             page.locator('#repair-form button[type="submit"]').click()
-            page.locator("#form-status.success").wait_for(state="visible")
+            if reject_all:
+                page.locator("#form-status.error").wait_for(state="visible", timeout=15000)
+                assert page.locator('[name="message"]').input_value() == "Intercepted browser contract; no production lead is created."
+                assert page.locator("#form-status").inner_text() == page.locator("#repair-form").get_attribute("data-error")
+                assert page.locator('[name="rush_service"]').is_checked()
+                assert page.locator('#repair-form button[type="submit"]').is_enabled()
+                assert submit_requests == proof_requests == 2
+                browser.close()
+                return
+            try:
+                page.locator("#form-status.success").wait_for(state="visible", timeout=15000)
+            except Exception as error:
+                raise AssertionError(f"{locale=} {clock_skew=} {fallback=} {proof_requests=} {submit_requests=} {proof_ages=} status={page.locator('#form-status').inner_text()}") from error
             assert not page.locator('[name="rush_service"]').is_checked()
             browser.close()
     finally:
@@ -237,5 +262,12 @@ if __name__ == "__main__":
     print("✓ Graphics Repair uses the committed Go/WASM contact runtime")
     test_wasm_submission_contract(expire_first_proof=True)
     print("✓ Expired proof refreshes and retries once using intercepted fixtures")
+    for locale in ("fr/", "es/", "vi/", "ar/", "ja/"):
+        test_wasm_submission_contract(expire_first_proof=True, locale=locale, clock_skew=600)
+    test_wasm_submission_contract(locale="fr/", reject_all=True)
+    for locale in ("", "fr/", "es/", "vi/", "ar/", "ja/"):
+        test_wasm_submission_contract(expire_first_proof=True, locale=locale, clock_skew=600, fallback=True)
+    test_wasm_submission_contract(locale="fr/", reject_all=True, fallback=True)
+    print("✓ All locales retry with a fast clock; terminal French error retains input")
     test_notomo_link_csp()
     print("✓ Desktop/mobile CSP admits owned Notomo carry endpoints and blocks unapproved paths/origins")

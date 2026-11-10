@@ -56,15 +56,20 @@ every sitemap URL. English Flesch checks do not apply to translated copy. Canoni
 
 ## Deployment
 
-Commit and normal-push completed work during the active turn. The automatic deployment manifest is retired. The existing `deploy_pages.py` helper configures legacy GitHub Pages workflows for `graphicsrepair.ca`, `graphicsrepair.com`, `fixgpu.ca` and `gpufix.ca`; publication still needs a verified Jenkins replacement.
+Commit and normal-push completed work during the active turn. `deploy_pages.py`
+submits the exact pushed main SHA to the primary's trusted Jenkins client. It
+requires `DEPLOY_IT_BRANCH=main`, `DEPLOY_IT_COMMIT=<full SHA>` and the installed
+`~/.local/share/jenkins-local/graphicsrepair-client/submit-graphicsrepair-normal.py`
+(or an absolute `JENKINS_GRAPHICSREPAIR_SUBMIT` override). The client must report
+protocol `graphicsrepair-normal/v1`. `--check` is no longer supported.
 
-The handoff uses the existing authenticated GitHub CLI configuration. It checks that the shared source still matches the pushed revision and verifies the published forms in all six languages, terms, privacy copy and submission JavaScript against that revision. It does not change DNS or publish the legacy `docs/` snapshot.
-
-Inspect existing Pages access without deploying:
-
-```bash
-python3 deploy_pages.py --check
-```
+Jenkins owns publication. Production currently uses the `pages` branch with
+GitHub Pages' built-in build workflow; preserve that path until Jenkins replaces
+it. Inspect it without deploying with `gh api repos/Leopere/graphicsrepair-ca/pages`
+and `gh run list -R Leopere/graphicsrepair-ca`. A box without the trusted Jenkins
+client cannot publish through this helper. Do not substitute an unverified
+publisher or move DNS. The published contact runtime identifies its source and
+artifact digests at `/contact-embed/manifest.json`.
 
 DNS is managed separately in Cloudflare. Apex and `www` must not move until the Pages deployment is successful and the GitHub Pages target has been proven. Both web records must remain DNS-only so Cloudflare does not proxy site traffic or enable its WAF. Mail is handled by MRC's Mail-in-a-Box; preserve the MX, SPF, DKIM, DMARC and MTA-STS records documented in `PRODUCTION_RUNBOOK.md`.
 

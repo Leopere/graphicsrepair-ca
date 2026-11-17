@@ -145,3 +145,28 @@ test('unchecking rush removes its fee from the next submission', () => {
   assert.equal(body.extra_fields.rush_service, false);
   assert.equal(Object.hasOwn(body.extra_fields, 'rush_fee'), false);
 });
+
+for (const { request, family, band, submits } of [
+  { request: 'repair', family: 'rtx-3080', band: 'decline', submits: false },
+  { request: 'repair', family: 'rtx-4070', band: 'review', submits: true },
+  { request: 'repair', family: 'other', band: 'review', submits: true },
+  { request: 'repair', family: 'unlisted-family', submits: true },
+  { request: 'repair', family: 'rtx-4070-super', band: 'accept', submits: true },
+  { request: 'verification', family: 'rtx-3080', band: 'decline', submits: true },
+]) {
+  test(`${request} for ${family} ${submits ? 'uses' : 'skips'} protected submission`, async () => {
+    const form = fakeForm({ message: 'Please assess my graphics card.', province: 'ON' });
+    form.elements.request_type.value = request;
+    form.elements.gpu_family = field(family, { selectedOptions: [{ dataset: { band } }] });
+    const phone = { e164: () => '+12265550123', profile: () => 'CA' };
+    const payload = buildLeadPayload(form, phone, 'en-CA');
+    assert.equal(payload.extra_fields.gpu_family, family);
+    assert.equal(payload.extra_fields.gpu_family_band, band ?? 'review');
+    if (submits) {
+      await sendThroughContactRuntime(payload);
+    } else {
+      const runtime = { submitProtectedPayload: () => assert.fail('Declined repair reached the runtime') };
+      assert.equal(await submitLeadPayload(payload, runtime), false);
+    }
+  });
+}

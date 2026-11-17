@@ -125,6 +125,7 @@ h3 { font-size: 1.3rem; letter-spacing: -.02em; }
 .form-status { min-height: 1.5rem; margin: 0; font-weight: 800; }
 .form-status.success { color: #167044; }
 .form-status.error { color: #b11725; }
+#repair-decline { margin: 0; color: #b11725; }
 
 .legal { padding-block: 6rem 8rem; background: white; }
 .legal-copy { max-width: 850px; }

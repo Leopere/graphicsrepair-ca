@@ -1,0 +1,108 @@
+{
+  "version": 1,
+  "reviewed_on": "2026-11-17",
+  "currency": "CAD",
+  "repair_threshold_cad": 1000,
+  "review_schedule": "Review quarterly against Canadian aftermarket prices for used, working cards. Figures are rounded intake estimates for representative models, not appraisals or repair quotes.",
+  "families": [
+    {
+      "id": "rtx-4070-super",
+      "family": "RTX 4070 Super / 4070 Ti / 4070 Ti Super",
+      "band": "accept",
+      "approx_used_cad": 1050,
+      "reviewed_on": "2026-11-17",
+      "notes": "Representative value at the lower end of this group. The plain RTX 4070 is listed separately."
+    },
+    {
+      "id": "rtx-5070-ti",
+      "family": "RTX 5070 Ti",
+      "band": "accept",
+      "approx_used_cad": 1150,
+      "reviewed_on": "2026-11-17",
+      "notes": "Higher-tier RTX 50-series model. Use Other for the unlisted plain RTX 5070."
+    },
+    {
+      "id": "rtx-4080",
+      "family": "RTX 4080 / 4080 Super",
+      "band": "accept",
+      "approx_used_cad": 1400,
+      "reviewed_on": "2026-11-17",
+      "notes": "Reference figure for a working RTX 4080; Super variants can differ."
+    },
+    {
+      "id": "rtx-5080",
+      "family": "RTX 5080",
+      "band": "accept",
+      "approx_used_cad": 1600,
+      "reviewed_on": "2026-11-17",
+      "notes": "Upper-tier desktop family, typically above the repair threshold."
+    },
+    {
+      "id": "rtx-4090",
+      "family": "RTX 4090",
+      "band": "accept",
+      "approx_used_cad": 2200,
+      "reviewed_on": "2026-11-17",
+      "notes": "Flagship desktop family; cooler, board variant and condition affect value."
+    },
+    {
+      "id": "rtx-5090",
+      "family": "RTX 5090",
+      "band": "accept",
+      "approx_used_cad": 3500,
+      "reviewed_on": "2026-11-17",
+      "notes": "Flagship desktop family; supply can move prices considerably."
+    },
+    {
+      "id": "radeon-high-end",
+      "family": "AMD Radeon RX 7900 XTX / RX 9070 XT",
+      "band": "accept",
+      "approx_used_cad": 1000,
+      "reviewed_on": "2026-11-17",
+      "notes": "Current high-end Radeon examples near or above the threshold. Use Other for unlisted Radeon models."
+    },
+    {
+      "id": "workstation-datacenter",
+      "family": "High-end workstation / data centre",
+      "label_key": "workstation",
+      "band": "accept",
+      "approx_used_cad": 1500,
+      "reviewed_on": "2026-11-17",
+      "notes": "Representative high-end professional value, such as an RTX A5000-class card. Older and entry-level professional cards vary; use Other if unsure. Exact model and safe testing still determine intake."
+    },
+    {
+      "id": "rtx-3080",
+      "family": "RTX 3080",
+      "band": "decline",
+      "approx_used_cad": 800,
+      "reviewed_on": "2026-11-17",
+      "notes": "Plain RTX 3080 family, including 10 GB and 12 GB. Use Other for the unlisted 3080 Ti."
+    },
+    {
+      "id": "rtx-3060-3070-4060",
+      "family": "RTX 3060 / 3070 / 4060 class",
+      "label_key": "midrange",
+      "band": "decline",
+      "approx_used_cad": 400,
+      "reviewed_on": "2026-11-17",
+      "notes": "Representative midrange value. Includes the Ti variants of the listed families."
+    },
+    {
+      "id": "legacy-geforce",
+      "family": "GTX 16 series / RTX 20 series and older GeForce",
+      "label_key": "older",
+      "band": "decline",
+      "approx_used_cad": 250,
+      "reviewed_on": "2026-11-17",
+      "notes": "Representative value for older consumer GeForce cards. Use Other for unlisted professional models."
+    },
+    {
+      "id": "rtx-4070",
+      "family": "RTX 4070",
+      "band": "review",
+      "approx_used_cad": 950,
+      "reviewed_on": "2026-11-17",
+      "notes": "Plain RTX 4070 near the threshold. The 4070 Super and Ti models are listed separately."
+    }
+  ]
+}

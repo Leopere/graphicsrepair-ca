@@ -73,7 +73,7 @@ def test_root_favicon() -> None:
         thread.join(timeout=5)
 
 
-def test_wasm_submission_contract(expire_first_proof: bool = False, locale: str = "", clock_skew: int = 0, reject_all: bool = False, fallback: bool = False) -> None:
+def test_wasm_submission_contract(expire_first_proof: bool = False, locale: str = "", clock_skew: int = 0, reject_all: bool = False, fallback: bool = False, screen_repair: bool = False) -> None:
     handler = functools.partial(QuietHandler, directory=SITE)
     server = socketserver.ThreadingTCPServer(("127.0.0.1", 0), handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -157,7 +157,9 @@ def test_wasm_submission_contract(expire_first_proof: bool = False, locale: str 
             page.locator('[name="name"]').fill("WASM Browser Contract")
             page.locator('[name="email"]').fill("production-acceptance@example.com")
             page.locator('[name="phone"]').fill("+1 226-555-0100")
-            page.locator('[name="model"]').fill("Test RTX 3080")
+            model = "Test RTX 3080" if screen_repair else "Test unlisted GPU"
+            page.locator('[name="model"]').fill(model)
+            page.locator('[name="gpu_family"]').select_option("rtx-3080" if screen_repair else "other")
             page.locator('[name="request_type"]').select_option("repair")
             if page.locator('[name="english_support_preference"]').count():
                 page.locator('[name="english_support_preference"]').select_option("no")
@@ -166,6 +168,22 @@ def test_wasm_submission_contract(expire_first_proof: bool = False, locale: str 
             assert not page.locator('[name="rush_service"]').is_checked()
             page.locator('[name="rush_service"]').check()
             page.locator('[name="accept_terms"]').check()
+            if screen_repair:
+                decline = page.locator("#repair-decline")
+                assert "C$1000" in decline.inner_text()
+                assert decline.is_visible()
+                page.locator('#repair-form button[type="submit"]').click()
+                assert page.evaluate("document.activeElement.id") == "repair-decline"
+                assert submit_requests == proof_requests == 0
+                page.locator('[name="gpu_family"]').select_option("rtx-4070")
+                assert decline.is_hidden()
+                page.locator('[name="gpu_family"]').select_option("rtx-3080")
+                assert decline.is_visible()
+                page.locator('[name="request_type"]').select_option("verification")
+                assert decline.is_hidden()
+                assert page.locator('[name="model"]').input_value() == model
+                assert page.locator('[name="message"]').input_value() == "Intercepted browser contract; no production lead is created."
+                assert page.locator('[name="rush_service"]').is_checked()
             page.locator('#repair-form button[type="submit"]').click()
             if reject_all:
                 page.locator("#form-status.error").wait_for(state="visible", timeout=15000)
@@ -192,7 +210,10 @@ def test_wasm_submission_contract(expire_first_proof: bool = False, locale: str 
     assert wasm_requested
     assert payload["form_proof_token"] == f"graphics-wasm-browser-contract-{proof_requests}"
     assert payload["form_id"] == "graphics_card_repair_quote"
-    assert payload["extra_fields"]["graphics_card_model"] == "Test RTX 3080"
+    assert payload["extra_fields"]["graphics_card_model"] == ("Test RTX 3080" if screen_repair else "Test unlisted GPU")
+    assert payload["extra_fields"]["gpu_family"] == ("rtx-3080" if screen_repair else "other")
+    assert payload["extra_fields"]["gpu_family_band"] == ("decline" if screen_repair else "review")
+    assert payload["extra_fields"]["request_type"] == ("verification" if screen_repair else "repair")
     assert payload["extra_fields"]["rush_service"] is True
     assert payload["extra_fields"]["rush_fee"] == 130
     assert "form_proof_token" in payload
@@ -258,8 +279,8 @@ def test_notomo_link_csp() -> None:
 if __name__ == "__main__":
     test_root_favicon()
     print("✓ Root ICO serves exact image bytes and decodes in Chromium; SVG link is unchanged")
-    test_wasm_submission_contract()
-    print("✓ Graphics Repair uses the committed Go/WASM contact runtime")
+    test_wasm_submission_contract(screen_repair=True)
+    print("✓ Declined repair makes zero proof or submit requests; switching to Certification retains input and uses the committed Go/WASM runtime")
     test_wasm_submission_contract(expire_first_proof=True)
     print("✓ Expired proof refreshes and retries once using intercepted fixtures")
     for locale in ("fr/", "es/", "vi/", "ar/", "ja/"):

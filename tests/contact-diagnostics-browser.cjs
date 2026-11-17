@@ -151,6 +151,7 @@ const mime = { '.html': 'text/html', '.js': 'application/javascript', '.css': 't
                 const type = await field.getAttribute('type');
                 const tag = await field.evaluate(el => el.tagName);
                 if (type === 'checkbox' || type === 'radio') await field.check();
+                else if (name === 'gpu_family') await field.selectOption('other');
                 else if (tag === 'SELECT') { if (name !== 'service_type') await field.selectOption({ index: 1 }); }
                 else await field.fill(({ name: 'Offline Fixture', email: 'offline@example.invalid', phone: '+1 202 555 0100', device_name: 'Offline board', model: 'Offline GPU', message: privateSentinel })[name] || 'Offline fixture');
             }

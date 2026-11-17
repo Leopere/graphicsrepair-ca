@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
 import importlib.util
 import json
@@ -29,7 +30,9 @@ CONTACT_EMBED_SOURCE = SOURCE / "contact-embed"
 CONTACT_FALLBACK_SOURCE = SOURCE / "js/contact-form.min.js"
 LOCALE_ORDER = ("en", "fr", "es", "vi", "ar", "ja")
 HREFLANG = {"en": "en-CA", "fr": "fr-CA", "es": "es-419", "vi": "vi-VN", "ar": "ar", "ja": "ja-JP"}
-LEGAL_REVIEWED_DATE = "2026-09-09"
+LEGAL_REVIEWED_DATE = "2026-11-17"
+GPU_CERTIFICATION_FEE_CAD = 50
+GPU_VALUE_TABLE = json.loads((SOURCE / "gpu-family-values.json").read_text(encoding="utf-8"))
 FAVICON_SIZES = (16, 32, 48)
 
 
@@ -70,6 +73,40 @@ def esc(value: object) -> str:
     return html.escape(str(value), quote=True)
 
 
+def gpu_value_policy(locale: str) -> dict[str, str]:
+    copy = content_module.GPU_VALUE_COPY[locale]
+    return {
+        key: copy[key].format(
+            threshold=f"C${GPU_VALUE_TABLE['repair_threshold_cad']}",
+            certification=f"C${GPU_CERTIFICATION_FEE_CAD}",
+        )
+        for key in ("threshold", "certification", "simple_work", "decline_message")
+    }
+
+
+def render_gpu_family_guide(locale: str, choose: str) -> tuple[str, str]:
+    copy = content_module.GPU_VALUE_COPY[locale]
+    families_by_band = {band: [] for band in ("accept", "decline", "review")}
+    options = [f'<option value="">{esc(choose)}</option>']
+    for row in GPU_VALUE_TABLE["families"]:
+        label = copy[row["label_key"]] if locale != "en" and "label_key" in row else row["family"]
+        band = row["band"]
+        options.append(f'<option value="{esc(row["id"])}" data-band="{esc(band)}">{esc(label)}</option>')
+        families_by_band[band].append(label)
+    options.append(f'<option value="other" data-band="review">{esc(copy["other"])}</option>')
+    families_by_band["review"].append(copy["other"])
+    separator = "、" if locale == "ja" else "، " if locale == "ar" else ", "
+    bands = "".join(
+        f'<li data-band="{band}"><strong>{esc(copy[band])}</strong> · {esc(separator.join(labels))}</li>'
+        for band, labels in families_by_band.items()
+    )
+    month = content_module.GPU_VALUE_REVIEW_MONTHS[GPU_VALUE_TABLE["reviewed_on"][:7]][locale]
+    reviewed = copy["reviewed"].format(month=month)
+    guide = f'<div id="gpu-family-guide"><h3>{esc(copy["guide"])}</h3><ul>{bands}</ul><p>{esc(reviewed)}</p></div>'
+    select = f'<label>{esc(copy["family"])}<select name="gpu_family" required>{"".join(options)}</select></label>'
+    return guide, select
+
+
 def notomo_script() -> str:
     return (
         f'<script async src="/assets/notomo-loader.js" '
@@ -81,7 +118,8 @@ def notomo_script() -> str:
 def contact_scripts() -> str:
     manifest = json.loads((CONTACT_EMBED_SOURCE / "manifest.json").read_text(encoding="utf-8"))
     key = manifest["loader_sha256"][:12]
-    return f'<script src="/contact-embed/loader.js?v={key}" defer></script>\n  <script src="/assets/site.js" defer></script>'
+    site_key = hashlib.sha256((SOURCE / "assets/site.js").read_bytes()).hexdigest()[:12]
+    return f'<script src="/contact-embed/loader.js?v={key}" defer></script>\n  <script src="/assets/site.js?v={site_key}" defer></script>'
 
 
 def locale_path(locale: str) -> str:
@@ -154,6 +192,8 @@ def render_index(locale: str) -> str:
     c = LOCALES[locale]
     f = FORM_COPY[locale]
     ui = UI_COPY[locale]
+    policy = gpu_value_policy(locale)
+    family_guide, family_select = render_gpu_family_guide(locale, f["choose"])
     path = locale_path(locale)
     prefix = "" if locale == "en" else "../"
     canonical = f"{DOMAIN}/{path}"
@@ -190,7 +230,7 @@ def render_index(locale: str) -> str:
                 "provider": {"@id": f"{DOMAIN}/#organization"},
                 "areaServed": {"@type": "Country", "name": "Canada"},
                 "serviceType": "Board-level graphics card and GPU repair",
-                "offers": {"@type": "Offer", "name": "GPU Certification", "price": "50", "priceCurrency": "CAD"},
+                "offers": {"@type": "Offer", "name": "GPU Certification", "price": str(GPU_CERTIFICATION_FEE_CAD), "priceCurrency": "CAD"},
             },
         ],
     }
@@ -221,15 +261,16 @@ def render_index(locale: str) -> str:
     <div class="hero-art" aria-hidden="true"><img src="{prefix}assets/gpu-repair-720.webp" srcset="{prefix}assets/gpu-repair-480.webp 480w, {prefix}assets/gpu-repair-720.webp 720w" sizes="(max-width: 920px) 100vw, 51vw" width="720" height="720" alt="" fetchpriority="high" decoding="async"></div>
     <div class="shell hero-grid"><div class="hero-copy">
       <p class="eyebrow">{esc(c['eyebrow'])}</p><h1>{esc(c['hero'])}</h1><p class="lede">{esc(c['hero_body'])}</p>
+      <p>{esc(policy['threshold'])} {esc(policy['certification'])}</p>
       <div class="hero-actions"><a class="button" href="#contact">{esc(c['hero_cta'])}</a><span>{esc(c['hero_note'])}</span></div>
     </div><div class="board-card" aria-hidden="true"><span>GPU</span><strong>TEST / REPAIR</strong><small>NVIDIA · AMD</small></div></div>
   </section>
   <div class="language-notice"><div class="shell"><span>{esc(c['notice'])}</span><nav class="languages" aria-label="{esc(ui['languages'])}">{language_links(locale)}</nav></div></div>
   <section class="section" id="faults"><div class="shell"><div class="section-heading"><p class="eyebrow">01 / {esc(c['nav_faults'])}</p><h2>{esc(c['faults_title'])}</h2><p>{esc(c['faults_intro'])}</p></div><div class="fault-grid">{fault_cards}</div></div></section>
-  <section class="section section-dark"><div class="shell split"><div><p class="eyebrow">02 / {esc(c['scope_title'])}</p><h2>{esc(c['scope_title'])}</h2><p>{esc(c['scope_body'])}</p><ul class="check-list">{list_items(c['scope_items'])}</ul></div><div class="limit-card"><h3>{esc(c['limits_title'])}</h3><ul>{list_items(c['limits_items'])}</ul></div></div></section>
+  <section class="section section-dark"><div class="shell split"><div><p class="eyebrow">02 / {esc(c['scope_title'])}</p><h2>{esc(c['scope_title'])}</h2><p>{esc(c['scope_body'])}</p><p>{esc(policy['threshold'])}</p>{family_guide}<ul class="check-list">{list_items(c['scope_items'])}</ul></div><div class="limit-card"><h3>{esc(c['limits_title'])}</h3><ul>{list_items([policy['simple_work'], policy['certification'], *c['limits_items']])}</ul></div></div></section>
   <section class="section" id="process"><div class="shell"><div class="section-heading"><p class="eyebrow">03 / {esc(c['nav_process'])}</p><h2>{esc(c['process_title'])}</h2></div><ol class="steps">{steps}</ol></div></section>
   <section class="section verification" id="gpu-certification"><div class="shell split"><div><p class="eyebrow">04 / {esc(c['nav_check'])}</p><h2>{esc(c['check_title'])}</h2><p>{esc(c['check_body'])}</p><ul class="check-list">{list_items(c['check_items'])}</ul></div><div class="price-card"><span>{esc(c['check_price'])}</span><small>{esc(c['hero_note'])}</small><a class="button" href="#contact">{esc(c['nav_check'])}</a></div></div></section>
-  <section class="section contact-section" id="contact"><div class="shell contact-grid"><div><p class="eyebrow">05 / {esc(c['nav_contact'])}</p><h2>{esc(c['contact_title'])}</h2><p>{esc(c['contact_intro'])}</p><div class="reply-card"><h3>{esc(c['reply_title'])}</h3><p>{esc(c['reply_body'])}</p></div></div>
+  <section class="section contact-section" id="contact"><div class="shell contact-grid"><div><p class="eyebrow">05 / {esc(c['nav_contact'])}</p><h2>{esc(c['contact_title'])}</h2><p>{esc(c['contact_intro'])}</p><p>{esc(policy['threshold'])} {esc(policy['simple_work'])} {esc(policy['certification'])}</p><div class="reply-card"><h3>{esc(c['reply_title'])}</h3><p>{esc(c['reply_body'])}</p></div></div>
     <form id="repair-form" class="repair-form" novalidate data-sending="{esc(c['sending'])}" data-success="{esc(c['success'])}" data-error="{esc(c['error'])}">
       <input type="hidden" name="form_id" value="graphics_card_repair_quote"><input type="hidden" name="start_time" value="">
       <fieldset><legend>{esc(f['contact_details'])}</legend>
@@ -237,10 +278,12 @@ def render_index(locale: str) -> str:
         <label>{esc(c['phone'])}<input name="phone" id="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" aria-describedby="phone-validation-profile phone-hint" data-error="{esc(f['phone_error'])}" required><span id="phone-validation-profile" class="phone-detection" data-international-label="{esc(f['international_phone'])}" aria-live="polite"></span><small id="phone-hint" class="form-hint">{esc(f['phone_hint'])}</small></label>{reply_language_field}
       </fieldset>
       <fieldset><legend>{esc(f['card_details'])}</legend>
+        {family_select}
         <label>{esc(c['model'])}<input name="model" type="text" maxlength="160" required aria-describedby="model-hint"><small id="model-hint" class="form-hint">{esc(f['model_hint'])}</small></label>
       </fieldset>
       <fieldset><legend>{esc(f['request_details'])}</legend>
         <label>{esc(c['service'])}<select name="request_type" required><option value="">{esc(f['choose'])}</option><option value="repair">{esc(c['repair'])}</option><option value="verification">{esc(c['verify'])}</option></select></label>
+        <p id="repair-decline" role="status" tabindex="-1" hidden>{esc(policy['decline_message'])}</p>
         <label>{esc(f['request_prompt'])}<textarea name="message" rows="6" minlength="20" maxlength="900" required aria-describedby="request-hint"></textarea><small id="request-hint" class="form-hint">{esc(f['request_hint'])}</small></label>
       </fieldset>
       <fieldset><legend>{esc(f['intake'])}</legend>
@@ -273,7 +316,7 @@ def render_legal(kind: str) -> str:
         title = "Privacy Policy"
         description = "Our privacy policy explains how we use your contact details. It also covers what this site records while you visit."
         body = """
-        <h2>Information we collect</h2><p>When you submit the repair form, we receive the name, email, phone number and the phone format used to validate it, card manufacturer and model, request type, symptoms, repair history and optional rush service request you provide. For a mail-in request, we also receive the return country, province, state or region, return address and optional unit number you provide. For an international mail-in request, we receive your ownership or owner-authorization confirmation and your acknowledgement of cross-border shipping costs and instructions. We use this information to review your request, contact you and carry out the work if we agree to take the job. We do not ask for the card serial number.</p>
+        <h2>Information we collect</h2><p>When you submit the repair form, we receive the name, email, phone number and the phone format used to validate it, GPU family and its repair eligibility category, card manufacturer and model, request type, symptoms, repair history and optional rush service request you provide. For a mail-in request, we also receive the return country, province, state or region, return address and optional unit number you provide. For an international mail-in request, we receive your ownership or owner-authorization confirmation and your acknowledgement of cross-border shipping costs and instructions. We use this information to review your request, contact you and carry out the work if we agree to take the job. We do not ask for the card serial number.</p>
         <h2>Form processing</h2><p>The form is sent to MRC's form service at forms.motherboardrepair.ca. Along with the fields shown, it sends your drop-off or mail-in choice, phone validation profile (the format used to check your number), international-mail-in status, page language, selected text-message reply language, consent confirmation and source site. Do not include passwords, payment-card numbers or unrelated sensitive information.</p>
         <h2>Language preference</h2><p>If you choose a language, the site stores that language code in your browser's local storage so it can open the same translation on a later visit. It is not sent with analytics.</p>
         <h2>Website analytics and session replay</h2><p>We use our self-hosted Notomo service to understand page visits, navigation, visit duration, browser errors and how people use the site. Notomo stores random visitor and session identifiers in local and session storage. It receives the page path without query or fragment details, the referring path, page title, campaign tags, screen and viewport size, visit duration and technical error details. Notomo also records page contents and your interactions as a session replay. This recording includes literal text entered into website fields as you type, including repair-form fields before you submit the form. Do not enter passwords, payment-card numbers or unrelated sensitive information. We do not use advertising analytics or fingerprinting.</p>
@@ -283,10 +326,12 @@ def render_legal(kind: str) -> str:
     else:
         title = "Service Terms"
         description = "These service terms explain how repair requests work. Read about quotes, rush service and shipping before you send your device."
-        body = """
+        policy = gpu_value_policy("en")
+        body = f"""
         <h2>Sending a request</h2><p>Graphics Repair Canada is an MRC specialist site. Submitting the form sends a request for review; it does not reserve a time, authorize work or guarantee a repair. Canada is our main market. International mail-in service is available only for jobs MRC accepts. Do not mail a card until MRC provides shipping instructions.</p>
+        <h2>Repair eligibility</h2><p>{esc(policy['threshold'])} {esc(policy['simple_work'])} If your GPU family is unlisted, you can send a request for review. {esc(policy['certification'])}</p>
         <h2>International mail-in</h2><p>Before shipping from outside Canada, wait for MRC’s instructions about the customs broker, carrier and return costs for your request. The customer is responsible for shipping, customs, duties, taxes, brokerage, insurance and return costs. Service availability and permitted shipping routes depend on the origin country, card and carrier restrictions.</p>
-        <h2>GPU Certification</h2><p>The $50 CAD plus tax price covers a check of one supported used desktop graphics card that MRC has agreed to take. We compare it with its sales listing and the parts expected for that model. We record its identifying details, model, memory, chips, circuit board, cooler and other required parts. This can reveal missing, substituted or changed chips and other differences found in deceptive sales of used cards.</p><p>We also try to boot the card in our shop’s test system. If it boots, you receive a written test report listing the checks we completed and the results we observed. GPU Certification reports only what we observe on that card. It does not certify that the card meets the manufacturer’s standards and is not a repair diagnostic, authenticity or performance guarantee, warranty, or assurance that there are no hidden faults. We do not establish the seller’s intent or ownership of the card, or make legal findings of fraud.</p><p>Shipping, repair and parts cost extra. The certification fee is non-refundable once checking begins.</p>
+        <h2>GPU Certification</h2><p>The ${GPU_CERTIFICATION_FEE_CAD} CAD plus tax price covers a check of one used graphics card that MRC has agreed to take. We compare it with its sales listing and the parts expected for that model. We record its identifying details, model, memory, chips, circuit board, cooler and other required parts. This can reveal missing, substituted or changed chips and other differences found in deceptive sales of used cards.</p><p>We also try to boot the card in our shop’s test system. If it boots, you receive a written test report listing the checks we completed and the results we observed. GPU Certification reports only what we observe on that card. It does not certify that the card meets the manufacturer’s standards and is not a repair diagnostic, authenticity or performance guarantee, warranty, or assurance that there are no hidden faults. We do not establish the seller’s intent or ownership of the card, or make legal findings of fraud.</p><p>Shipping, repair and parts cost extra. The certification fee is non-refundable once checking begins.</p>
         <h2>Reviewing your request and quoting repairs</h2><p>We review your request for free to decide whether we can take the job. This review is not a repair diagnostic. Once a card we have agreed to work on arrives, we diagnose it and give you a quote. No repair work begins until you approve that quote. The work, price and other details MRC gives you for your job are the ones that apply.</p><h2>Rush service</h2><p>Rush service is optional and costs an additional $130.</p>
         """
     prefix = "../"

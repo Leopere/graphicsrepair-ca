@@ -10,6 +10,7 @@ import struct
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
+from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlparse
@@ -86,8 +87,82 @@ def test_favicon_provenance() -> None:
                 assert actual.getextrema()[3] == (0, 255), "Expected transparent and opaque pixels"
 
 
+def validate_gpu_family_table() -> dict[str, str]:
+    table = json.loads((ROOT / "site/gpu-family-values.json").read_text(encoding="utf-8"))
+    assert type(table["version"]) is int and table["version"] >= 1
+    assert table["currency"] == "CAD"
+    assert table["repair_threshold_cad"] == 1000
+    assert "quarterly" in table["review_schedule"].lower()
+    reviewed = date.fromisoformat(table["reviewed_on"])
+    assert (reviewed.year, reviewed.month) == (2026, 11)
+    bands = {}
+    for row in table["families"]:
+        family_id = row["id"]
+        assert re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", family_id)
+        assert family_id not in bands and family_id != "other"
+        assert row["family"].strip() and row["notes"].strip()
+        assert date.fromisoformat(row["reviewed_on"]) == reviewed
+        assert type(row["approx_used_cad"]) is int and row["approx_used_cad"] > 0
+        bands[family_id] = row["band"]
+    assert set(bands.values()) == {"accept", "review", "decline"}
+    for family_id in ("rtx-4070-super", "rtx-4080", "rtx-5080", "rtx-4090", "rtx-5090",
+                      "radeon-high-end", "workstation-datacenter"):
+        assert bands[family_id] == "accept"
+    for family_id in ("rtx-3080", "rtx-3060-3070-4060", "legacy-geforce"):
+        assert bands[family_id] == "decline"
+    assert bands["rtx-4070"] == "review"
+    assert next(row["approx_used_cad"] for row in table["families"] if row["id"] == "rtx-3080") == 800
+    return bands
+
+
+def validate_gpu_value_policy(locale: str, parser: PageParser, source: str, bands: dict[str, str]) -> None:
+    localized_copy = {
+        "en": ("used and working", "available for all cards", "simple fan, thermal pad or connector work",
+               "Last reviewed November 2026", "quarterly", "Other / not sure", "English source copy."),
+        "fr": ("en état de marche", "pour toutes les cartes", "un ventilateur, un tampon thermique ou un connecteur",
+               "Dernière révision en novembre 2026", "chaque trimestre", "Autre / incertain", "Traduction automatique"),
+        "es": ("en buen funcionamiento", "para todas las tarjetas", "ventiladores, almohadillas térmicas o conectores",
+               "Última revisión en noviembre de 2026", "trimestralmente", "Otra / No estoy seguro", "Traducción automática"),
+        "vi": ("còn hoạt động", "cho mọi card", "quạt, miếng tản nhiệt hoặc đầu nối",
+               "tháng 11 năm 2026", "mỗi quý", "Khác / Không chắc", "Bản dịch máy"),
+        "ar": ("بحالة تشغيلية", "لجميع البطاقات", "المراوح أو الوسادات الحرارية أو الموصلات",
+               "آخر مراجعة في نوفمبر 2026", "كل ثلاثة أشهر", "أخرى / غير متأكد", "ترجمة آلية"),
+        "ja": ("動作する中古品", "すべてのカードが対象", "ファン、サーマルパッド、コネクタ",
+               "2026年11月", "四半期ごと", "その他／不明", "機械翻訳"),
+    }[locale]
+    working, cert, simple, review_month, quarterly, other, translation_notice = localized_copy
+    hero = source.split('<section class="hero">', 1)[1].split("</section>", 1)[0]
+    scope = source.split('<section class="section section-dark">', 1)[1].split("</section>", 1)[0]
+    limits = scope.split('<div class="limit-card">', 1)[1]
+    contact = source.split('id="contact">', 1)[1].split("<form", 1)[0]
+    for section in (hero, scope, contact):
+        assert "C$1000" in section and working in section, locale
+    for section in (hero, limits, contact):
+        assert "C$50" in section and cert in section, locale
+    for section in (limits, contact):
+        assert simple in section, locale
+    assert translation_notice in source.split('<div class="language-notice">', 1)[1].split("</nav>", 1)[0], locale
+    assert review_month in scope and quarterly in scope, locale
+    assert "gpu-family-guide" in parser.ids
+    assert re.findall(r'<li data-band="([^"]+)">', scope) == ["accept", "decline", "review"]
+    for family in ("RTX 3080", "RTX 4070", "RTX 4070 Super", "RTX 5080", "AMD Radeon RX 7900 XTX"):
+        assert family in scope, locale
+    if locale == "en":
+        for phrase in ("Typically accepted", "Typically not accepted", "Ask us", "We don’t normally accept Intel graphics cards"):
+            assert phrase in scope
+    (options,) = re.findall(r'<select name="gpu_family" required>(.*?)</select>', source)
+    assert options.startswith('<option value="">')
+    assert re.findall(r'<option value="([^"]+)" data-band="([^"]+)">', options) == [
+        *bands.items(), ("other", "review"),
+    ], locale
+    assert other in options
+    assert "required" in next(attrs for name, attrs in parser.tags if name == "input" and attrs.get("name") == "model")
+    assert 'id="repair-decline" role="status" tabindex="-1" hidden' in source
+
+
 def validate_site() -> None:
     validate_favicon()
+    family_bands = validate_gpu_family_table()
     assert (SITE / "CNAME").read_text(encoding="utf-8") == "graphicsrepair.ca\n"
     expected_pages = {"index.html", "privacy/index.html", "terms/index.html", "404.html"}
     expected_pages.update(f"{locale}/index.html" for locale in LOCALES if locale != "en")
@@ -119,6 +194,7 @@ def validate_site() -> None:
     for locale, tag in LOCALES.items():
         path = SITE / ("index.html" if locale == "en" else f"{locale}/index.html")
         parser, source = parse(path)
+        validate_gpu_value_policy(locale, parser, source, family_bands)
         assert source.startswith("<!DOCTYPE html>")
         html_tags = [attrs for name, attrs in parser.tags if name == "html"]
         assert html_tags and html_tags[0].get("lang") == tag
@@ -320,10 +396,12 @@ def validate_site() -> None:
         if locale != "en":
             assert (SITE / locale / "js/contact-form.min.js").is_file()
 
+    site_script_key = hashlib.sha256((SITE / "assets/site.js").read_bytes()).hexdigest()[:12]
+    site_script_ref = f'src="/assets/site.js?v={site_script_key}"'
     for locale in LOCALES:
         page = SITE / ("index.html" if locale == "en" else f"{locale}/index.html")
         source = page.read_text(encoding="utf-8")
-        assert source.index(f'src="/contact-embed/loader.js?v={manifest["loader_sha256"][:12]}"') < source.index('src="/assets/site.js"')
+        assert source.index(f'src="/contact-embed/loader.js?v={manifest["loader_sha256"][:12]}"') < source.index(site_script_ref)
         assert "'wasm-unsafe-eval'" in source
 
     css = (SITE / "assets/style.css").read_text(encoding="utf-8")
@@ -336,7 +414,7 @@ def validate_site() -> None:
         legal_parser, legal_source = parse(SITE / legal_kind / "index.html")
         legal_canonical = [attrs.get("href") for name, attrs in legal_parser.tags if name == "link" and attrs.get("rel") == "canonical"]
         assert legal_canonical == [f"https://graphicsrepair.ca/{legal_kind}/"]
-        assert "MRC · Updated 2026-09-09" in legal_source
+        assert "MRC · Updated 2026-11-17" in legal_source
         assert f'href="/{legal_kind}/"' in legal_source
         assert 'href="../assets/style.css"' in legal_source
         assert 'src="../assets/mrc-logo-white.svg"' in legal_source
@@ -354,6 +432,9 @@ def validate_site() -> None:
             assert f'href="/#{fragment}"' in legal_source
 
     terms = (SITE / "terms" / "index.html").read_text(encoding="utf-8").lower()
+    assert "about c$1000 or more used and working" in terms
+    assert "including simple fan, thermal pad or connector work" in terms
+    assert "gpu certification (c$50 plus tax) is available for all cards" in terms
     assert "is not a repair diagnostic" in terms
     assert "missing, substituted or changed chips" in terms
     assert "does not certify that the card meets the manufacturer’s standards" in terms
@@ -369,7 +450,7 @@ def validate_site() -> None:
     assert "Page not found" in not_found
     assert 'content="noindex,follow"' in not_found
     assert 'href="/assets/style.css"' in not_found
-    assert 'src="/assets/site.js"' in not_found
+    assert site_script_ref in not_found
     assert 'src="/assets/mrc-logo.svg"' in not_found
     assert 'src="/assets/mrc-logo-white.svg"' in not_found
     for fragment in ("faults", "process", "gpu-certification", "contact"):

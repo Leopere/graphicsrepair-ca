@@ -166,10 +166,23 @@
     update();
     return update;
   }
+  function selectedGPUFamily(form) {
+    const select = form.elements.gpu_family;
+    if (!select || !select.value) return {};
+    const band = select.selectedOptions[0]?.dataset.band;
+    return {
+      id: clean(select.value, 80),
+      band: band === 'accept' || band === 'decline' ? band : 'review'
+    };
+  }
+  function declinesRepair(requestType, band) {
+    return requestType === 'repair' && band === 'decline';
+  }
   function buildLeadPayload(form, phoneSetup, siteLanguage) {
     const message = form.elements.message.value;
     const model = clean(form.elements.model.value, 160);
     const requestType = form.elements.request_type.value;
+    const gpuFamily = selectedGPUFamily(form);
     const serviceType = form.elements.service_type.value;
     const rushService = form.elements.rush_service.checked;
     const mailIn = serviceType === 'Mail-In';
@@ -193,6 +206,8 @@
       extra_fields: {
         phone_validation_profile: phoneSetup.profile(),
         graphics_card_model: model,
+        gpu_family: gpuFamily.id,
+        gpu_family_band: gpuFamily.band,
         request_type: requestType,
         service_type: serviceType,
         rush_service: rushService,
@@ -213,6 +228,10 @@
     };
   }
   function submitLeadPayload(payload, contactForm) {
+    const fields = payload.extra_fields;
+    if (fields && declinesRepair(fields.request_type, fields.gpu_family_band)) {
+      return Promise.resolve(false);
+    }
     if (!contactForm || typeof contactForm.submitProtectedPayload !== 'function') {
       return Promise.reject(new Error('Submission is unavailable.'));
     }
@@ -226,8 +245,20 @@
     const updateMailingFields = setupMailingFields(form);
     const button = form.querySelector('button[type="submit"]');
     const status = form.querySelector('#form-status');
+    const decline = form.querySelector('#repair-decline');
+    function updateEligibility() {
+      decline.hidden = !declinesRepair(form.elements.request_type.value, selectedGPUFamily(form).band);
+      return !decline.hidden;
+    }
+    form.elements.gpu_family.addEventListener('change', updateEligibility);
+    form.elements.request_type.addEventListener('change', updateEligibility);
+    updateEligibility();
     form.addEventListener('submit', async function (event) {
       event.preventDefault();
+      if (updateEligibility()) {
+        decline.focus();
+        return;
+      }
       if (!form.reportValidity()) return;
       button.disabled = true;
       status.className = 'form-status';
@@ -239,6 +270,7 @@
         form.elements.start_time.value = String(Math.floor(Date.now() / 1000));
         phoneSetup.update();
         updateMailingFields();
+        updateEligibility();
         status.className = 'form-status success';
         status.textContent = form.dataset.success;
       } catch (error) {
